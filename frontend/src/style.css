@@ -1,0 +1,189 @@
+.padding-s {
+	padding: 5px;
+}
+
+.padding-m {
+	padding: 10px;
+}
+
+.padding-l {
+	padding: 15px;
+}
+
+.paddingTop-s {
+	padding-top: 5px;
+}
+
+.paddingTop-m {
+	padding-top: 10px;
+}
+
+.paddingTop-l {
+	padding-top: 15px;
+}
+
+.marginTop-s {
+	margin-top: 5px;
+}
+
+.marginTop-m {
+	margin-top: 10px;
+}
+
+.marginTop-l {
+	margin-top: 15px;
+}
+
+.marginTop-xl {
+	margin-top: 25px;
+}
+
+.paddingLeft-s {
+	padding-left: 5px;
+}
+
+.paddingLeft-m {
+	padding-left: 10px;
+}
+
+.paddingLeft-l {
+	padding-left: 15px;
+}
+
+.paddingRight-s {
+	padding-right: 5px;
+}
+
+.paddingRight-m {
+	padding-right: 10px;
+}
+
+.paddingRight-l {
+	padding-right: 15px;
+}
+
+.paddingBottom-s {
+	padding-bottom: 5px;
+}
+
+.paddingBottom-m {
+	padding-bottom: 10px;
+}
+
+.paddingBottom-l {
+	padding-bottom: 15px;
+}
+
+.text_center {
+	text-align: center;
+}
+
+.text_small {
+	font-size: 15px;
+}
+
+.text_medium {
+	font-size: 25px;
+}
+
+.text_large {
+	font-size: 35px;
+}
+
+.border {
+	border-style: solid;
+	border-color: black;
+}
+
+.border_bottom {
+	border-bottom: 1px;
+}
+
+.no_border {
+	border-style: hidden;
+}
+
+.font_size_s {
+	font-size: 15px;
+}
+
+.font_size_m {
+	font-size: 20px;
+}
+
+.font_size_l {
+	font-size: 25px;
+}
+
+.font_normal {
+	font-weight: normal;
+}
+
+.font_bold {
+	font-weight: bold;
+}
+
+.font_medium {
+	font-weight: 450;
+}
+
+.text_color_white {
+	color: white;
+}
+
+.text_color_black {
+	color: #28384b;
+}
+
+.text_color_red {
+	color: #fa2b46;
+}
+
+.text_color_green {
+	color: #06b45b;
+}
+
+
+.text_color_blue {
+	color: #428bca
+}
+
+.bg_color_green {
+	background-color: #06b45b;
+}
+
+.bg_color_blue {
+	background-color: #428bca;
+}
+
+.bg_color_canvas_blue {
+	background: linear-gradient(#007dc1, #0073b2);
+}
+
+.bg_color_red {
+	background-color: #ff3300;
+	opacity: 0.95;
+}
+
+.bg_color_white {
+	background-color: white;
+}
+
+.bg_color_white_smoke {
+	background-color: whitesmoke;
+}
+
+.pointer {
+	cursor: pointer;
+}
+
+
+.react-paginate ul {
+    display: inline-block;
+    padding-left: 15px;
+    padding-right: 15px;
+}
+
+.react-paginate li {
+    display: inline-block;
+}
