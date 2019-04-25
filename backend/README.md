@@ -2,14 +2,14 @@
 
 ## Steps
 
-### `npm install`
+##### `npm install`
 
-### `npm start`
+##### `npm start`
 
 ## Steps to start with pm2
 
-### `npm install -g pm2 `
+##### `npm install -g pm2 `
 
-### `npm install`
+##### `npm install`
 
-### `pm2 start server.js`
+##### `pm2 start server.js`
