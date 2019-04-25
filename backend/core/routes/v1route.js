@@ -1,11 +1,11 @@
-//let authservice = require('./../services/authservice').router;
+let authservice = require('./../services/authservice').router;
 let userservice = require('./../services/userservice').router;
 module.exports = (express) => {
     let versionRouter = express.Router();
 
     /* Auth Routes */
-    // versionRouter.post('/signin', authservice.signin);
-    // versionRouter.post('/signup', authservice.signup);
+    versionRouter.post('/signin', authservice.signin);
+    versionRouter.post('/signup', authservice.signup);
     /* Auth Routes */
 
     /* User Routes */
