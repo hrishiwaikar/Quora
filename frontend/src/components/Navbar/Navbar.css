@@ -1,0 +1,28 @@
+.logo {
+    /* width: 120px; */
+    height: 50px;
+    float: left;
+    margin-right: 30px;
+  }
+
+  .navbar { 
+    background: #fff;
+    padding: 0px 100px;
+    border: 0;
+    border-bottom: 1px solid #e8e8e8;
+  }
+
+  .navbar-search:hover {
+    cursor: default;
+  }
+  .navbar-profile {
+    height: 30px;
+    width: 30px;
+    border-radius: 50%;
+    border: 1px solid black;
+    object-fit: contain;
+  }
+
+  .navbar-button {
+      cursor: default;
+  }

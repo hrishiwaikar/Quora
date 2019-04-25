@@ -1,20 +1,23 @@
 import React, { Component } from 'react';
 import logo from './logo.svg';
 import './App.css';
-import { BrowserRouter as Router, Route } from 'react-router-dom';
-import Home from './components/home/home.js';
-import QuestionPage from './components/questions/question_page.js';
+import "antd/dist/antd.css";
+import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
+
+import Home from './components/home/home';
+import Authentication from './components/Authentication/Authentication';
+import PrivateRoute from './components/common/PrivateRoute';
+
 
 class App extends Component {
   render = () => {
 
     return (
       <Router>
-        <div>
-
-          <Route exact path="/" component={Home} />
-          <Route path="/question" component={QuestionPage} />
-        </div>
+        <Switch>
+          <Route path="/" component={Home} exact />
+          <Route path="/login" component={Authentication} />
+        </Switch>
       </Router>
     )
   }

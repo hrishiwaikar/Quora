@@ -1,5 +1,10 @@
 import React, { Component } from 'react';
+import { Layout } from 'antd';
 
+import Navbar from '../Navbar/Navbar';
+import './home.css';
+
+const { Content } = Layout;
 
 class Home extends Component {
     state = {
@@ -10,9 +15,13 @@ class Home extends Component {
 
         return (
             <div>
-                Welcome Home, seek your answers here!
+                <Layout className="layout" >
+                    <Navbar />
+                    <Content className="content">
+                        <div style={{ background: '#fff', padding: 24, minHeight: 280 }}>Content</div>
+                    </Content>
+                </Layout>
             </div>
-
         );
     };
 }
