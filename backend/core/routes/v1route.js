@@ -12,8 +12,8 @@ module.exports = (express) => {
 
     /* User Routes */
     //versionRouter.post('/users', userservice.create);
-    versionRouter.get('/users/:userId/image', userservice.readProfileImage);
     versionRouter.get('/users/:userId', userservice.read);
+    versionRouter.get('/users/:userId/image', userservice.readProfileImage);
     versionRouter.put('/users/:userId', userservice.update);
     versionRouter.delete('/users/:userId', userservice.delete);
     /* User Routes */

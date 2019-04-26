@@ -57,14 +57,12 @@ let service = {
                 let userId = args[1] || null;
                 let userModel = require('./../models/usermodel');
                 let body = {};
-                console.log(userId)
                 body.userId = userId || null;
                 userModel.findOne(body).select({
                     "password": 0,
                     "__v": 0,
                     "_id": 0
                 }).then((dbObj) => {
-                    console.log("dbObj", dbObj)
                     if (!!dbObj) {
                         resolve(dbObj);
                     } else {
@@ -182,7 +180,7 @@ let router = {
         let successCB = (data) => {
             res.sendFile(process.cwd() + '/profiles/default.png');
         };
-        service.read(req.user, req.params.userId).then(successCB, next);
+        service.readProfileImage(req.user, req.params.userId).then(successCB, next);
     },
     update: (req, res, next) => {
         let successCB = (data) => {
