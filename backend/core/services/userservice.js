@@ -41,12 +41,14 @@ let service = {
                 let userId = args[1] || null;
                 let userModel = require('./../models/usermodel');
                 let body = {};
+                console.log(userId)
                 body.userId = userId || null;
                 userModel.findOne(body).select({
                     "password": 0,
                     "__v": 0,
                     "_id": 0
                 }).then((dbObj) => {
+                    console.log("dbObj",dbObj)
                     if (!!dbObj) {
                         resolve(dbObj);
                     } else {
