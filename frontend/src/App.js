@@ -4,9 +4,8 @@ import './App.css';
 import "antd/dist/antd.css";
 import { BrowserRouter as Router, Route, Switch } from 'react-router-dom';
 
-import Home from './components/home/home';
+import Layout from './components/Layout/Layout';
 import Authentication from './components/Authentication/Authentication';
-import PrivateRoute from './components/common/PrivateRoute';
 
 
 class App extends Component {
@@ -14,10 +13,10 @@ class App extends Component {
 
     return (
       <Router>
-        <Switch>
-          <Route path="/" component={Home} exact />
+        <>
+          <Route path="/" component={Layout} />
           <Route path="/login" component={Authentication} />
-        </Switch>
+        </>
       </Router>
     )
   }
