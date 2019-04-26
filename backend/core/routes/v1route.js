@@ -12,16 +12,17 @@ module.exports = (express) => {
 
     /* User Routes */
     //versionRouter.post('/users', userservice.create);
-    versionRouter.get('/users/:userId', jwt.verifyRequest, userservice.read);
-    versionRouter.put('/users/:userId', jwt.verifyRequest, userservice.update);
-    versionRouter.delete('/users/:userId', jwt.verifyRequest, userservice.delete);
+    versionRouter.get('/users/:userId/image', userservice.readProfileImage);
+    versionRouter.get('/users/:userId', userservice.read);
+    versionRouter.put('/users/:userId', userservice.update);
+    versionRouter.delete('/users/:userId', userservice.delete);
     /* User Routes */
 
     /* Follow Routes */
-    versionRouter.post('/follow/:userId', jwt.verifyRequest, followservice.markFollow); // only self can
-    versionRouter.post('/unfollow/:userId', jwt.verifyRequest, followservice.markUnfollow); // only self can
-    versionRouter.get('/users/:userId/followers', jwt.verifyRequest, followservice.getFollowers);
-    versionRouter.get('/users/:userId/following', jwt.verifyRequest, followservice.getFollowing);
+    versionRouter.post('/follow/:userId', followservice.markFollow); // only self can
+    versionRouter.post('/unfollow/:userId', followservice.markUnfollow); // only self can
+    versionRouter.get('/users/:userId/followers', followservice.getFollowers);
+    versionRouter.get('/users/:userId/following', followservice.getFollowing);
     /* Follow Routes */
 
     return versionRouter;

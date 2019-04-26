@@ -81,6 +81,18 @@ let service = {
             }
         });
     },
+    readProfileImage: (...args) => {
+        return new Promise(function (resolve, reject) {
+            try {
+                let _session = args[0] || {};
+                let userId = args[1] || null;
+                resolve();
+            } catch (e) {
+                console.error(e)
+                reject(e);
+            }
+        });
+    },
     update: (...args) => {
         return new Promise(function (resolve, reject) {
             try {
@@ -163,6 +175,12 @@ let router = {
                 }],
                 user: data
             })
+        };
+        service.read(req.user, req.params.userId).then(successCB, next);
+    },
+    readProfileImage: (req, res, next) => {
+        let successCB = (data) => {
+            res.sendFile(process.cwd() + '/profiles/default.png');
         };
         service.read(req.user, req.params.userId).then(successCB, next);
     },
