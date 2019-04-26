@@ -12,7 +12,7 @@ service.generate = (payload, signOptions) => {
     return jwt.sign(payload || {}, secretKey, Object.assign({}, defaultOptions, signOptions));
 };
 service.validate = (token) => {
-    return new Promise(function(resolve, reject) {
+    return new Promise(function (resolve, reject) {
         try {
             let result = jwt.verify(token, secretKey);
             resolve(result);
@@ -24,9 +24,9 @@ service.validate = (token) => {
 service.verifyRequest = (req, res, next) => {
     let token = (req.headers['authorization'] || "").split('Bearer ')[1] || req.query.token || "";
     service.validate(token).then((payload) => {
-        req.session = payload;
+        req.user = payload;
         let userservice = require('./../services/userservice').service;
-        return userservice.read(req.session, payload.userId)
+        return userservice.read(req.user, payload.userId)
     }).then((dbObj) => {
         if (!!dbObj) {
             next();

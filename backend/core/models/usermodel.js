@@ -84,6 +84,12 @@ let userSchema = new mongoose.Schema({
         unique: true,
         trim: true,
     },
+    displayId: {
+        type: String,
+        required: true,
+        lowercase: true,
+        trim: true,
+    },
     profileCredential: {
         type: String,
         trim: true,
@@ -91,6 +97,12 @@ let userSchema = new mongoose.Schema({
     description: {
         type: String,
         trim: true,
+    },
+    followers: {
+        type: Number,
+    },
+    following: {
+        type: Number,
     },
     employment: [employmentSchema],
     education: [educationSchema],

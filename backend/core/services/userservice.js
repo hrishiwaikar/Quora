@@ -9,6 +9,8 @@ let service = {
                 let _session = args[0] || {};
                 let body = args[1] || {};
                 let userModel = require('./../models/usermodel');
+                body.firstName = (body.firstName || "").toLowerCase();
+                body.lastName = (body.lastName || "").toLowerCase();
                 body.userId = body.userId || utils.getUniqueId();
                 if (!body.password) {
                     throw rs.invalidrequest;
@@ -16,17 +18,31 @@ let service = {
                 pv.create(body.password).then((hashedPassword) => {
                     body.password = hashedPassword;
                     userModel.find({
-                        email: body.email
-                    }).then((response) => {
-                        if (!!response && !!response.length) {
-                            reject({
-                                message: "User Exists",
-                                code: "USEREXISTS"
-                            });
-                        } else {
-                            userModel.create(body).then(resolve, reject);
-                        }
-                    }).catch(reject);
+                            email: body.email
+                        })
+                        .then((response) => {
+                            if (!!response && !!response.length) {
+                                reject({
+                                    message: "User Exists",
+                                    code: "USEREXISTS"
+                                });
+                            } else {
+                                return userModel.find({
+                                    firstName: body.firstName,
+                                    lastName: body.lastName,
+                                });
+                            }
+                        })
+                        .then((dbObj) => {
+                            let c = 0;
+                            body.displayId = body.firstName + "-" + body.lastName;
+                            if (!!dbObj && !!dbObj.length) {
+                                body.displayId = body.displayId + "-" + dbObj.length;
+                            }
+                            return userModel.create(body)
+                        })
+                        .then(resolve, reject)
+                        .catch(reject);
                 }).catch(reject);
             } catch (e) {
                 console.error(e)
@@ -48,7 +64,7 @@ let service = {
                     "__v": 0,
                     "_id": 0
                 }).then((dbObj) => {
-                    console.log("dbObj",dbObj)
+                    console.log("dbObj", dbObj)
                     if (!!dbObj) {
                         resolve(dbObj);
                     } else {
@@ -82,9 +98,9 @@ let service = {
                     "__v": 0,
                     "_id": 0
                 }).then((dbObj) => {
-                    if(!!dbObj){
+                    if (!!dbObj) {
                         resolve(dbObj);
-                    }else{
+                    } else {
                         reject(rs.notfound);
                     }
                     return;
@@ -99,7 +115,7 @@ let service = {
         });
     },
     delete: (...args) => {
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             try {
                 let _session = args[0] || {};
                 let userId = args[1] || null;
@@ -107,9 +123,9 @@ let service = {
                 let body = {};
                 body.userId = userId || null;
                 userModel.remove(body).then((dbObj) => {
-                    if(!!dbObj.deletedCount){
+                    if (!!dbObj.deletedCount) {
                         resolve({});
-                    }else{
+                    } else {
                         reject(rs.notfound);
                     }
                     return;
