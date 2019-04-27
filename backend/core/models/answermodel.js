@@ -11,19 +11,29 @@ let answerSchema = new mongoose.Schema({
         type: mongoose.Schema.Types.ObjectId, 
         ref: 'user'
     },
+    question : {
+        type: mongoose.Schema.Types.ObjectId, 
+        ref: 'question'
+    },
     isAnonymous : {
         type: Boolean,
         default:false
     },
     upvotes : [
         {
-            type: Schema.Types.ObjectId, 
+            type: mongoose.Schema.Types.ObjectId, 
             ref: 'user'
         }
     ],
     downvotes : [
         {
-            type: Schema.Types.ObjectId, 
+            type: mongoose.Schema.Types.ObjectId, 
+            ref: 'user'
+        }
+    ],
+    bookmarkedBy : [
+        {
+            type: mongoose.Schema.Types.ObjectId, 
             ref: 'user'
         }
     ],

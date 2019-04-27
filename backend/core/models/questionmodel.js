@@ -14,13 +14,13 @@ let questionSchema = new mongoose.Schema({
     },
     topics : [
         {
-            type: Schema.Types.ObjectId, 
+            type: mongoose.Schema.Types.ObjectId, 
             ref: 'topic'
         }
     ],
     followers : [
         {
-            type: Schema.Types.ObjectId, 
+            type: mongoose.Schema.Types.ObjectId, 
             ref: 'user'
         }
     ],

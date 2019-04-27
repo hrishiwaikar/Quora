@@ -1,7 +1,9 @@
+let jwt = require('./../commons/jwt');
 let authservice = require('./../services/authservice').router;
 let userservice = require('./../services/userservice').router;
 let followservice = require('./../services/followservice').router;
-let jwt = require('./../commons/jwt');
+let questionservice = require('../services/questionservice').router;
+
 module.exports = (express) => {
     let versionRouter = express.Router();
 
@@ -24,6 +26,13 @@ module.exports = (express) => {
     versionRouter.get('/users/:userId/followers', followservice.getFollowers);
     versionRouter.get('/users/:userId/following', followservice.getFollowing);
     /* Follow Routes */
+
+     /* Question Routes */
+     versionRouter.post('/questions', questionservice.create);
+     versionRouter.get('/questions/:questionId', questionservice.read);
+     versionRouter.put('/questions/:questionId', questionservice.update);
+     versionRouter.delete('/questions/:questionId', questionservice.delete);
+     /* Question Routes */
 
     return versionRouter;
 }
