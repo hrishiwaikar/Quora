@@ -55,14 +55,23 @@ let service = {
             try {
                 let _session = args[0] || {};
                 let userId = args[1] || null;
+                let query = args[2] || {};
                 let userModel = require('./../models/usermodel');
                 let body = {};
                 body.userId = userId || null;
-                userModel.findOne(body).select({
+                let select = {
                     "password": 0,
                     "__v": 0,
                     "_id": 0
-                }).then((dbObj) => {
+                };
+                if (query.filter && !!query.filter.length) {
+                    select = {};
+                    query.filter = (query.filter || "").split(",");
+                    for (let index = 0; index < query.filter.length; index++) {
+                        select[query.filter[index]] = 1
+                    }
+                }
+                userModel.findOne(body).select(select).then((dbObj) => {
                     if (!!dbObj) {
                         resolve(dbObj);
                     } else {
