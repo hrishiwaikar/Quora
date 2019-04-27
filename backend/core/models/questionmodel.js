@@ -1,29 +1,27 @@
+const utils = require("./../commons/utils");
 let mongoose = require('mongoose')
 let topicSchema = require('./topicmodel');
 let userSchema = require('./usermodel')
 
 let questionSchema = new mongoose.Schema({
+    questionId : {
+        type: String,
+        required: true,
+        trim :true,
+        default : utils.getUniqueId()
+    },
     questionText: {
         type: String,
         required: true,
         trim :true,
     },
     owner : {
-        type: mongoose.Schema.Types.ObjectId, 
-        ref: 'user'
+        type: String,
+        required: true,
+        trim :true,
     },
-    topics : [
-        {
-            type: mongoose.Schema.Types.ObjectId, 
-            ref: 'topic'
-        }
-    ],
-    followers : [
-        {
-            type: mongoose.Schema.Types.ObjectId, 
-            ref: 'user'
-        }
-    ],
+    topics : [String],
+    followers : [String],
 },
 {
     timestamps: true

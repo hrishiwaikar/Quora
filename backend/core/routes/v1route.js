@@ -28,10 +28,10 @@ module.exports = (express) => {
     /* Follow Routes */
 
      /* Question Routes */
-     versionRouter.post('/questions', questionservice.create);
-     versionRouter.get('/questions/:questionId', questionservice.read);
-     versionRouter.put('/questions/:questionId', questionservice.update);
-     versionRouter.delete('/questions/:questionId', questionservice.delete);
+     versionRouter.post('/questions',jwt.verifyRequest, questionservice.create);
+     versionRouter.get('/questions/:questionId',jwt.verifyRequest, questionservice.read);
+     versionRouter.put('/questions/:questionId',jwt.verifyRequest, questionservice.update);
+     versionRouter.delete('/questions/:questionId',jwt.verifyRequest, questionservice.delete);
      /* Question Routes */
 
     return versionRouter;

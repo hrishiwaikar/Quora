@@ -1,42 +1,36 @@
+const utils = require("./../commons/utils");
 let mongoose = require('mongoose')
 let userSchema = require('./usermodel')
 
 let answerSchema = new mongoose.Schema({
+    answerId : {
+        type: String,
+        required: true,
+        trim :true,
+        default : utils.getUniqueId()
+    },
     answerText: {
         type: String,
         required: true,
         trim :true,
     },
     owner : {
-        type: mongoose.Schema.Types.ObjectId, 
-        ref: 'user'
+        type: String,
+        required: true,
+        trim :true,
     },
     question : {
-        type: mongoose.Schema.Types.ObjectId, 
-        ref: 'question'
+        type: String,
+        required: true,
+        trim :true,
     },
     isAnonymous : {
         type: Boolean,
         default:false
     },
-    upvotes : [
-        {
-            type: mongoose.Schema.Types.ObjectId, 
-            ref: 'user'
-        }
-    ],
-    downvotes : [
-        {
-            type: mongoose.Schema.Types.ObjectId, 
-            ref: 'user'
-        }
-    ],
-    bookmarkedBy : [
-        {
-            type: mongoose.Schema.Types.ObjectId, 
-            ref: 'user'
-        }
-    ],
+    upvotes : [String],
+    downvotes : [String],
+    bookmarkedBy : [String],
     //comments to be added here.
 },
 {

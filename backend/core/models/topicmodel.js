@@ -1,5 +1,12 @@
+const utils = require("./../commons/utils");
 let mongoose = require('mongoose')
 let topicSchema = new mongoose.Schema({
+    topicId : {
+        type: String,
+        required: true,
+        trim :true,
+        default : utils.getUniqueId()
+    },
     topicText: {
         type: String,
         required: true,
