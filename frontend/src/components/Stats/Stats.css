@@ -25,14 +25,14 @@
   border-right: 1px solid #e2e2e2;
   border-top: 1px solid #e2e2e2;
   border-bottom: 1px solid #e2e2e2;
-  height: 545px;
+  height: 600px;
   color: #949494;
 }
 
 .statsgraph {
   background: #fafafa;
-  border-right: 1px solid #e2e2e2;
   border-top: 1px solid #e2e2e2;
+  height: 577px;
 }
 
 .ant-menu-item {
@@ -97,4 +97,33 @@
   font-weight: 500;
   letter-spacing: 1px;
   text-transform: uppercase;
+}
+
+#chart {
+  background-color: #fff;
+  border: none;
+}
+
+.bar {
+  shape-rendering: crispEdges;
+}
+
+.bar-label {
+  fill: #000;
+  text-anchor: middle;
+  font-size: 18px;
+}
+
+.axis path,
+.axis line {
+  fill: none;
+  stroke: #000;
+  shape-rendering: crispEdges;
+}
+
+.gridline path,
+.gridline line {
+  fill: none;
+  stroke: #ccc;
+  shape-rendering: crispEdges;
 }

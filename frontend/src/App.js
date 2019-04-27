@@ -12,13 +12,15 @@ import Stats from "./components/Stats/Stats";
 class App extends Component {
   render = () => {
     return (
-      <Router>
-        <Switch>
-          <Route path="/" component={Home} exact />
-          <Route path="/login" component={Authentication} />
-          <Route path="/stats" component={Stats} />
-        </Switch>
-      </Router>
+      <div>
+        <Router>
+          <Switch>
+            <Route path="/" component={Home} exact />
+            <Route path="/login" component={Authentication} />
+            <Route path="/stats" component={Stats} />
+          </Switch>
+        </Router>
+      </div>
     );
   };
 }
