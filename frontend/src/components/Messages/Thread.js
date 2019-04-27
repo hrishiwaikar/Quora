@@ -6,6 +6,54 @@ import ThreadFooter from './ThreadFooter';
 import './Thread.css';
 
 const { Title, Text } = Typography;
+const conversation = {
+  "users": [
+    "a1640220-6802-11e9-8e1a-bd176bf67daa",
+    "e1a21570-6802-11e9-935c-855a9a513e79"
+  ],
+  "conversationId": "24427060-687f-11e9-820f-d16c50b9ab48",
+  "messages": 3,
+  "updatedAt": "2019-04-26T23:58:09.013Z",
+  "createdAt": "2019-04-26T23:58:09.013Z",
+  "firstName": "vinit",
+  "lastName": "dholakia",
+  "userId": "a1640220-6802-11e9-8e1a-bd176bf67daa",
+  "conversationWith": {
+    "firstName": "Tosha",
+    "lastName": "Kamath",
+    "userId": "e1a21570-6802-11e9-935c-855a9a513e79"
+  },
+  "messageList": [
+    {
+      "_id": "5cc3a331b3fefeb598dd2df4",
+      "from": "e1a21570-6802-11e9-935c-855a9a513e79",
+      "to": "a1640220-6802-11e9-8e1a-bd176bf67daa",
+      "message": "Hello Vinit! Good to be on Quora",
+      "createdAt": "2019-04-27T00:32:49.736Z"
+    },
+    {
+      "_id": "5cc39ba451c4e8adb90cc2b0",
+      "from": "a1640220-6802-11e9-8e1a-bd176bf67daa",
+      "to": "e1a21570-6802-11e9-935c-855a9a513e79",
+      "message": "Hello, Welcome to Quora!",
+      "createdAt": "2019-04-27T00:00:36.249Z"
+    },
+    {
+      "_id": "5cc39b11d9f5f2ac9dcc5c48",
+      "from": "a1640220-6802-11e9-8e1a-bd176bf67daa",
+      "to": "e1a21570-6802-11e9-935c-855a9a513e79",
+      "message": "Hi There",
+      "createdAt": "2019-04-26T23:58:09.113Z"
+    }
+  ]
+}
+const axios = {
+  get: () => (
+    new Promise((resolve, reject) => {
+      resolve(conversation)
+    })
+  )
+}
 
 class Thread extends Component {
   state = {
@@ -13,51 +61,19 @@ class Thread extends Component {
     conversation: {}
   }
 
+
+
   componentDidMount() {
-    const conversation = {
-      "users": [
-        "a1640220-6802-11e9-8e1a-bd176bf67daa",
-        "e1a21570-6802-11e9-935c-855a9a513e79"
-      ],
-      "conversationId": "24427060-687f-11e9-820f-d16c50b9ab48",
-      "messages": 3,
-      "updatedAt": "2019-04-26T23:58:09.013Z",
-      "createdAt": "2019-04-26T23:58:09.013Z",
-      "firstName": "vinit",
-      "lastName": "dholakia",
-      "userId": "a1640220-6802-11e9-8e1a-bd176bf67daa",
-      "conversationWith": {
-        "firstName": "Tosha",
-        "lastName": "Kamath",
-        "userId": "e1a21570-6802-11e9-935c-855a9a513e79"
-      },
-      "messageList": [
-        {
-          "_id": "5cc3a331b3fefeb598dd2df4",
-          "from": "e1a21570-6802-11e9-935c-855a9a513e79",
-          "to": "a1640220-6802-11e9-8e1a-bd176bf67daa",
-          "message": "Hello Vinit! Good to be on Quora",
-          "createdAt": "2019-04-27T00:32:49.736Z"
-        },
-        {
-          "_id": "5cc39ba451c4e8adb90cc2b0",
-          "from": "a1640220-6802-11e9-8e1a-bd176bf67daa",
-          "to": "e1a21570-6802-11e9-935c-855a9a513e79",
-          "message": "Hello, Welcome to Quora!",
-          "createdAt": "2019-04-27T00:00:36.249Z"
-        },
-        {
-          "_id": "5cc39b11d9f5f2ac9dcc5c48",
-          "from": "a1640220-6802-11e9-8e1a-bd176bf67daa",
-          "to": "e1a21570-6802-11e9-935c-855a9a513e79",
-          "message": "Hi There",
-          "createdAt": "2019-04-26T23:58:09.113Z"
-        }
-      ]
-    }
-    this.setState({
-      conversation
+    console.log(this.props.match.id)
+    axios.get()
+    .then(conversations => {
+      this.setState({
+        conversation
+      })
     })
+
+
+    
   }
 
   handleSubmit = (message) => {
