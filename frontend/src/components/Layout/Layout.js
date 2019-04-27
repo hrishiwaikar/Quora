@@ -1,9 +1,9 @@
 import React, { Component } from 'react';
 import { Route, Switch } from 'react-router-dom';
-
 import Navbar from '../Navbar/Navbar';
 import './Layout.css';
-
+import QuestionPage from '../questions/question_page.js';
+import { TestDisplayQuestion } from '../DisplayQuestion/DisplayQuestion.js';
 import HomeLayout from '../HomeLayout/HomeLayout';
 import ProfileLayout from '../ProfileLayout/ProfileLayout';
 import AnswerLayout from '../AnswerLayout/AnswerLayout';
@@ -34,7 +34,7 @@ class Layout extends Component {
             location.state &&
             location.state.modal &&
             this.previousLocation !== location
-        ); 
+        );
         return (
             <div>
 
@@ -43,6 +43,8 @@ class Layout extends Component {
                     <Switch location={isModal ? this.previousLocation : location}>
                         <Route path="/profile" component={ProfileLayout} />
                         <Route path="/answer" component={AnswerLayout} />
+                        <Route path="/question" component={QuestionPage} />
+                        <Route path="/displayQuestion" component={TestDisplayQuestion} />
                         <Route path="/" exact component={HomeLayout} />
                     </Switch>
                     {isModal ?
