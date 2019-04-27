@@ -1,6 +1,7 @@
 let authservice = require('./../services/authservice').router;
 let userservice = require('./../services/userservice').router;
 let followservice = require('./../services/followservice').router;
+let conversationservice = require('./../services/conversationservice').router;
 let jwt = require('./../commons/jwt');
 module.exports = (express) => {
     let versionRouter = express.Router();
@@ -19,11 +20,18 @@ module.exports = (express) => {
     /* User Routes */
 
     /* Follow Routes */
-    versionRouter.post('/follow/:userId', followservice.markFollow); // only self can
-    versionRouter.post('/unfollow/:userId', followservice.markUnfollow); // only self can
+    versionRouter.post('/follow/:userId', jwt.verifyRequest, followservice.markFollow); // only self can
+    versionRouter.post('/unfollow/:userId', jwt.verifyRequest, followservice.markUnfollow); // only self can
     versionRouter.get('/users/:userId/followers', followservice.getFollowers);
     versionRouter.get('/users/:userId/following', followservice.getFollowing);
     /* Follow Routes */
+
+    /* conversations Routes */
+    versionRouter.get('/sendto', jwt.verifyRequest, conversationservice.searchUsers);
+    versionRouter.get('/conversations', jwt.verifyRequest, conversationservice.getConversations);
+    versionRouter.get('/conversations/:conversationId', jwt.verifyRequest, conversationservice.getOneConversation); // only self can
+    versionRouter.post('/conversations/message', jwt.verifyRequest, conversationservice.sendMessage);
+    /* conversations Routes */
 
     return versionRouter;
 }
