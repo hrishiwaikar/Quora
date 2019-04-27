@@ -39,6 +39,10 @@ let answerSchema = new mongoose.Schema({
     bookmarkedBy : {
         type : Number,
         default : 0
+    },
+    noOfTimesviewed : {
+        type : Number,
+        default : 0
     }
 },
 {

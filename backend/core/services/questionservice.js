@@ -6,9 +6,11 @@ const utils = require("./../commons/utils");
 let questionModel = require("../models/questionmodel")
 let answerModel = require("../models/answermodel")
 let userModel = require("../models/usermodel")
+let topicModel = require("../models/topicmodel")
 let answerUpvotesModel = require("../models/answerupvotesmodel")
 let answerDownvotesModel = require("../models/answerdownvotesmodel")
 let answerBookmarkModel = require("../models/answerbookmarkmodel")
+let questionFollowModel = require("../models/questionfollowmodel")
 
 let service = {
     create: (...args) => {
@@ -41,13 +43,27 @@ let service = {
                 // body.questionId = mongoose.Types.ObjectId(questionId);
                 body.questionId = questionId;
 
-                questionModel.findOne(body).then((questionObj) => {
+                questionModel.findOne(body).then(async (questionObj) => {
                     if (!!questionObj){
                         output['userId'] = _session.userId
                         output['id'] = questionObj.questionId
                         output['questionText'] = questionObj.questionText
                         output['followersCount'] = questionObj.followers
                         output['questionerId'] = questionObj.userId
+                        output['topics'] = []
+                        output['userIsFollowingTheQuestion'] = false
+                        if (questionObj.topicsId.length > 0){
+                            for (let topicIndex=0;topicIndex<questionObj.topicsId.length;topicIndex++){
+                                await topicModel.findOne({topicId:questionObj.topicsId[topicIndex]}).then((topicObj) =>{
+                                    output['topics'].push(topicObj.topicText)
+                                })
+                            }
+                        }
+                        await questionFollowModel.findOne({userId:_session.userId,questionId:questionObj.questionId}).then((questionFollowObj) => {
+                            if(questionFollowObj !== null){
+                                output['userIsFollowingTheQuestion'] = true
+                            }
+                        })
                         answerModel.find({questionId:questionId}).sort('-createdAt').then((answerObjs) =>{
                             if(answerObjs.length > 0){
                                 answerModel.findOne({questionId:questionId,userId:_session.userId}).then(async (answerObj)=>{
@@ -69,6 +85,7 @@ let service = {
                                         temp_answer['userUpvoted'] = false
                                         temp_answer['userDownvoted'] = false
                                         temp_answer['userBookmarked'] = false
+                                        temp_answer['userisfollowinganswerer'] = false //vinit dependency
                                         await answerUpvotesModel.findOne({userId:_session.userId,answerId:answerObjs[index].answerId}).then((answerUpvoteObj)=>{
                                             if(answerUpvoteObj !== null){
                                                 temp_answer['userUpvoted'] = true
@@ -85,13 +102,15 @@ let service = {
                                             }
                                         });
                                         await userModel.findOne({userId:answerObjs[index].userId}).then((answererObj)=>{
-                                            if (answererObj !== null){
+                                            if (answererObj !== null && 'profileCredential' in answerObj){
                                                 temp_answer['profileCredential'] = answererObj.profileCredential
                                             }
                                         })
                                         //comments
                                         temp_answer['comments'] = []
                                         answer_output.push(temp_answer)
+                                        answerObjs[index].noOfTimesviewed += 1;
+                                        await answerObjs[index].save();
                                     }
                                     output['answers'] = answer_output
                                     return resolve(output);
@@ -106,22 +125,6 @@ let service = {
                             else{
                                 output['answers'] = []
                                 output['userHasAnswered'] = false
-                                //delete 
-                                // let temp_answer = {}
-                                // temp_answer['id'] = '123456'
-                                // temp_answer['answerText'] = "was born into a noble Orthodox Christian Circassian family and grew up in Isfahan in the Iranian royal court. In 1608 she married the Elizabethan English adventurer Robert Shirley, who attended the Safavid court in an effort to forge an alliance against the neighbouring Ottoman Empire. She accompanied him on the Persian embassy to Europe (1609–15), where he represented the Safavid king"
-                                // temp_answer['answererId'] = _session.userId
-                                // temp_answer['profileCredential'] = "Tanaji Jadhav, SJSU"
-                                // temp_answer['isAnonymous'] = false
-                                // temp_answer['createdAt'] = new Date()
-                                // temp_answer['upvotes'] = 0
-                                // temp_answer['downvotes'] = 0
-                                // temp_answer['userUpvoted'] = false
-                                // temp_answer['userDownvoted'] = false
-                                // temp_answer['userBookmarked'] = false
-                                // output['answers'].push(temp_answer)
-                                // output['answers'].push(temp_answer)
-                                //delete
                                 return resolve(output);
                             }
                         }).catch((errors) => {
@@ -190,7 +193,7 @@ let router = {
                 }]
             })
         };
-        service.update(req.user, req.params.userId, req.body).then(successCB, next);
+        service.update(req.user, req.params.questionId, req.body).then(successCB, next);
     },
     delete: (req, res, next) => {
         let successCB = (data) => {
@@ -202,7 +205,7 @@ let router = {
                 }]
             })
         };
-        service.delete(req.user, req.params.userId, req.body).then(successCB, next);
+        service.delete(req.user, req.params.questionId, req.body).then(successCB, next);
     }
 };
 module.exports.service = service;

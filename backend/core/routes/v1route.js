@@ -5,6 +5,7 @@ let followservice = require('./../services/followservice').router;
 let questionservice = require('../services/questionservice').router;
 let conversationservice = require('./../services/conversationservice').router;
 let answerservice = require('../services/answerservice').router;
+let topicservice = require('../services/topicservice').router;
 
 module.exports = (express) => {
     let versionRouter = express.Router();
@@ -49,6 +50,13 @@ module.exports = (express) => {
      versionRouter.put('/answers/:questionId',jwt.verifyRequest, answerservice.update);
      versionRouter.delete('/answers/:questionId',jwt.verifyRequest, answerservice.delete);
      /* Answer Routes */
+
+     /* Topic Routes */
+     versionRouter.post('/topics',jwt.verifyRequest, topicservice.create);
+     versionRouter.get('/topics/:questionId',jwt.verifyRequest, topicservice.read);
+     versionRouter.put('/topics/:questionId',jwt.verifyRequest, topicservice.update);
+     versionRouter.delete('/topics/:questionId',jwt.verifyRequest, topicservice.delete);
+     /* Topic Routes */
 
     return versionRouter;
 }
