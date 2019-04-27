@@ -1,5 +1,5 @@
 let mongoose = require('mongoose');
-let config = require('../configs/configDev')
+let config = require('../configs/config')
 class Database {
   constructor() {
     this._connect()

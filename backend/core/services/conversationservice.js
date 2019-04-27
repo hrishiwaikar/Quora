@@ -257,7 +257,22 @@ let service = {
                 if (!limit || !userId || !q || q.length < 3) {
                     throw rs.invalidrequest;
                 }
-                resolve([]);
+                resolve([{
+                    "firstName": "Hrishikesh",
+                    "lastName": "Waiker",
+                    "userId": "221cf8c0-6805-11e9-b14f-67ed4350d048",
+                    "followers": 1
+                }, {
+                    "firstName": "vinit",
+                    "lastName": "dholakia",
+                    "userId": "d4b272d0-6814-11e9-b339-05da8f0f9c12",
+                    "displayId": "vinit-dholakia-1",
+                }, {
+                    "firstName": "atul",
+                    "lastName": "gutal",
+                    "userId": "d2c752f0-6888-11e9-8d07-f1003021cb4d",
+                    "displayId": "atul-gutal",
+                }]);
             } catch (e) {
                 console.error(e)
                 reject(e);

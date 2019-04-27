@@ -27,7 +27,7 @@ module.exports = (express) => {
     /* Follow Routes */
 
     /* conversations Routes */
-    versionRouter.get('/sendto', jwt.verifyRequest, conversationservice.searchUsers);
+    versionRouter.get('/conversations/sendto', jwt.verifyRequest, conversationservice.searchUsers);
     versionRouter.get('/conversations', jwt.verifyRequest, conversationservice.getConversations);
     versionRouter.get('/conversations/:conversationId', jwt.verifyRequest, conversationservice.getOneConversation); // only self can
     versionRouter.post('/conversations/message', jwt.verifyRequest, conversationservice.sendMessage);
