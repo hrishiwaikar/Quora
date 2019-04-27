@@ -42,13 +42,16 @@ class SignUp extends Component {
               message.success(res.data.response[0].message);
               //   window.localStorage.setItem("userId");
               //   window.localStorage.setItem("token");
-            } else {
-              console.log("Signup response data", res.data.response[0].message);
-              message.error(res.data.response[0].message);
             }
           })
           .catch(err => {
             console.log("signup error: ", err);
+
+            console.log(
+              "signup error response: ",
+              err.response.data.response.message
+            );
+            message.error(err.response.data.response.message);
           });
       }
     });

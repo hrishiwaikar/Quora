@@ -3,7 +3,7 @@ import "antd/dist/antd.css";
 import "./../../style.css";
 import axios from "axios";
 
-import { Form, Icon, Input, Button, Checkbox, Card, Row, Col } from "antd";
+import { Form, Icon, Input, Button, Card, message } from "antd";
 
 class Login extends Component {
   constructor(props) {
@@ -26,8 +26,8 @@ class Login extends Component {
       if (!err) {
         //console.log("Received values of form: ", values);
         const data = {
-          loginEmail: this.state.loginEmail,
-          signupPassword: this.state.signupPassword
+          email: this.state.loginEmail,
+          password: this.state.loginPassword
         };
         console.log("login data ", data);
 
@@ -35,13 +35,17 @@ class Login extends Component {
           .post("http://10.0.0.188:7836/v1/signin", data)
           .then(res => {
             if (res.status === 200) {
-              window.localStorage.setItem("userId");
-              window.localStorage.setItem("token");
-            } else {
+              console.log("login response data", res.data);
+              message.success(res.data.response[0].message);
+              window.localStorage.setItem("userId", res.data.user.userId);
+              window.localStorage.setItem("token", res.data.token);
             }
           })
           .catch(err => {
             console.log("login error: ", err);
+
+            console.log("login error response: ", err.response);
+            message.error(err.response.data.response.message);
           });
       }
     });
