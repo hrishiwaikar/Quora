@@ -14,6 +14,7 @@ import Sidebar from './Sidebar';
 class Profile extends Component {
     render() {
         return (
+            <div className="profile-layout">
 
             <Row gutter={8}>
                 <Col span={18}>
@@ -42,6 +43,7 @@ class Profile extends Component {
                     </Row>
                 </Col>
             </Row>
+            </div>
 
 
         )

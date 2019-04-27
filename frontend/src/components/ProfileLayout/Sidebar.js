@@ -1,24 +1,36 @@
 import React, { Component } from 'react'
 import { Typography, Divider, Menu, Row, Col } from 'antd';
 import { Route, Switch } from 'react-router-dom'
+import { withRouter } from 'react-router-dom';
 import './Sidebar.css';
-import Profile from './Profile';
+import Profile from '../Profile/Profile';
+import Followers from '../Followers/Followers';
+import Following from '../Followers/Following'
 
 const { Title, Text } = Typography;
 
 class Sidebar extends Component {
-    state = {
-        selected: "profile"
+    constructor() {
+        super();
+        const currentPath = window.location.pathname.split('/')[3];
+        const selected = currentPath ? currentPath : "profile";
+        this.state = {
+            selected
+        }
     }
     handleClick = ({ key }) => {
         console.log(key)
+        const { match, history } = this.props;
         this.setState({
             selected: key
-        })
+        });
+        if (key === 'profile')
+            history.push(`/profile/1`)
+        else
+            history.push(`/profile/1/${key}`)
     }
     render() {
         const { selected } = this.state;
-
         return (
             <div>
                 <Row gutter={16}>
@@ -36,17 +48,18 @@ class Sidebar extends Component {
                                 <Menu.Item key="questions">Questions</Menu.Item>
                                 <Menu.Item key="followers">Followers</Menu.Item>
                                 <Menu.Item key="following">Following</Menu.Item>
-                                <Menu.Item key="activity">Activity</Menu.Item>
                             </Menu>
                         </div>
                     </Col>
                     <Col span={18}>
                         <div className="profile-sidebar-content">
-                        <Title level={4} >{selected}</Title>
-                        <Divider />
-                        <Switch>
-                            <Route path="/" component={Profile} />
-                        </Switch>
+                            <Title level={4} >{selected}</Title>
+                            <Divider />
+                            <Switch>
+                                <Route path="/profile/:id/followers" component={Followers} />
+                                <Route path="/profile/:id/following" component={Following} />
+                                <Route path="/profile/:id" component={Profile} />
+                            </Switch>
                         </div>
                     </Col>
                 </Row>
@@ -58,4 +71,4 @@ class Sidebar extends Component {
     }
 }
 
-export default Sidebar;
+export default withRouter(Sidebar);
