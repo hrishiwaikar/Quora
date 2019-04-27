@@ -14,12 +14,12 @@ let answerSchema = new mongoose.Schema({
         required: true,
         trim :true,
     },
-    owner : {
+    userId : {
         type: String,
         required: true,
         trim :true,
     },
-    question : {
+    questionId : {
         type: String,
         required: true,
         trim :true,
@@ -28,10 +28,18 @@ let answerSchema = new mongoose.Schema({
         type: Boolean,
         default:false
     },
-    upvotes : [String],
-    downvotes : [String],
-    bookmarkedBy : [String],
-    //comments to be added here.
+    upvotes : {
+        type : Number,
+        default : 0
+    },
+    downvotes : {
+        type : Number,
+        default : 0
+    },
+    bookmarkedBy : {
+        type : Number,
+        default : 0
+    }
 },
 {
     timestamps: true

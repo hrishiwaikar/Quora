@@ -5,19 +5,21 @@ const utils = require("./../commons/utils");
 
 let questionModel = require("../models/questionmodel")
 let answerModel = require("../models/answermodel")
-let topicModel = require("../models/topicmodel")
 let userModel = require("../models/usermodel")
+let answerUpvotesModel = require("../models/answerupvotesmodel")
+let answerDownvotesModel = require("../models/answerdownvotesmodel")
+let answerBookmarkModel = require("../models/answerbookmarkmodel")
 
 let service = {
     create: (...args) => {
         return new Promise(async function (resolve, reject) {
             try {
-                let user = args[0] || {};
+                let _session = args[0] || {};
                 let body = args[1] || {};
                 let question_body = {}
                 let questionText = body.questionText || "";
                 let topics = body.topics || [];
-                let questionObj = new questionModel({owner:user.userId,questionText:questionText,topics:topics});
+                let questionObj = new questionModel({userId:_session.userId,questionText:questionText,topicsId:topics});
                 questionObj.save().then(response => {
                     return resolve(response);
                 }).catch(reject);
@@ -33,7 +35,7 @@ let service = {
             try {
                 let output = {}
                 let answer = []
-                let user = args[0] || {};
+                let _session = args[0] || {};
                 let questionId = args[1] || null;
                 let body = {};
                 // body.questionId = mongoose.Types.ObjectId(questionId);
@@ -41,14 +43,14 @@ let service = {
 
                 questionModel.findOne(body).then((questionObj) => {
                     if (!!questionObj){
+                        output['userId'] = _session.userId
                         output['id'] = questionObj.questionId
                         output['questionText'] = questionObj.questionText
-                        output['followersCount'] = questionObj.followers.length
-                        output['userId'] = user.userId
-                        output['questionerId'] = questionObj.owner
-                        answerModel.find({question:questionId}).sort('-createdAt').then((answerObjs) =>{
+                        output['followersCount'] = questionObj.followers
+                        output['questionerId'] = questionObj.userId
+                        answerModel.find({questionId:questionId}).sort('-createdAt').then((answerObjs) =>{
                             if(answerObjs.length > 0){
-                                answerModel.findOne({question:questionId,owner:user.userId}).then(async (answerObj)=>{
+                                answerModel.findOne({questionId:questionId,userId:_session.userId}).then(async (answerObj)=>{
                                     output['userHasAnswered'] = true
                                     if (answerObj === null){
                                         output['userHasAnswered'] = false
@@ -58,31 +60,37 @@ let service = {
                                         let temp_answer = {}
                                         temp_answer['id'] = answerObjs[index].answerId
                                         temp_answer['answerText'] = answerObjs[index].answerText
-                                        temp_answer['answererId'] = answerObjs[index].owner
+                                        temp_answer['answererId'] = answerObjs[index].userId
                                         temp_answer['isAnonymous'] = answerObjs[index].isAnonymous
                                         temp_answer['createdAt'] = answerObjs[index].createdAt
-                                        temp_answer['upvotes'] = answerObjs[index].upvotes.length
-                                        temp_answer['downvotes'] = answerObjs[index].downvotes.length
+                                        temp_answer['upvotes'] = answerObjs[index].upvotes
+                                        temp_answer['downvotes'] = answerObjs[index].downvotes
                                         temp_answer['profileCredential'] = null
-                                        temp['userUpvoted'] = false
-                                        temp['userDownvoted'] = false
-                                        temp['userBookmarked'] = false
-                                        temp['userUpvoted'] = await answerObjs[index].upvotes.some(function (upvotedUserId) {
-                                            return upvotedUserId.equals(user.userId);
+                                        temp_answer['userUpvoted'] = false
+                                        temp_answer['userDownvoted'] = false
+                                        temp_answer['userBookmarked'] = false
+                                        await answerUpvotesModel.findOne({userId:_session.userId,answerId:answerObjs[index].answerId}).then((answerUpvoteObj)=>{
+                                            if(answerUpvoteObj !== null){
+                                                temp_answer['userUpvoted'] = true
+                                            }
                                         });
-                                        temp['userDownvoted'] = await answerObjs[index].downvotes.some(function (downvotedUserId) {
-                                            return downvotedUserId.equals(user.userId);
+                                        await answerDownvotesModel.findOne({userId:_session.userId,answerId:answerObjs[index].answerId}).then((answerDownvoteObj)=>{
+                                            if(answerDownvoteObj !== null){
+                                                temp_answer['userDownvoted'] = true
+                                            }
                                         });
-                                        temp['userBookmarked'] = await answerObjs[index].bookmarkedBy.some(function (bookmarkedUserId) {
-                                            return bookmarkedUserId.equals(user.userId);
+                                        await answerBookmarkModel.findOne({userId:_session.userId,answerId:answerObjs[index].answerId}).then((answerBookmarkObj)=>{
+                                            if(answerBookmarkObj !== null){
+                                                temp_answer['userBookmarked'] = true
+                                            }
                                         });
-                                        await userModel.findOne({userId:answerObjs[index].owner}).then((answererObj)=>{
+                                        await userModel.findOne({userId:answerObjs[index].userId}).then((answererObj)=>{
                                             if (answererObj !== null){
                                                 temp_answer['profileCredential'] = answererObj.profileCredential
                                             }
                                         })
                                         //comments
-                                        temp['comments'] = []
+                                        temp_answer['comments'] = []
                                         answer_output.push(temp_answer)
                                     }
                                     output['answers'] = answer_output
@@ -102,7 +110,7 @@ let service = {
                                 // let temp_answer = {}
                                 // temp_answer['id'] = '123456'
                                 // temp_answer['answerText'] = "was born into a noble Orthodox Christian Circassian family and grew up in Isfahan in the Iranian royal court. In 1608 she married the Elizabethan English adventurer Robert Shirley, who attended the Safavid court in an effort to forge an alliance against the neighbouring Ottoman Empire. She accompanied him on the Persian embassy to Europe (1609–15), where he represented the Safavid king"
-                                // temp_answer['answererId'] = user.userId
+                                // temp_answer['answererId'] = _session.userId
                                 // temp_answer['profileCredential'] = "Tanaji Jadhav, SJSU"
                                 // temp_answer['isAnonymous'] = false
                                 // temp_answer['createdAt'] = new Date()

@@ -4,6 +4,8 @@ let userservice = require('./../services/userservice').router;
 let followservice = require('./../services/followservice').router;
 let questionservice = require('../services/questionservice').router;
 let conversationservice = require('./../services/conversationservice').router;
+let answerservice = require('../services/answerservice').router;
+
 module.exports = (express) => {
     let versionRouter = express.Router();
 
@@ -40,6 +42,13 @@ module.exports = (express) => {
     versionRouter.get('/conversations/:conversationId', jwt.verifyRequest, conversationservice.getOneConversation); // only self can
     versionRouter.post('/conversations/message', jwt.verifyRequest, conversationservice.sendMessage);
     /* conversations Routes */
+
+     /* Answer Routes */
+     versionRouter.post('/answers',jwt.verifyRequest, answerservice.create);
+     versionRouter.get('/answers/:questionId',jwt.verifyRequest, answerservice.read);
+     versionRouter.put('/answers/:questionId',jwt.verifyRequest, answerservice.update);
+     versionRouter.delete('/answers/:questionId',jwt.verifyRequest, answerservice.delete);
+     /* Answer Routes */
 
     return versionRouter;
 }
