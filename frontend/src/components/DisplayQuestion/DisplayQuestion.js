@@ -21,6 +21,7 @@ export class TestDisplayQuestion extends Component {
                 questionId: '1031390ABC',
                 questionText: 'What is the first thing a child learns as it comes out of the womb?',
                 hasAnswer: true,
+                noOfAnswers: 10,
                 answerId: 1,
                 answererProfileImage: "https://qph.fs.quoracdn.net/main-thumb-16193221-200-EO9EO7XcPOETr1ZfTiWvDKKVxqAzgtzG.jpeg",
                 isAnonymous: false, // is the answerer anonymous
@@ -41,6 +42,7 @@ export class TestDisplayQuestion extends Component {
                 questionId: '0038912923',
                 questionText: 'Is it okay to talk on phone at the gas station?',
                 hasAnswer: false,
+                noOfAnswers: 150,
                 answerId: 1,
                 answererProfileImage: "https://qph.fs.quoracdn.net/main-thumb-19904714-200-uwrpnqdikmuzquejfxjkxurnvwytrqhs.jpeg",
                 isAnonymous: false, // is the answerer anonymous
@@ -88,6 +90,7 @@ class DisplayQuestion extends Component {
                     <Row>
                         <Answer data={data} />
                     </Row>
+
                     :
                     null
                 }
