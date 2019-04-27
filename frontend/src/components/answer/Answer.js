@@ -172,11 +172,11 @@ class VotingAndBookMark extends Component {
         //     });
 
 
-        // post('', '', () => {
+        post('', '', () => {
 
-        // }, () => {
+        }, () => {
 
-        // })
+        })
 
         // In success
 
