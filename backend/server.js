@@ -1,8 +1,10 @@
+console.log(process.env.env)
+console.log("************************************************")
 let express = require('express');
 let cluster = require('cluster');
 let middlewares = require('./core/commons/middlewares');
 let log = require('./core/commons/logger');
-const config = require('./core/configs/config');
+const config = require('./core/configs/configDev');
 
 let messagePassingApi = {};
 messagePassingApi.activeWorkerList = [];
