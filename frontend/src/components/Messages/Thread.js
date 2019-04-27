@@ -66,7 +66,7 @@ class Thread extends Component {
   componentDidMount() {
     console.log(this.props.match.id)
     axios.get()
-    .then(conversations => {
+    .then(conversation => {
       this.setState({
         conversation
       })
