@@ -247,7 +247,7 @@ class QuestionPage extends Component {
         return (
             <div>
                 <Row className="marginTop-l text_color_black">
-                    <Col span={9} offset={4}>
+                    <Col span={15}>
                         <Row>
                             {result != null
                                 ?

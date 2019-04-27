@@ -1,0 +1,9 @@
+.knows-about h4 {
+    font-size: 15px;
+    font-weight: 500;
+    display: inline;
+}
+
+.knows-about .ant-divider{
+    margin: 12px 0;
+}

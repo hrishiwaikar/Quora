@@ -20,6 +20,7 @@ export class TestDisplayQuestion extends Component {
             {
                 questionId: '1031390ABC',
                 questionText: 'What is the first thing a child learns as it comes out of the womb?',
+                hasAnswer: true,
                 answerId: 1,
                 answererProfileImage: "https://qph.fs.quoracdn.net/main-thumb-16193221-200-EO9EO7XcPOETr1ZfTiWvDKKVxqAzgtzG.jpeg",
                 isAnonymous: false, // is the answerer anonymous
@@ -39,6 +40,7 @@ export class TestDisplayQuestion extends Component {
             {
                 questionId: '0038912923',
                 questionText: 'Is it okay to talk on phone at the gas station?',
+                hasAnswer: false,
                 answerId: 1,
                 answererProfileImage: "https://qph.fs.quoracdn.net/main-thumb-19904714-200-uwrpnqdikmuzquejfxjkxurnvwytrqhs.jpeg",
                 isAnonymous: false, // is the answerer anonymous
@@ -61,7 +63,7 @@ export class TestDisplayQuestion extends Component {
             {questions.map((question) => {
                 return (
                     <Row className="paddingTop-l marginTop-l">
-                        <Col offset={6} span={9} >
+                        <Col offset={5} span={12} >
                             <DisplayQuestion data={question} />
                         </Col>
                     </Row>
@@ -82,9 +84,14 @@ class DisplayQuestion extends Component {
                 <Row>
                     <Title level={4} className="quora_question_text">{data.questionText}</Title>
                 </Row>
-                <Row>
-                    <Answer data={data} />
-                </Row>
+                {data.hasAnswer === true ?
+                    <Row>
+                        <Answer data={data} />
+                    </Row>
+                    :
+                    null
+                }
+
             </>
         );
     }
