@@ -39,7 +39,10 @@ if (cluster.isMaster) {
 } else {
     let app = express();
     let db = require('./core/commons/db');
-    app.use(require('body-parser').json());
+    // app.use(require('body-parser').json());
+    var bodyParser = require('body-parser');
+    app.use(bodyParser.json({limit: "50mb"}));
+    app.use(bodyParser.urlencoded({limit: "50mb", extended: true, parameterLimit:50000}));
     app.use(middlewares.cors);
     app.use(middlewares.apiTimeout(60000));
     process.on('uncaughtException', function (err) {
