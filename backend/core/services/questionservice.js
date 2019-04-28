@@ -146,6 +146,43 @@ let service = {
             }
         });
     },
+    questionFollow : (...args) => {
+        console.log("Idar")
+        return new Promise(function (resolve, reject) {
+            try {
+                let _session = args[0] || {};
+                let body = args[1] || {};
+                let isFollow = body.isFollow
+                let questionId = body.questionId
+                if(isFollow) {
+                    questionModel.findOne({questionId:questionId}).then((questionObj) => {
+                        let questionFollowObj = new questionFollowModel({userId:_session.userId,questionId:questionId})
+                        questionFollowObj.save().then(response => {
+                            questionObj.followers += 1
+                            questionObj.save().then(response => {
+                                return resolve(response);
+                            }).catch(reject);
+                        }).catch(reject);
+                    }).catch(reject);
+                }
+                else{
+                    questionModel.findOne({questionId:questionId}).then((questionObj) => {
+                        let questionFollowObj = questionFollowModel.remove({userId:_session.userId,questionId:questionId}).then((response) =>{
+                            if(questionObj.followers > 0){
+                                questionObj.followers -= 1
+                            }
+                            questionObj.save().then(response => {
+                                return resolve(response);
+                            }).catch(reject);
+                        }).catch(reject);
+                    }).catch(reject);
+                }
+            } catch (e) {
+                console.error(e)
+                reject(e);
+            }
+        });
+    },
     update: (...args) => {
         return new Promise(function (resolve, reject) {
             
@@ -206,7 +243,19 @@ let router = {
             })
         };
         service.delete(req.user, req.params.questionId, req.body).then(successCB, next);
-    }
+    },
+    questionFollow : (req, res, next) => {
+        let successCB = (data) => {
+            res.json({
+                result: "success",
+                response: [{
+                    message: "Question follow or unfollow",
+                    code: "UPDATED"
+                }]
+            })
+        };
+        service.questionFollow(req.user, req.body).then(successCB, next);
+    },
 };
 module.exports.service = service;
 module.exports.router = router;

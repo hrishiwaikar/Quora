@@ -35,6 +35,7 @@ module.exports = (express) => {
      versionRouter.get('/questions/:questionId',jwt.verifyRequest, questionservice.read);
      versionRouter.put('/questions/:questionId',jwt.verifyRequest, questionservice.update);
      versionRouter.delete('/questions/:questionId',jwt.verifyRequest, questionservice.delete);
+     versionRouter.post('/questions/follow',jwt.verifyRequest, questionservice.questionFollow);
      /* Question Routes */
      
     /* conversations Routes */
@@ -46,6 +47,8 @@ module.exports = (express) => {
 
      /* Answer Routes */
      versionRouter.post('/answers',jwt.verifyRequest, answerservice.create);
+     versionRouter.post('/answers/vote',jwt.verifyRequest, answerservice.upordownvote);
+     versionRouter.post('/answers/bookmark',jwt.verifyRequest, answerservice.answerBookmark);
      versionRouter.get('/answers/:questionId',jwt.verifyRequest, answerservice.read);
      versionRouter.put('/answers/:questionId',jwt.verifyRequest, answerservice.update);
      versionRouter.delete('/answers/:questionId',jwt.verifyRequest, answerservice.delete);
