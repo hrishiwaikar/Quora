@@ -20,10 +20,11 @@ let service = {
                 let body = args[1] || {};
                 let question_body = {}
                 let questionText = body.questionText || "";
-                let topics = body.topics || [];
+                let topics = body.topanswerBookmarkModelics || [];
                 let questionObj = new questionModel({userId:_session.userId,questionText:questionText,topicsId:topics});
                 questionObj.save().then(response => {
-                    return resolve(response);
+                    // console.log(response.questionId)
+                    return resolve(response.questionId);
                 }).catch(reject);
                 
             } catch (e) {
@@ -42,16 +43,18 @@ let service = {
                 let body = {};
                 // body.questionId = mongoose.Types.ObjectId(questionId);
                 body.questionId = questionId;
+                // console.log("----body----",body);
 
                 questionModel.findOne(body).then(async (questionObj) => {
                     if (!!questionObj){
                         output['userId'] = _session.userId
-                        output['id'] = questionObj.questionId
+                        output['questionId'] = questionObj.questionId
                         output['questionText'] = questionObj.questionText
                         output['followersCount'] = questionObj.followers
                         output['questionerId'] = questionObj.userId
                         output['topics'] = []
                         output['userIsFollowingTheQuestion'] = false
+                        output['profileCredential'] = "Hrishi, SJSU" //CODE THIS
                         if (questionObj.topicsId.length > 0){
                             for (let topicIndex=0;topicIndex<questionObj.topicsId.length;topicIndex++){
                                 await topicModel.findOne({topicId:questionObj.topicsId[topicIndex]}).then((topicObj) =>{
@@ -74,13 +77,14 @@ let service = {
                                     let answer_output = []
                                     for(let index=0;index<answerObjs.length;index++){
                                         let temp_answer = {}
-                                        temp_answer['id'] = answerObjs[index].answerId
+                                        temp_answer['answerId'] = answerObjs[index].answerId
                                         temp_answer['answerText'] = answerObjs[index].answerText
                                         temp_answer['answererId'] = answerObjs[index].userId
                                         temp_answer['isAnonymous'] = answerObjs[index].isAnonymous
                                         temp_answer['createdAt'] = answerObjs[index].createdAt
                                         temp_answer['upvotes'] = answerObjs[index].upvotes
                                         temp_answer['downvotes'] = answerObjs[index].downvotes
+                                        temp_answer['noOfTimesViewed'] = answerObjs[index].noOfTimesviewed
                                         temp_answer['profileCredential'] = null
                                         temp_answer['userUpvoted'] = false
                                         temp_answer['userDownvoted'] = false
@@ -102,7 +106,8 @@ let service = {
                                             }
                                         });
                                         await userModel.findOne({userId:answerObjs[index].userId}).then((answererObj)=>{
-                                            if (answererObj !== null && 'profileCredential' in answerObj){
+                                            // console.log("answerObj\n",answererObj)
+                                            if (answererObj !== null){
                                                 temp_answer['profileCredential'] = answererObj.profileCredential
                                             }
                                         })
@@ -202,7 +207,8 @@ let router = {
                 response: [{
                     message: "Question Created Successfully",
                     code: "CREATED"
-                }]
+                }],
+                data: data
             })
         };
         service.create(req.user, req.body).then(successCB, next);

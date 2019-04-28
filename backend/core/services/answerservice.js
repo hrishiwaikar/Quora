@@ -17,6 +17,7 @@ let service = {
             try {
                 let _session = args[0] || {};
                 let body = args[1] || {};
+                // console.log("Body\n",body)
                 let answerCreationParams = {}
                 answerCreationParams.userId = _session.userId
                 answerCreationParams.questionId = body.questionId
@@ -112,7 +113,7 @@ let service = {
                     answerModel.findOne({answerId:answerId}).then((answerObj) => {
                         let answerBookmarkObj = answerBookmarkModel.remove({userId:_session.userId,answerId:answerId}).then((response) =>{
                             if(answerObj.bookmarkedBy > 0){
-                                questionObj.bookmarkedBy -= 1
+                                answerObj.bookmarkedBy -= 1
                             }
                             answerObj.save().then(response => {
                                 return resolve(response);
