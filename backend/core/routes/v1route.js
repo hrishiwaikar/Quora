@@ -56,7 +56,7 @@ module.exports = (express) => {
 
      /* Topic Routes */
      versionRouter.post('/topics',jwt.verifyRequest, topicservice.create);
-     versionRouter.get('/topics/:questionId',jwt.verifyRequest, topicservice.read);
+     versionRouter.get('/topics/',jwt.verifyRequest, topicservice.read);
      versionRouter.put('/topics/:questionId',jwt.verifyRequest, topicservice.update);
      versionRouter.delete('/topics/:questionId',jwt.verifyRequest, topicservice.delete);
      /* Topic Routes */

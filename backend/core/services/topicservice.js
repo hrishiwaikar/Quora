@@ -23,13 +23,22 @@ let service = {
     },
     read: (...args) => {
         return new Promise(function (resolve, reject) {
-            
+            try {
+                let output = [];
+                topicModel.find({}).then((topicsObj) => {
+                    for (let index = 0;index < topicsObj.length;index++){
+                        let temp = {}
+                        temp.topicText = topicsObj[index].topicText
+                        temp.id = topicsObj[index].topicId
+                        output.push(temp)
+                    }
+                    return resolve(output);
+                })
+            } catch (e) {
+                console.error(e)
+                reject(e);
+            }
         }); 
-    },
-    readProfileImage: (...args) => {
-        return new Promise(function (resolve, reject) {
-            
-        });
     },
     update: (...args) => {
         return new Promise(function (resolve, reject) {
@@ -63,7 +72,7 @@ let router = {
                     message: "Topic Read Successfully",
                     code: "READ"
                 }],
-                user: data
+                data: data
             })
         };
         service.read(req.user, req.params.topicId).then(successCB, next);
