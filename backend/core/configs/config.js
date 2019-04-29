@@ -1,4 +1,4 @@
-console.log("CHOOSING ENV >>>>>>>>>> ", process.env.NODE_ENV)
+console.log("CHOOSING ENV >>>>>>>>>> ", process.env.env)
 if (process.env.env === "production") {
     module.exports = require('./configProd')
 } else {

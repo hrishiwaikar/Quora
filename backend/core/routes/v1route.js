@@ -6,6 +6,7 @@ let questionservice = require('../services/questionservice').router;
 let conversationservice = require('./../services/conversationservice').router;
 let answerservice = require('../services/answerservice').router;
 let topicservice = require('../services/topicservice').router;
+let analyticService = require('../services/analyticservice');
 
 module.exports = (express) => {
     let versionRouter = express.Router();
@@ -30,14 +31,14 @@ module.exports = (express) => {
     versionRouter.get('/users/:userId/following', followservice.getFollowing);
     /* Follow Routes */
 
-     /* Question Routes */
-     versionRouter.post('/questions',jwt.verifyRequest, questionservice.create);
-     versionRouter.get('/questions/:questionId',jwt.verifyRequest, questionservice.read);
-     versionRouter.put('/questions/:questionId',jwt.verifyRequest, questionservice.update);
-     versionRouter.delete('/questions/:questionId',jwt.verifyRequest, questionservice.delete);
-     versionRouter.post('/questions/follow',jwt.verifyRequest, questionservice.questionFollow);
-     /* Question Routes */
-     
+    /* Question Routes */
+    versionRouter.post('/questions', jwt.verifyRequest, questionservice.create);
+    versionRouter.get('/questions/:questionId', jwt.verifyRequest, questionservice.read);
+    versionRouter.put('/questions/:questionId', jwt.verifyRequest, questionservice.update);
+    versionRouter.delete('/questions/:questionId', jwt.verifyRequest, questionservice.delete);
+    versionRouter.post('/questions/follow', jwt.verifyRequest, questionservice.questionFollow);
+    /* Question Routes */
+
     /* conversations Routes */
     versionRouter.get('/conversations/sendto', jwt.verifyRequest, conversationservice.searchUsers);
     versionRouter.get('/conversations', jwt.verifyRequest, conversationservice.getConversations);
@@ -45,21 +46,24 @@ module.exports = (express) => {
     versionRouter.post('/conversations/message', jwt.verifyRequest, conversationservice.sendMessage);
     /* conversations Routes */
 
-     /* Answer Routes */
-     versionRouter.post('/answers',jwt.verifyRequest, answerservice.create);
-     versionRouter.post('/answers/vote',jwt.verifyRequest, answerservice.upordownvote);
-     versionRouter.post('/answers/bookmark',jwt.verifyRequest, answerservice.answerBookmark);
-     versionRouter.get('/answers/:questionId',jwt.verifyRequest, answerservice.read);
-     versionRouter.put('/answers/:questionId',jwt.verifyRequest, answerservice.update);
-     versionRouter.delete('/answers/:questionId',jwt.verifyRequest, answerservice.delete);
-     /* Answer Routes */
+    /* Answer Routes */
+    versionRouter.post('/answers', jwt.verifyRequest, answerservice.create);
+    versionRouter.post('/answers/vote', jwt.verifyRequest, answerservice.upordownvote);
+    versionRouter.post('/answers/bookmark', jwt.verifyRequest, answerservice.answerBookmark);
+    versionRouter.get('/answers/:questionId', jwt.verifyRequest, answerservice.read);
+    versionRouter.put('/answers/:questionId', jwt.verifyRequest, answerservice.update);
+    versionRouter.delete('/answers/:questionId', jwt.verifyRequest, answerservice.delete);
 
-     /* Topic Routes */
-     versionRouter.post('/topics',jwt.verifyRequest, topicservice.create);
-     versionRouter.get('/topics/',jwt.verifyRequest, topicservice.read);
-     versionRouter.put('/topics/:questionId',jwt.verifyRequest, topicservice.update);
-     versionRouter.delete('/topics/:questionId',jwt.verifyRequest, topicservice.delete);
-     /* Topic Routes */
+    versionRouter.get('/answers', jwt.verifyRequest, analyticService.getAnswers);
+    versionRouter.get('/answers/:answerId/:type', jwt.verifyRequest, analyticService.getAnswerStats);
+    /* Answer Routes */
+
+    /* Topic Routes */
+    versionRouter.post('/topics', jwt.verifyRequest, topicservice.create);
+    versionRouter.get('/topics/', jwt.verifyRequest, topicservice.read);
+    versionRouter.put('/topics/:questionId', jwt.verifyRequest, topicservice.update);
+    versionRouter.delete('/topics/:questionId', jwt.verifyRequest, topicservice.delete);
+    /* Topic Routes */
 
     return versionRouter;
 }
