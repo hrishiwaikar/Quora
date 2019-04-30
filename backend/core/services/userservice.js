@@ -1,5 +1,6 @@
 const rs = require("./../commons/responses");
 const utils = require("./../commons/utils");
+const redis = require("./../commons/redis");
 const _ = require("lodash");
 let pv = require("./../commons/passwordVerification");
 let service = {
@@ -71,17 +72,23 @@ let service = {
                         select[query.filter[index]] = 1
                     }
                 }
-                userModel.findOne(body).select(select).then((dbObj) => {
+                let userFound = (dbObj) => {
                     if (!!dbObj) {
+                        redis.hset("USERS", userId, dbObj).then().catch()
                         resolve(dbObj);
                     } else {
                         reject(rs.notfound);
                     }
                     return;
-                }).catch((errors) => {
-                    reject(errors);
-                    return;
-                })
+                }
+                redis.hget("USERS", userId)
+                    .then(userFound)
+                    .catch(e => {
+                        userModel.findOne(body).then(userFound).catch((errors) => {
+                            reject(errors);
+                            return;
+                        })
+                    });
             } catch (e) {
                 console.error(e)
                 reject(e);
@@ -118,6 +125,7 @@ let service = {
                     "_id": 0
                 }).then((dbObj) => {
                     if (!!dbObj) {
+                        redis.hdel("USERS", userId).then().catch()
                         resolve(dbObj);
                     } else {
                         reject(rs.notfound);
@@ -142,6 +150,7 @@ let service = {
                 let body = {};
                 body.userId = userId || null;
                 userModel.remove(body).then((dbObj) => {
+                    redis.hdel("USERS", userId).then().catch()
                     if (!!dbObj.deletedCount) {
                         resolve({});
                     } else {
