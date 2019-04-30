@@ -17,21 +17,9 @@ module.exports = (topic, type, requestId, payload, callback) => {
     }
     topic = topic.split("-")[1];
     switch (topic) {
-        case 'auth':
-            let authHandling = require('./authHandling');
-            authHandling(type, payload).then(successCB, throwError);
-            break;
         case 'users':
             let userHandling = require('./userHandling');
             userHandling(type, payload).then(successCB, throwError);
-            break;
-        case 'courses':
-            let courseHandling = require('./courseHandling');
-            courseHandling(type, payload).then(successCB, throwError);
-            break;
-        case 'inbox':
-            let inboxHandling = require('./inboxHandling');
-            inboxHandling(type, payload).then(successCB, throwError);
             break;
         default:
             throwError();
