@@ -1,0 +1,281 @@
+2019-04-25T08:18:22.212Z error: {"result":"failure","response":{"message":"Object Not Found","code":"NOTFOUND"}}
+2019-04-25T21:09:24.748Z error: "This API does not Exist : POST /v1/auth/signup"
+2019-04-25T21:09:43.991Z error: "authservice is not defined"
+2019-04-25T21:09:43.987Z error: "authservice is not defined"
+2019-04-25T21:09:43.998Z error: "authservice is not defined"
+2019-04-25T21:09:43.994Z error: "authservice is not defined"
+2019-04-25T21:09:48.375Z error: "authservice is not defined"
+2019-04-25T21:09:48.372Z error: "authservice is not defined"
+2019-04-25T21:09:48.444Z error: "authservice is not defined"
+2019-04-25T21:09:48.500Z error: "authservice is not defined"
+2019-04-25T21:09:52.586Z error: "authservice is not defined"
+2019-04-25T21:09:52.670Z error: "authservice is not defined"
+2019-04-25T21:09:52.773Z error: "authservice is not defined"
+2019-04-25T21:09:52.840Z error: "authservice is not defined"
+2019-04-25T21:10:03.583Z error: "This API does not Exist : POST /v1/auth/signup"
+2019-04-25T21:10:14.985Z error: {"result":"failure","response":{"message":"Invalid Credentials","code":"SIGNINERROR"}}
+2019-04-25T21:12:56.517Z error: {"result":"failure","response":{"message":"Cast to string failed for value \"{ userId: '91c3c210-679e-11e9-99c7-7fe0ae2536bc' }\" at path \"userId\" for model \"user\"","code":"EXCEPTION"}}
+2019-04-25T23:27:10.026Z error: "Cannot find module 'passport'"
+2019-04-25T23:27:10.029Z error: "Cannot find module 'passport'"
+2019-04-25T23:27:10.035Z error: "Cannot find module 'passport'"
+2019-04-25T23:27:10.029Z error: "Cannot find module 'passport'"
+2019-04-25T23:27:15.125Z error: "Cannot find module 'passport'"
+2019-04-25T23:27:15.126Z error: "Cannot find module 'passport'"
+2019-04-25T23:27:15.141Z error: "Cannot find module 'passport'"
+2019-04-25T23:27:15.147Z error: "Cannot find module 'passport'"
+2019-04-25T23:27:20.265Z error: "Cannot find module 'passport'"
+2019-04-25T23:27:20.447Z error: "Cannot find module 'passport'"
+2019-04-25T23:27:20.483Z error: "Cannot find module 'passport'"
+2019-04-25T23:27:20.572Z error: "Cannot find module 'passport'"
+2019-04-25T23:27:24.954Z error: "Cannot find module 'passport'"
+2019-04-25T23:27:25.256Z error: "Cannot find module 'passport'"
+2019-04-25T23:27:25.259Z error: "Cannot find module 'passport'"
+2019-04-25T23:27:25.333Z error: "Cannot find module 'passport'"
+2019-04-25T23:39:04.924Z error: "This API does not Exist : OPTIONS /signup"
+2019-04-26T06:29:28.914Z error: "This API does not Exist : GET /v1"
+2019-04-26T06:29:29.413Z error: "This API does not Exist : GET /favicon.ico"
+2019-04-26T06:46:01.708Z error: "This API does not Exist : GET /v1/signup"
+2019-04-26T06:46:01.834Z error: "This API does not Exist : GET /favicon.ico"
+2019-04-26T06:46:02.291Z error: {"result":"failure","response":{"message":"User Exists","code":"USEREXISTS"}}
+2019-04-26T06:46:05.366Z error: "This API does not Exist : GET /v1/signup"
+2019-04-26T06:46:10.057Z error: "This API does not Exist : GET /v1/signup"
+2019-04-26T06:46:15.562Z error: "This API does not Exist : GET /v1/signup"
+2019-04-26T06:46:21.948Z error: "This API does not Exist : GET /v1/signup"
+2019-04-26T06:47:36.169Z error: {"result":"failure","response":{"message":"User Exists","code":"USEREXISTS"}}
+2019-04-26T07:01:28.781Z error: {"result":"failure","response":{"message":"Schema is not defined","code":"EXCEPTION"}}
+2019-04-26T07:02:19.489Z error: {"result":"failure","response":{"message":"Cast to embedded failed for value \"'English'\" at path \"language\"","code":"EXCEPTION"}}
+2019-04-26T07:10:20.508Z error: {"result":"failure","response":{"message":"Validation failed: education.0.graduationYear: Path `graduationYear` (`12342`) is longer than the maximum allowed length (4).","code":"EXCEPTION"}}
+2019-04-26T07:11:10.494Z error: {"result":"failure","response":{"message":"User Exists","code":"USEREXISTS"}}
+2019-04-26T07:21:46.070Z error: {"result":"failure","response":{"message":"User Exists","code":"USEREXISTS"}}
+2019-04-26T07:25:38.999Z error: {"result":"failure","response":{"message":"User Exists","code":"USEREXISTS"}}
+2019-04-26T07:25:40.289Z error: {"result":"failure","response":{"message":"User Exists","code":"USEREXISTS"}}
+2019-04-26T07:26:05.230Z error: {"result":"failure","response":{"message":"User Exists","code":"USEREXISTS"}}
+2019-04-26T09:06:54.595Z error: {"result":"failure","response":{"message":"User Exists","code":"USEREXISTS"}}
+2019-04-26T09:13:47.578Z error: "This API does not Exist : GET /v1/follow/e1a21570-6802-11e9-935c-855a9a513e79"
+2019-04-26T09:13:51.830Z error: {"result":"failure","response":{"message":"Invalid Token","code":"TOKENERROR"}}
+2019-04-26T09:13:59.371Z error: {"result":"failure","response":{"message":"Cannot find module '../models/followmodel'","code":"MODULE_NOT_FOUND"}}
+2019-04-26T09:20:43.945Z error: {"result":"failure","response":{"message":"You are not following this user","code":"FOLLOWERROR"}}
+2019-04-26T09:21:38.807Z error: {"result":"failure","response":{"message":"You are already following this user","code":"FOLLOWERROR"}}
+2019-04-26T09:25:32.195Z error: {"result":"failure","response":{"message":"Object Not Found","code":"NOTFOUND"}}
+2019-04-26T09:25:39.588Z error: {"result":"failure","response":{"message":"You are already following this user","code":"FOLLOWERROR"}}
+2019-04-26T09:35:01.515Z error: {"result":"failure","response":{"message":"Invalid Credentials","code":"SIGNINERROR"}}
+2019-04-26T09:35:18.076Z error: "This API does not Exist : POST /v1/users/221cf8c0-6805-11e9-b14f-67ed4350d048/followers"
+2019-04-26T09:39:32.911Z error: "This API does not Exist : GET /v1/users/a1640220-6802-11e9-8e1a-bd176bf67daa/followings"
+2019-04-26T09:44:16.681Z error: {"result":"failure","response":{"message":"You are already following this user","code":"FOLLOWERROR"}}
+2019-04-26T10:57:27.746Z error: {"result":"failure","response":{"message":"You are already following this user","code":"FOLLOWERROR"}}
+2019-04-26T10:57:47.326Z error: {"result":"failure","response":{"message":"toFollow is not defined","code":"EXCEPTION"}}
+2019-04-26T10:58:13.256Z error: {"result":"failure","response":{"message":"You are not following this user","code":"FOLLOWERROR"}}
+2019-04-26T10:58:58.192Z error: {"result":"failure","response":{"message":"toFollow is not defined","code":"EXCEPTION"}}
+2019-04-26T21:44:51.367Z error: "This API does not Exist : GET /favicon.ico"
+2019-04-26T21:51:03.294Z error: {"result":"failure","response":{"message":"Object Not Found","code":"NOTFOUND"}}
+2019-04-26T21:51:21.190Z error: {"result":"failure","response":{"message":"Object Not Found","code":"NOTFOUND"}}
+2019-04-26T23:52:40.830Z error: "conversationservice is not defined"
+2019-04-26T23:52:40.828Z error: "conversationservice is not defined"
+2019-04-26T23:52:40.830Z error: "conversationservice is not defined"
+2019-04-26T23:52:40.830Z error: "conversationservice is not defined"
+2019-04-26T23:52:45.186Z error: "conversationservice is not defined"
+2019-04-26T23:52:45.207Z error: "conversationservice is not defined"
+2019-04-26T23:52:45.295Z error: "conversationservice is not defined"
+2019-04-26T23:52:45.363Z error: "conversationservice is not defined"
+2019-04-26T23:52:49.334Z error: "conversationservice is not defined"
+2019-04-26T23:52:49.366Z error: "conversationservice is not defined"
+2019-04-26T23:52:49.490Z error: "conversationservice is not defined"
+2019-04-26T23:52:49.565Z error: "conversationservice is not defined"
+2019-04-26T23:52:53.747Z error: "conversationservice is not defined"
+2019-04-26T23:52:53.789Z error: "conversationservice is not defined"
+2019-04-26T23:52:54.022Z error: "conversationservice is not defined"
+2019-04-26T23:52:54.072Z error: "conversationservice is not defined"
+2019-04-26T23:52:57.693Z error: "conversationservice is not defined"
+2019-04-26T23:52:57.690Z error: "conversationservice is not defined"
+2019-04-26T23:52:57.689Z error: "conversationservice is not defined"
+2019-04-26T23:52:57.736Z error: "conversationservice is not defined"
+2019-04-26T23:56:15.966Z error: {"result":"failure","response":{"message":"Invalid Request","code":"INVREQUEST"}}
+2019-04-26T23:59:40.444Z error: {"result":"failure","response":{"message":"conversationModel.udpate is not a function","code":"EXCEPTION"}}
+2019-04-27T00:33:49.012Z error: {"result":"failure","response":{"message":"Invalid Token","code":"TOKENERROR"}}
+2019-04-27T00:34:00.723Z error: {"result":"failure","response":{"message":"Object Not Found","code":"NOTFOUND"}}
+2019-04-27T00:34:53.412Z error: {"result":"failure","response":{"message":"Object Not Found","code":"NOTFOUND"}}
+2019-04-27T00:35:34.983Z error: {"result":"failure","response":{"message":"Object Not Found","code":"NOTFOUND"}}
+2019-04-27T00:58:26.835Z error: {"result":"failure","response":{"message":"obj._doc is not iterable","code":"EXCEPTION"}}
+2019-04-27T00:59:26.505Z error: {"result":"failure","response":{"message":"obj._doc is not iterable","code":"EXCEPTION"}}
+2019-04-27T01:07:33.274Z error: {"result":"failure","response":{"message":"User Exists","code":"USEREXISTS"}}
+2019-04-27T01:08:05.803Z error: {"result":"failure","response":{"message":"User Exists","code":"USEREXISTS"}}
+2019-04-27T01:08:32.175Z error: {"result":"failure","response":{"message":"User Exists","code":"USEREXISTS"}}
+2019-04-27T01:11:19.385Z error: {"result":"failure","response":{"message":"User Exists","code":"USEREXISTS"}}
+2019-04-27T01:12:24.241Z error: {"result":"failure","response":{"message":"User Exists","code":"USEREXISTS"}}
+2019-04-27T01:13:26.253Z error: {"result":"failure","response":{"message":"User Exists","code":"USEREXISTS"}}
+2019-04-27T01:13:43.660Z error: {"result":"failure","response":{"message":"User Exists","code":"USEREXISTS"}}
+2019-04-27T01:15:20.633Z error: {"result":"failure","response":{"message":"User Exists","code":"USEREXISTS"}}
+2019-04-27T01:15:38.069Z error: {"result":"failure","response":{"message":"User Exists","code":"USEREXISTS"}}
+2019-04-27T01:15:53.618Z error: {"result":"failure","response":{"message":"User Exists","code":"USEREXISTS"}}
+2019-04-27T01:16:31.492Z error: {"result":"failure","response":{"message":"User Exists","code":"USEREXISTS"}}
+2019-04-27T01:18:51.489Z error: {"result":"failure","response":{"message":"Invalid Credentials","code":"SIGNINERROR"}}
+2019-04-27T01:24:00.017Z error: {"result":"failure","response":{"message":"Invalid Credentials","code":"SIGNINERROR"}}
+2019-04-27T01:29:25.225Z error: {"result":"failure","response":{"message":"Invalid Credentials","code":"SIGNINERROR"}}
+2019-04-27T01:29:50.955Z error: {"result":"failure","response":{"message":"query.filter.split is not a function","code":"EXCEPTION"}}
+2019-04-27T01:30:46.247Z error: {"result":"failure","response":{"message":"(query.filter || \"\").split is not a function","code":"EXCEPTION"}}
+2019-04-27T01:34:56.025Z error: {"result":"failure","response":{"message":"Invalid Credentials","code":"SIGNINERROR"}}
+2019-04-27T03:01:39.665Z error: {"result":"failure","response":{"message":"array is not defined","code":"EXCEPTION"}}
+2019-04-27T03:39:28.214Z error: {"result":"failure","response":{"message":"Cannot set property 'conversationList' of undefined","code":"EXCEPTION"}}
+2019-04-27T03:39:41.674Z error: {"result":"failure","response":{"message":"Cannot set property 'conversationList' of undefined","code":"EXCEPTION"}}
+2019-04-27T03:39:42.039Z error: {"result":"failure","response":{"message":"Cannot set property 'conversationList' of undefined","code":"EXCEPTION"}}
+2019-04-27T03:44:27.052Z error: {"result":"failure","response":{"message":"Invalid Credentials","code":"SIGNINERROR"}}
+2019-04-27T04:33:50.824Z error: {"result":"failure","response":{"message":"Object Not Found","code":"NOTFOUND"}}
+2019-04-27T04:34:29.883Z error: {"result":"failure","response":{"message":"Invalid Request","code":"INVREQUEST"}}
+2019-04-27T04:35:00.374Z error: {"result":"failure","response":{"message":"Invalid Request","code":"INVREQUEST"}}
+2019-04-27T04:35:07.068Z error: {"result":"failure","response":{"message":"Invalid Request","code":"INVREQUEST"}}
+2019-04-29T05:34:47.502Z error: "Cannot read property 'getAnswers' of undefined"
+2019-04-29T05:34:47.500Z error: "Cannot read property 'getAnswers' of undefined"
+2019-04-29T05:34:47.499Z error: "Cannot read property 'getAnswers' of undefined"
+2019-04-29T05:34:47.503Z error: "Cannot read property 'getAnswers' of undefined"
+2019-04-29T05:34:51.776Z error: "Cannot read property 'getAnswers' of undefined"
+2019-04-29T05:34:51.772Z error: "Cannot read property 'getAnswers' of undefined"
+2019-04-29T05:34:51.808Z error: "Cannot read property 'getAnswers' of undefined"
+2019-04-29T05:34:51.835Z error: "Cannot read property 'getAnswers' of undefined"
+2019-04-29T05:34:56.000Z error: "Cannot read property 'getAnswers' of undefined"
+2019-04-29T05:34:56.002Z error: "Cannot read property 'getAnswers' of undefined"
+2019-04-29T05:34:56.060Z error: "Cannot read property 'getAnswers' of undefined"
+2019-04-29T05:34:56.093Z error: "Cannot read property 'getAnswers' of undefined"
+2019-04-29T05:35:00.367Z error: "Cannot read property 'getAnswers' of undefined"
+2019-04-29T05:35:00.381Z error: "Cannot read property 'getAnswers' of undefined"
+2019-04-29T05:35:00.383Z error: "Cannot read property 'getAnswers' of undefined"
+2019-04-29T05:35:00.442Z error: "Cannot read property 'getAnswers' of undefined"
+2019-04-29T05:35:04.758Z error: "Cannot read property 'getAnswers' of undefined"
+2019-04-29T05:35:04.751Z error: "Cannot read property 'getAnswers' of undefined"
+2019-04-29T05:35:04.818Z error: "Cannot read property 'getAnswers' of undefined"
+2019-04-29T05:35:04.886Z error: "Cannot read property 'getAnswers' of undefined"
+2019-04-29T05:37:47.594Z error: {"result":"failure","response":{"message":"Invalid Token","code":"TOKENERROR"}}
+2019-04-29T05:37:48.012Z error: {"result":"failure","response":{"message":"Invalid Token","code":"TOKENERROR"}}
+2019-04-29T05:40:49.915Z error: {"result":"failure","response":{"message":"eq is not defined","code":"EXCEPTION"}}
+2019-04-29T05:41:06.842Z error: {"result":"failure","response":{"message":"i is not defined","code":"EXCEPTION"}}
+2019-04-30T10:09:57.790Z error: "Cannot find module 'ioredis'"
+2019-04-30T10:09:57.792Z error: "Cannot find module 'ioredis'"
+2019-04-30T10:09:57.797Z error: "Cannot find module 'ioredis'"
+2019-04-30T10:09:57.790Z error: "Cannot find module 'ioredis'"
+2019-04-30T10:10:02.390Z error: "Cannot find module 'ioredis'"
+2019-04-30T10:10:02.388Z error: "Cannot find module 'ioredis'"
+2019-04-30T10:10:02.452Z error: "Cannot find module 'ioredis'"
+2019-04-30T10:10:02.557Z error: "Cannot find module 'ioredis'"
+2019-04-30T10:10:06.545Z error: "Cannot find module 'ioredis'"
+2019-04-30T10:10:06.628Z error: "Cannot find module 'ioredis'"
+2019-04-30T10:10:06.700Z error: "Cannot find module 'ioredis'"
+2019-04-30T10:10:06.779Z error: "Cannot find module 'ioredis'"
+2019-04-30T10:10:11.006Z error: "Cannot find module 'ioredis'"
+2019-04-30T10:10:11.229Z error: "Cannot find module 'ioredis'"
+2019-04-30T10:10:11.366Z error: "Cannot find module 'ioredis'"
+2019-04-30T10:10:11.423Z error: "Cannot find module 'ioredis'"
+2019-04-30T10:10:15.449Z error: "options is not defined"
+2019-04-30T10:10:15.807Z error: "options is not defined"
+2019-04-30T10:10:15.969Z error: "options is not defined"
+2019-04-30T10:10:16.008Z error: "options is not defined"
+2019-04-30T10:10:19.264Z error: "options is not defined"
+2019-04-30T10:10:19.812Z error: "options is not defined"
+2019-04-30T10:10:20.044Z error: "options is not defined"
+2019-04-30T10:10:20.072Z error: "options is not defined"
+2019-04-30T10:10:22.984Z error: "options is not defined"
+2019-04-30T10:10:23.823Z error: "options is not defined"
+2019-04-30T10:10:24.022Z error: "options is not defined"
+2019-04-30T10:10:24.076Z error: "options is not defined"
+2019-04-30T10:10:26.686Z error: "options is not defined"
+2019-04-30T10:10:27.714Z error: "options is not defined"
+2019-04-30T10:10:27.964Z error: "options is not defined"
+2019-04-30T10:10:28.036Z error: "options is not defined"
+2019-04-30T10:10:30.382Z error: "options is not defined"
+2019-04-30T10:10:31.588Z error: "options is not defined"
+2019-04-30T10:10:31.902Z error: "options is not defined"
+2019-04-30T10:10:31.979Z error: "options is not defined"
+2019-04-30T10:10:34.066Z error: "options is not defined"
+2019-04-30T10:10:35.416Z error: "options is not defined"
+2019-04-30T10:10:35.783Z error: "options is not defined"
+2019-04-30T10:10:35.870Z error: "options is not defined"
+2019-04-30T10:10:37.741Z error: "options is not defined"
+2019-04-30T10:10:39.229Z error: "options is not defined"
+2019-04-30T10:10:39.675Z error: "options is not defined"
+2019-04-30T10:10:39.744Z error: "options is not defined"
+2019-04-30T10:10:41.423Z error: "options is not defined"
+2019-04-30T10:10:42.985Z error: "options is not defined"
+2019-04-30T10:10:43.595Z error: "options is not defined"
+2019-04-30T10:10:43.675Z error: "options is not defined"
+2019-04-30T10:10:45.109Z error: "options is not defined"
+2019-04-30T10:10:46.680Z error: "options is not defined"
+2019-04-30T10:10:47.376Z error: "options is not defined"
+2019-04-30T10:10:47.455Z error: "options is not defined"
+2019-04-30T10:10:48.793Z error: "options is not defined"
+2019-04-30T10:10:50.371Z error: "options is not defined"
+2019-04-30T10:10:51.153Z error: "options is not defined"
+2019-04-30T10:10:51.232Z error: "options is not defined"
+2019-04-30T10:10:52.500Z error: "options is not defined"
+2019-04-30T10:10:54.065Z error: "options is not defined"
+2019-04-30T10:10:54.906Z error: "options is not defined"
+2019-04-30T10:10:55.010Z error: "options is not defined"
+2019-04-30T10:10:56.202Z error: "options is not defined"
+2019-04-30T10:10:57.768Z error: "options is not defined"
+2019-04-30T10:10:58.676Z error: "options is not defined"
+2019-04-30T10:10:58.791Z error: "options is not defined"
+2019-04-30T10:10:59.903Z error: "options is not defined"
+2019-04-30T10:11:01.462Z error: "options is not defined"
+2019-04-30T10:11:02.451Z error: "options is not defined"
+2019-04-30T10:11:02.581Z error: "options is not defined"
+2019-04-30T10:11:03.599Z error: "options is not defined"
+2019-04-30T10:11:05.195Z error: "options is not defined"
+2019-04-30T10:11:06.271Z error: "options is not defined"
+2019-04-30T10:11:06.412Z error: "options is not defined"
+2019-04-30T10:11:07.316Z error: "options is not defined"
+2019-04-30T10:11:08.964Z error: "options is not defined"
+2019-04-30T10:11:10.236Z error: "options is not defined"
+2019-04-30T10:11:10.236Z error: "options is not defined"
+2019-04-30T10:11:10.233Z error: "options is not defined"
+2019-04-30T10:11:10.250Z error: "options is not defined"
+2019-04-30T10:11:14.462Z error: "options is not defined"
+2019-04-30T10:11:14.485Z error: "options is not defined"
+2019-04-30T10:11:14.490Z error: "options is not defined"
+2019-04-30T10:11:14.474Z error: "options is not defined"
+2019-04-30T10:11:18.678Z error: "options is not defined"
+2019-04-30T10:11:18.702Z error: "options is not defined"
+2019-04-30T10:11:18.723Z error: "options is not defined"
+2019-04-30T10:11:18.744Z error: "options is not defined"
+2019-04-30T10:11:22.878Z error: "options is not defined"
+2019-04-30T10:11:22.946Z error: "options is not defined"
+2019-04-30T10:11:22.969Z error: "options is not defined"
+2019-04-30T10:11:23.010Z error: "options is not defined"
+2019-04-30T10:11:27.077Z error: "options is not defined"
+2019-04-30T10:11:27.210Z error: "options is not defined"
+2019-04-30T10:11:27.248Z error: "options is not defined"
+2019-04-30T10:11:27.274Z error: "options is not defined"
+2019-04-30T10:11:31.212Z error: "options is not defined"
+2019-04-30T10:11:31.443Z error: "options is not defined"
+2019-04-30T10:11:31.457Z error: "options is not defined"
+2019-04-30T10:11:31.524Z error: "options is not defined"
+2019-04-30T10:11:36.113Z error: "options is not defined"
+2019-04-30T10:11:36.115Z error: "options is not defined"
+2019-04-30T10:11:36.118Z error: "options is not defined"
+2019-04-30T10:11:36.124Z error: "options is not defined"
+2019-04-30T10:11:40.421Z error: "options is not defined"
+2019-04-30T10:11:40.424Z error: "options is not defined"
+2019-04-30T10:11:40.407Z error: "options is not defined"
+2019-04-30T10:11:40.481Z error: "options is not defined"
+2019-04-30T10:11:43.480Z error: "options is not defined"
+2019-04-30T10:11:43.488Z error: "options is not defined"
+2019-04-30T10:11:43.482Z error: "options is not defined"
+2019-04-30T10:11:43.561Z error: "options is not defined"
+2019-04-30T10:11:48.023Z error: "options is not defined"
+2019-04-30T10:11:48.007Z error: "options is not defined"
+2019-04-30T10:11:48.006Z error: "options is not defined"
+2019-04-30T10:11:48.133Z error: "options is not defined"
+2019-04-30T10:11:52.628Z error: "options is not defined"
+2019-04-30T10:11:52.634Z error: "options is not defined"
+2019-04-30T10:11:52.658Z error: "options is not defined"
+2019-04-30T10:11:52.756Z error: "options is not defined"
+2019-04-30T10:11:59.176Z error: "require(...) is not a function"
+2019-04-30T10:11:59.170Z error: "require(...) is not a function"
+2019-04-30T10:11:59.192Z error: "require(...) is not a function"
+2019-04-30T10:11:59.233Z error: "require(...) is not a function"
+2019-04-30T10:12:03.984Z error: "require(...) is not a function"
+2019-04-30T10:12:04.027Z error: "require(...) is not a function"
+2019-04-30T10:12:04.010Z error: "require(...) is not a function"
+2019-04-30T10:12:04.185Z error: "require(...) is not a function"
+2019-04-30T10:12:08.680Z error: "require(...) is not a function"
+2019-04-30T10:12:08.713Z error: "require(...) is not a function"
+2019-04-30T10:12:08.699Z error: "require(...) is not a function"
+2019-04-30T10:12:08.916Z error: "require(...) is not a function"
+2019-04-30T10:15:23.488Z error: {"result":"failure","response":{"message":"Object Not Found","code":"NOTFOUND"}}
+2019-04-30T10:16:01.598Z error: {"result":"failure","response":{"message":"Object Not Found","code":"NOTFOUND"}}
