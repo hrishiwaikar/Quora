@@ -1,0 +1,18 @@
+let mongoose = require('mongoose');
+let config = require('../configs/config')
+class Database {
+  constructor() {
+    this._connect()
+  }
+_connect() {
+  console.log(">>>>>>>>>>>>" + `${config.db.endpoint}/${config.db.dbname}`)
+     mongoose.connect(`${config.db.endpoint}/${config.db.dbname}`)
+       .then(() => {
+         console.log('Database connection successful')
+       })
+       .catch(err => {
+         console.error('Database connection error')
+       })
+  }
+}
+module.exports = new Database()
