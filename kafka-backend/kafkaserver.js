@@ -1,5 +1,6 @@
 let kafka = require('kafka-node');
 let log = require('./core/commons/logger');
+let db = require('./core/commons/db');
 let messageHandler = require('./core/kafkaMessageHandling/index');
 let Consumer = kafka.Consumer;
 let Producer = kafka.Producer;
@@ -11,12 +12,6 @@ broker.on('ready', (e, r, t) => {
         client,
         [{
             topic: 'users',
-            partition: 0
-        }, {
-            topic: 'questions',
-            partition: 0
-        }, {
-            topic: 'answers',
             partition: 0
         }], {
             autoCommit: true

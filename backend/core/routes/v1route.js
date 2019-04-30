@@ -7,21 +7,53 @@ let conversationservice = require('./../services/conversationservice').router;
 let answerservice = require('../services/answerservice').router;
 let topicservice = require('../services/topicservice').router;
 let analyticService = require('../services/analyticservice');
-
+let producer = require('./../commons/kafkarpc');
+let log = require('./../commons/logger');
+producer = producer.getInstance();
+let kEvent = require('./../commons/kafkaEvent');
+let kafkaMiddleware = (type) => {
+    let topic = "users";
+    return (req, res, next) => {
+        const options = {};
+        let event = new kEvent(topic, type, req);
+        producer.fire(event.getEvent(), (err, kafkaResponse) => {
+            if (err) {
+                next(err);
+                return;
+            } else {
+                log.info("Step 7 : Event Response Recived");
+                req.kafkaResponse = kafkaResponse || {};
+                next();
+                return;
+            }
+        })
+    }
+}
+// can make custom If required
+let finalService = (req, res, next) => {
+    if (!!req.kafkaResponse) {
+        log.info("Step 8 : Event Response Given to UI");
+        res.json(req.kafkaResponse);
+        return
+    } else {
+        next([rs.UNKNOWN_ERR]);
+        return;
+    }
+}
 module.exports = (express) => {
     let versionRouter = express.Router();
 
     /* Auth Routes */
-    versionRouter.post('/signin', authservice.signin);
-    versionRouter.post('/signup', authservice.signup);
+    versionRouter.post('/signin', kafkaMiddleware('signin'), finalService);
+    versionRouter.post('/signup', kafkaMiddleware('signup'), finalService);
     /* Auth Routes */
 
     /* User Routes */
-    //versionRouter.post('/users', userservice.create);
-    versionRouter.get('/users/:userId', userservice.read);
+    //versionRouter.post('/users', kafkaMiddleware('create_user'), finalService);
+    versionRouter.get('/users/:userId', kafkaMiddleware('get_user'), finalService);
     versionRouter.get('/users/:userId/image', userservice.readProfileImage);
-    versionRouter.put('/users/:userId', userservice.update);
-    versionRouter.delete('/users/:userId', userservice.delete);
+    versionRouter.put('/users/:userId', kafkaMiddleware('update_user'), finalService);
+    versionRouter.delete('/users/:userId', kafkaMiddleware('delete_user'), finalService);
     /* User Routes */
 
     /* Follow Routes */

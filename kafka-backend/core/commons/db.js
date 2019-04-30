@@ -5,6 +5,7 @@ class Database {
     this._connect()
   }
 _connect() {
+  console.log(">>>>>>>>>>>>" + `${config.db.endpoint}/${config.db.dbname}`)
      mongoose.connect(`${config.db.endpoint}/${config.db.dbname}`)
        .then(() => {
          console.log('Database connection successful')
