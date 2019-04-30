@@ -8,6 +8,7 @@ let service = {
             try {
                 let _session = args[0] || {};
                 let body = args[1] || {};
+                console.log("Body of user create",body)
                 let userModel = require('./../models/usermodel');
                 body.firstName = (body.firstName || "").toLowerCase();
                 body.lastName = (body.lastName || "").toLowerCase();
@@ -15,12 +16,15 @@ let service = {
                 if (!body.password) {
                     throw rs.invalidrequest;
                 }
+                console.log(12321);
                 pv.create(body.password).then((hashedPassword) => {
                     body.password = hashedPassword;
+                    console.log("user model")
                     userModel.find({
                             email: body.email
                         })
                         .then((response) => {
+                            console.log("sfa")
                             if (!!response && !!response.length) {
                                 reject({
                                     message: "User Exists",
