@@ -6,31 +6,72 @@ import "./Stats.css";
 import { Element } from "react-faux-dom";
 import * as d3 from "d3";
 import data from "./Data";
+import graphData from "./graphData";
+import viewGraph from "./viewGraph";
+import upvotesGraph from "./upvotes";
+import downvotesGraph from "./downvotes";
 
-import {
-  Form,
-  Icon,
-  Input,
-  Button,
-  Card,
-  message,
-  Row,
-  Col,
-  Menu,
-  Dropdown
-} from "antd";
+import { Button, Row, Col, Menu, Dropdown } from "antd";
 
 class Stats extends Component {
   constructor(props) {
     super(props);
 
     this.state = {
-      isActive: false,
       views: "statsTab-active",
       upvotes: "statsTab",
-      downvotes: "statsTab"
+      downvotes: "statsTab",
+      viewsCount: graphData[0].views,
+      upvotesCount: graphData[0].upvotes,
+      downvotesCount: graphData[0].downvotes,
+      graphData: viewGraph[0].graphData
     };
   }
+
+  // componentDidMount() {
+  //   axios
+  //     .get("http://10.0.0.188:7836/v1/answers?top=10&sort=views", {
+  //       headers: {
+  //         authorization: token
+  //       }
+  //     })
+  //     .then(res => {
+  //       if (res.status === 200) {
+  //         console.log("view response data", res.data);
+
+  // this.setState({
+  //   viewsCount: res.data[0].views,
+  //   upvotesCount: res.data[0].upvotes,
+  //   downvotesCount: res.data[0].downvotes,
+  // })
+
+  //axios
+  //     .get("http://10.0.0.188:7836/v1/answers/:answerId/views?day=30", {
+  //       headers: {
+  //         authorization: token
+  //       }
+  //     })
+  //     .then(res => {
+  //       if (res.status === 200) {
+  //         console.log("view response data", res.data);
+  // this.setState({
+  //   graphData: resizeBy.data[0].graphData
+  // })
+  //       }
+  //     })
+  //     .catch(err => {
+  //       console.log("view error: ", err);
+  //     });
+
+  //       }
+
+  //     })
+  //     .catch(err => {
+  //       console.log("view error: ", err);
+  //     });
+
+  // }
+
   onChange = e => {
     this.setState({
       [e.target.name]: e.target.value
@@ -45,19 +86,33 @@ class Stats extends Component {
       this.setState({
         views: "statsTab-active",
         upvotes: "statsTab",
-        downvotes: "statsTab"
+        downvotes: "statsTab",
+        graphData: viewGraph[0].graphData
       });
+
+      // axios
+      //   .post("http://10.0.0.188:7836/v1/signin")
+      //   .then(res => {
+      //     if (res.status === 200) {
+      //       console.log("views response data", res.data);
+      //     }
+      //   })
+      //   .catch(err => {
+      //     console.log("views error: ", err);
+      //   });
     } else if (name === "upvotes") {
       this.setState({
         upvotes: "statsTab-active",
         views: "statsTab",
-        downvotes: "statsTab"
+        downvotes: "statsTab",
+        graphData: upvotesGraph[0].graphData
       });
     } else if (name === "downvotes") {
       this.setState({
         downvotes: "statsTab-active",
         upvotes: "statsTab",
-        views: "statsTab"
+        views: "statsTab",
+        graphData: downvotesGraph[0].graphData
       });
     }
   };
@@ -94,40 +149,46 @@ class Stats extends Component {
   // };
 
   plot = (chart, width, height) => {
+    // var viewData = [];
+    // viewData = viewGraph[0].views;
+
+    // console.log("view Data", viewGraph[0].views);
+
     // create scales!
     const xScale = d3
       .scaleBand()
-      .domain(data.map(d => d.country))
+      .domain(this.state.graphData.map((d, i) => d.timestamp))
       .range([0, width]);
     const yScale = d3
       .scaleLinear()
-      .domain([0, d3.max(data, d => d.value)])
+      .domain([0, d3.max(this.state.graphData, d => d.view)])
       .range([height, 0]);
-    const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
+    //  const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
 
     chart
       .selectAll(".bar")
-      .data(data)
+      .data(this.state.graphData)
       .enter()
       .append("rect")
       .classed("bar", true)
-      .attr("x", d => xScale(d.country))
-      .attr("y", d => yScale(d.value))
-      .attr("height", d => height - yScale(d.value))
-      .attr("width", d => xScale.bandwidth())
-      .style("fill", (d, i) => colorScale(i));
+      .attr("x", d => xScale(d.timestamp))
+      .attr("y", d => yScale(d.view))
+      .attr("height", d => height - yScale(d.view))
+      .attr("width", d => xScale.bandwidth() - 1)
+      .style("fill", "#84B1E1");
+    //.style("fill", (d, i) => colorScale(i));
 
-    chart
-      .selectAll(".bar-label")
-      .data(data)
-      .enter()
-      .append("text")
-      .classed("bar-label", true)
-      .attr("x", d => xScale(d.country) + xScale.bandwidth() / 2)
-      .attr("dx", 0)
-      .attr("y", d => yScale(d.value))
-      .attr("dy", -6)
-      .text(d => d.value);
+    // chart
+    //   .selectAll(".bar-label")
+    //   .data(data)
+    //   .enter()
+    //   .append("text")
+    //   .classed("bar-label", true)
+    //   .attr("x", d => xScale(d.country) + xScale.bandwidth() / 2)
+    //   .attr("dx", 0)
+    //   .attr("y", d => yScale(d.value))
+    //   .attr("dy", -6)
+    //   .text(d => d.value);
 
     const xAxis = d3.axisBottom().scale(xScale);
 
@@ -148,26 +209,26 @@ class Stats extends Component {
       .attr("transform", "translate(0,0)")
       .call(yAxis);
 
-    chart
-      .select(".x.axis")
-      .append("text")
-      .attr("x", width / 2)
-      .attr("y", 60)
-      .attr("fill", "#000")
-      .style("font-size", "20px")
-      .style("text-anchor", "middle")
-      .text("Country");
+    // chart
+    //   .select(".x.axis")
+    //   .append("text")
+    //   .attr("x", width / 2)
+    //   .attr("y", 60)
+    //   .attr("fill", "#000")
+    //   .style("font-size", "20px")
+    //   .style("text-anchor", "middle")
+    //   .text("Country");
 
-    chart
-      .select(".y.axis")
-      .append("text")
-      .attr("x", 0)
-      .attr("y", 0)
-      .attr("transform", `translate(-50, ${height / 2}) rotate(-90)`)
-      .attr("fill", "#000")
-      .style("font-size", "20px")
-      .style("text-anchor", "middle")
-      .text("Government Expenditure in Billion Dollars");
+    // chart
+    //   .select(".y.axis")
+    //   .append("text")
+    //   .attr("x", 0)
+    //   .attr("y", 0)
+    //   .attr("transform", `translate(-50, ${height / 2}) rotate(-90)`)
+    //   .attr("fill", "#000")
+    //   .style("font-size", "20px")
+    //   .style("text-anchor", "middle")
+    //   .text("Government Expenditure in Billion Dollars");
 
     const yGridlines = d3
       .axisLeft()
@@ -212,6 +273,25 @@ class Stats extends Component {
 
     return el.toReact();
   }
+
+  onChangeQuestion = answerId => {
+    console.log("key ", answerId);
+    graphData.map((data, i) => {
+      console.log("key ", data);
+      if (answerId === data.answerId) {
+        // console.log("key ", i);
+        this.setState({
+          viewsCount: graphData[i].views,
+          upvotesCount: graphData[i].upvotes,
+          downvotesCount: graphData[i].downvotes,
+          graphData:
+            viewGraph[0].graphData ||
+            upvotesGraph[0].graphData ||
+            downvotesGraph[0].graphData
+        });
+      }
+    });
+  };
 
   render() {
     const menu = (
@@ -284,39 +364,19 @@ class Stats extends Component {
           <Col span={8} className="statsAnswerList">
             <div>
               <Menu
-                defaultSelectedKeys={["1"]}
+                defaultSelectedKeys={["0"]}
                 defaultOpenKeys={["sub1"]}
                 mode={this.state.mode}
                 theme={this.state.theme}
               >
-                <Menu.Item key="1">All Answers </Menu.Item>
-                <Menu.Item key="2">
-                  <a>Who sang the song "Never Ever" (1997)?</a>
-                </Menu.Item>
-                <Menu.Item key="3">
-                  <a>Who sang the song "Never Ever" (1997)?</a>
-                </Menu.Item>
-                <Menu.Item key="4">
-                  <a>Who sang the song "Never Ever" (1997)?</a>
-                </Menu.Item>
-                <Menu.Item key="5">
-                  <a>Who sang the song "Never Ever" (1997)?</a>
-                </Menu.Item>
-                <Menu.Item key="6">
-                  <a>Who sang the song "Never Ever" (1997)?</a>
-                </Menu.Item>
-                <Menu.Item key="7">
-                  <a>Who sang the song "Never Ever" (1997)?</a>
-                </Menu.Item>
-                <Menu.Item key="8">
-                  <a>Who sang the song "Never Ever" (1997)?</a>
-                </Menu.Item>
-                <Menu.Item key="9">
-                  <a>Who sang the song "Never Ever" (1997)?</a>
-                </Menu.Item>
-                <Menu.Item key="10">
-                  <a>Who sang the song "Never Ever" (1997)?</a>
-                </Menu.Item>
+                {graphData.map((q, i) => (
+                  <Menu.Item
+                    key={i}
+                    onClick={() => this.onChangeQuestion(q.answerId)}
+                  >
+                    <a>{q.question}</a>
+                  </Menu.Item>
+                ))}
               </Menu>
             </div>
           </Col>
@@ -331,7 +391,7 @@ class Stats extends Component {
                 borderTop: "none"
               }}
             >
-              <p className="viewsNum">0</p>
+              <p className="viewsNum">{this.state.viewsCount}</p>
               <p className="viewslabel">VIEWS</p>
             </button>
             <button
@@ -343,7 +403,7 @@ class Stats extends Component {
                 borderTop: "none"
               }}
             >
-              <p className="upvotesNum">0</p>
+              <p className="upvotesNum">{this.state.upvotesCount}</p>
               <p className="upvoteslabel">UPVOTES</p>
             </button>
             <button
@@ -354,7 +414,7 @@ class Stats extends Component {
                 borderTop: "none"
               }}
             >
-              <p className="downvotesNum">0</p>
+              <p className="downvotesNum">{this.state.downvotesCount}</p>
               <p className="downvoteslabel">DOWNVOTES</p>
             </button>
             <Col span={24}>{this.drawChart()}</Col>
