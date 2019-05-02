@@ -104,6 +104,15 @@
 	border-style: hidden;
 }
 
+.font_size_xxs {
+	font-size: 10px;
+}
+
+.font_size_xs {
+	font-size: 13px;
+}
+
+
 .font_size_s {
 	font-size: 15px;
 }
@@ -133,7 +142,7 @@
 }
 
 .text_color_black {
-	color: #28384b;
+	color: #333333;
 }
 
 .text_color_red {
@@ -144,9 +153,17 @@
 	color: #06b45b;
 }
 
+.text_color_quora_faint_text {
+	color: #949494
+}
+
 
 .text_color_blue {
 	color: #428bca
+}
+
+.text_color_quora_blue {
+	color: #2b6dad;
 }
 
 .bg_color_green {
@@ -174,6 +191,10 @@
 	background-color: whitesmoke;
 }
 
+.bg_color_light_gray {
+	background-color: #f2f2f2;
+}
+
 .pointer {
 	cursor: pointer;
 }
@@ -188,3 +209,40 @@
 .react-paginate li {
     display: inline-block;
 }
+
+.AnswerBase {
+    padding: 16px 0;
+    border-top: 1px solid #e2e2e2;
+    position: relative;
+}
+
+.quora_answer_text {
+	font-size: 16px;
+	color: #333333;
+	font-family: 'q_serif',Georgia,Times,"Times New Roman","Hiragino Kaku Gothic Pro","Meiryo",serif
+}
+
+.quora_question_text{
+	font-size: 23px;
+	color: #333333;
+	font-family: 'q_serif',Georgia,Times,"Times New Roman","Hiragino Kaku Gothic Pro","Meiryo",serif
+}
+
+.quora_button_blue {
+	background-color: #3e78ad;
+}
+
+.no_hover:hover {
+	/* example color */
+	color:#FFFFFF;
+}
+/* .ant-btn:focus {
+	color:  #3e78ad;
+	background-color: #FFFFFF;
+	border-color: #333333;
+}
+.ant-btn:hover  {
+	color: #333333;
+	background-color: #FFFFFF;
+	border-color: #333333;
+} */
