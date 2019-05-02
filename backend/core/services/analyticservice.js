@@ -8,7 +8,7 @@ module.exports = {
         for (let i = 0; i < limit; i++) {
             console.log(i,"in")
             ans.push({
-                answerId: "1234",
+                answerId: (parseInt(Math.random() * 100000)).toString(),
                 questionId: "456",
                 answer: answers[i],
                 question: questions[i],
@@ -47,11 +47,11 @@ module.exports = {
             let x = {
                 value: parseInt(Math.random() * 100)
             }
-            if (i % 5 == 0 || i ==1) {
-                x.timestamp = (new Date(startDate).getMonth() + 1) + "/" + new Date(startDate).getDate();
-            } else {
-                x.timestamp = "";
-            }
+            x.timestamp = (new Date(startDate).getMonth() + 1) + "/" + new Date(startDate).getDate();
+            // if (i % 5 == 0 || i ==1) {
+            // } else {
+            //     x.timestamp = "";
+            // }
             obj.graphData.push(x)
             startDate = startDate + (24*60*60*1000)
         }
