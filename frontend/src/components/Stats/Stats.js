@@ -5,12 +5,6 @@ import axios from "axios";
 import "./Stats.css";
 import { Element } from "react-faux-dom";
 import * as d3 from "d3";
-import data from "./Data";
-import graphData from "./graphData";
-import viewGraph from "./viewGraph";
-import upvotesGraph from "./upvotes";
-import downvotesGraph from "./downvotes";
-
 import { Button, Row, Col, Menu, Dropdown } from "antd";
 
 class Stats extends Component {
@@ -21,56 +15,63 @@ class Stats extends Component {
       views: "statsTab-active",
       upvotes: "statsTab",
       downvotes: "statsTab",
-      viewsCount: graphData[0].views,
-      upvotesCount: graphData[0].upvotes,
-      downvotesCount: graphData[0].downvotes,
-      graphData: viewGraph[0].graphData
+      questionArray: [],
+      answerId: "",
+      viewsCount: "",
+      upvotesCount: "",
+      downvotesCount: "",
+      graphData: "",
+      filter: "",
+      toggle: true
     };
   }
 
-  // componentDidMount() {
-  //   axios
-  //     .get("http://10.0.0.188:7836/v1/answers?top=10&sort=views", {
-  //       headers: {
-  //         authorization: token
-  //       }
-  //     })
-  //     .then(res => {
-  //       if (res.status === 200) {
-  //         console.log("view response data", res.data);
+  componentDidMount() {
+    const token =
+      "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJhMTY0MDIyMC02ODAyLTExZTktOGUxYS1iZDE3NmJmNjdkYWEiLCJjcmVhdGVkX2F0IjoxNTU2NzQzMTcwMzIyLCJpYXQiOjE1NTY3NDMxNzAsImV4cCI6MTU1OTMzNTE3MH0.CNknpZADc05g6Un4ogHzO8pmdW5mDB3QnhRLQKHcmm0";
 
-  // this.setState({
-  //   viewsCount: res.data[0].views,
-  //   upvotesCount: res.data[0].upvotes,
-  //   downvotesCount: res.data[0].downvotes,
-  // })
+    axios
+      .get("v1/answers?top=10&sort=views", {
+        headers: {
+          authorization: token
+        }
+      })
+      .then(res => {
+        if (res.status === 200) {
+          console.log("view response data", res.data.answers);
 
-  //axios
-  //     .get("http://10.0.0.188:7836/v1/answers/:answerId/views?day=30", {
-  //       headers: {
-  //         authorization: token
-  //       }
-  //     })
-  //     .then(res => {
-  //       if (res.status === 200) {
-  //         console.log("view response data", res.data);
-  // this.setState({
-  //   graphData: resizeBy.data[0].graphData
-  // })
-  //       }
-  //     })
-  //     .catch(err => {
-  //       console.log("view error: ", err);
-  //     });
+          this.setState({
+            questionArray: res.data.answers,
+            answerId: res.data.answers[0].answerId,
+            viewsCount: res.data.answers[0].views,
+            upvotesCount: res.data.answers[0].upvotes,
+            downvotesCount: res.data.answers[0].downvotes
+          });
 
-  //       }
-
-  //     })
-  //     .catch(err => {
-  //       console.log("view error: ", err);
-  //     });
-
-  // }
+          axios
+            .get("v1/answers/:this.state.answerId/views?day=30", {
+              headers: {
+                authorization: token
+              }
+            })
+            .then(res => {
+              if (res.status === 200) {
+                console.log("graph response data", res.data.data.graphData);
+                this.setState({
+                  graphOriginalData: res.data,
+                  graphData: res.data.data.graphData
+                });
+              }
+            })
+            .catch(err => {
+              console.log("view error: ", err);
+            });
+        }
+      })
+      .catch(err => {
+        console.log("view error: ", err);
+      });
+  }
 
   onChange = e => {
     this.setState({
@@ -81,106 +82,111 @@ class Stats extends Component {
   graph = name => {
     //e.preventDefault();
     // console.log(e.target.name, name);
+    const token =
+      "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJhMTY0MDIyMC02ODAyLTExZTktOGUxYS1iZDE3NmJmNjdkYWEiLCJjcmVhdGVkX2F0IjoxNTU2NzQzMTcwMzIyLCJpYXQiOjE1NTY3NDMxNzAsImV4cCI6MTU1OTMzNTE3MH0.CNknpZADc05g6Un4ogHzO8pmdW5mDB3QnhRLQKHcmm0";
 
     if (name === "views") {
-      this.setState({
-        views: "statsTab-active",
-        upvotes: "statsTab",
-        downvotes: "statsTab",
-        graphData: viewGraph[0].graphData
-      });
-
-      // axios
-      //   .post("http://10.0.0.188:7836/v1/signin")
-      //   .then(res => {
-      //     if (res.status === 200) {
-      //       console.log("views response data", res.data);
-      //     }
-      //   })
-      //   .catch(err => {
-      //     console.log("views error: ", err);
-      //   });
+      axios
+        .get("v1/answers/:this.state.answerId/views?day=30", {
+          headers: {
+            authorization: token
+          }
+        })
+        .then(res => {
+          if (res.status === 200) {
+            console.log("graph views response data", res.data.data.graphData);
+            this.setState({
+              graphData: res.data.data.graphData,
+              views: "statsTab-active",
+              upvotes: "statsTab",
+              downvotes: "statsTab"
+            });
+          }
+        })
+        .catch(err => {
+          console.log("views graph error: ", err);
+        });
     } else if (name === "upvotes") {
-      this.setState({
-        upvotes: "statsTab-active",
-        views: "statsTab",
-        downvotes: "statsTab",
-        graphData: upvotesGraph[0].graphData
-      });
+      axios
+        .get("v1/answers/:this.state.answerId/upvotes?day=30", {
+          headers: {
+            authorization: token
+          }
+        })
+        .then(res => {
+          if (res.status === 200) {
+            console.log("graph upvotes response data", res.data.data.graphData);
+            this.setState({
+              graphData: res.data.data.graphData,
+              upvotes: "statsTab-active",
+              views: "statsTab",
+              downvotes: "statsTab"
+            });
+          }
+        })
+        .catch(err => {
+          console.log("upvotes graph error: ", err);
+        });
     } else if (name === "downvotes") {
-      this.setState({
-        downvotes: "statsTab-active",
-        upvotes: "statsTab",
-        views: "statsTab",
-        graphData: downvotesGraph[0].graphData
-      });
+      axios
+        .get("v1/answers/:this.state.answerId/downvotes?day=30", {
+          headers: {
+            authorization: token
+          }
+        })
+        .then(res => {
+          if (res.status === 200) {
+            console.log(
+              "graph downvotes response data",
+              res.data.data.graphData
+            );
+            this.setState({
+              graphData: res.data.data.graphData,
+              downvotes: "statsTab-active",
+              upvotes: "statsTab",
+              views: "statsTab"
+            });
+          }
+        })
+        .catch(err => {
+          console.log("downvotes graph error: ", err);
+        });
     }
   };
 
-  // loginSubmit = e => {
-  //   e.preventDefault();
-  //   this.props.form.validateFields((err, values) => {
-  //     if (!err) {
-  //       //console.log("Received values of form: ", values);
-  //       const data = {
-  //         email: this.state.loginEmail,
-  //         password: this.state.loginPassword
-  //       };
-  //       console.log("login data ", data);
-
-  //       axios
-  //         .post("http://10.0.0.188:7836/v1/signin", data)
-  //         .then(res => {
-  //           if (res.status === 200) {
-  //             console.log("login response data", res.data);
-  //             message.success(res.data.response[0].message);
-  //             window.localStorage.setItem("userId", res.data.user.userId);
-  //             window.localStorage.setItem("token", res.data.token);
-  //           }
-  //         })
-  //         .catch(err => {
-  //           console.log("login error: ", err);
-
-  //           console.log("login error response: ", err.response);
-  //           message.error(err.response.data.response.message);
-  //         });
-  //     }
-  //   });
-  // };
-
   plot = (chart, width, height) => {
-    // var viewData = [];
-    // viewData = viewGraph[0].views;
+    //  var viewData = [];
+    //  viewData = viewGraph[0].views;
 
     // console.log("view Data", viewGraph[0].views);
 
-    // create scales!
+    //create scales!
     const xScale = d3
       .scaleBand()
-      .domain(this.state.graphData.map((d, i) => d.timestamp))
+      .domain((this.state.graphData || []).map((d, i) => d.timestamp))
       .range([0, width]);
     const yScale = d3
       .scaleLinear()
-      .domain([0, d3.max(this.state.graphData, d => d.view)])
+      .domain([0, d3.max(this.state.graphData, d => d.value)])
       .range([height, 0]);
     //  const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
 
     chart
       .selectAll(".bar")
-      .data(this.state.graphData)
+      .data(this.state.graphData || [])
       .enter()
       .append("rect")
       .classed("bar", true)
       .attr("x", d => xScale(d.timestamp))
-      .attr("y", d => yScale(d.view))
-      .attr("height", d => height - yScale(d.view))
+      .attr("y", d => yScale(d.value))
+      .attr("height", d => height - yScale(d.value))
       .attr("width", d => xScale.bandwidth() - 1)
       .style("fill", "#84B1E1");
     //.style("fill", (d, i) => colorScale(i));
 
     // chart
     //   .selectAll(".bar-label")
-    //   .data(data)
+    //   .data(this.state.graphData || [])
     //   .enter()
     //   .append("text")
     //   .classed("bar-label", true)
@@ -244,8 +250,14 @@ class Stats extends Component {
   };
 
   drawChart() {
-    const width = 800;
-    const height = 500;
+    let width, height;
+    if (this.state.toggle) {
+      width = 800;
+      height = 500;
+    } else {
+      width = 1200;
+      height = 500;
+    }
 
     const el = new Element("div");
     const svg = d3
@@ -269,77 +281,144 @@ class Stats extends Component {
 
     const chartWidth = width - margin.left - margin.right;
     const chartHeight = height - margin.top - margin.bottom;
+
     this.plot(chart, chartWidth, chartHeight);
 
     return el.toReact();
   }
 
   onChangeQuestion = answerId => {
-    console.log("key ", answerId);
-    graphData.map((data, i) => {
-      console.log("key ", data);
+    // console.log("key ", answerId);
+    this.state.questionArray.map((data, i) => {
+      //console.log("key ", data);
       if (answerId === data.answerId) {
-        // console.log("key ", i);
+        //   console.log("key ", i);
         this.setState({
-          viewsCount: graphData[i].views,
-          upvotesCount: graphData[i].upvotes,
-          downvotesCount: graphData[i].downvotes,
-          graphData:
-            viewGraph[0].graphData ||
-            upvotesGraph[0].graphData ||
-            downvotesGraph[0].graphData
+          answerId: data.answerId,
+          viewsCount: data.views,
+          upvotesCount: data.upvotes,
+          downvotesCount: data.downvotes
         });
+
+        const token =
+          "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJhMTY0MDIyMC02ODAyLTExZTktOGUxYS1iZDE3NmJmNjdkYWEiLCJjcmVhdGVkX2F0IjoxNTU2NzQzMTcwMzIyLCJpYXQiOjE1NTY3NDMxNzAsImV4cCI6MTU1OTMzNTE3MH0.CNknpZADc05g6Un4ogHzO8pmdW5mDB3QnhRLQKHcmm0";
+
+        axios
+          .get("/v1/answers/:this.state.answerId/views?day=30", {
+            headers: {
+              authorization: token
+            }
+          })
+          .then(res => {
+            if (res.status === 200) {
+              console.log("graph response data", res.data.data.graphData);
+              this.setState({
+                graphData: res.data.data.graphData
+              });
+            }
+          })
+          .catch(err => {
+            console.log("view error: ", err);
+          });
       }
     });
+  };
+
+  dropDown = value => {
+    const token =
+      "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJhMTY0MDIyMC02ODAyLTExZTktOGUxYS1iZDE3NmJmNjdkYWEiLCJjcmVhdGVkX2F0IjoxNTU2NzQzMTcwMzIyLCJpYXQiOjE1NTY3NDMxNzAsImV4cCI6MTU1OTMzNTE3MH0.CNknpZADc05g6Un4ogHzO8pmdW5mDB3QnhRLQKHcmm0";
+
+    console.log("value", value);
+    if (value === "views") {
+      this.setState({
+        filter: "views",
+        toggle: true
+      });
+    } else if (value === "upvotes") {
+      this.setState({
+        filter: "upvotes",
+        toggle: true
+      });
+    } else if (value === "downvotes") {
+      this.setState({
+        filter: "downvotes",
+        toggle: true
+      });
+    } else if (value === "bookmark") {
+      this.setState({
+        filter: "views",
+        toggle: false
+      });
+    }
+    if (value === "profile") {
+      this.setState({
+        filter: "profile",
+        toggle: false
+      });
+    }
+
+    axios
+      .get("v1/answers?top=10&sort=this.state.filter", {
+        headers: {
+          authorization: token
+        }
+      })
+      .then(res => {
+        if (res.status === 200) {
+          console.log("dropdown view response data", res.data.answers);
+
+          this.setState({
+            questionArray: res.data.answers,
+            answerId: res.data.answers[0].answerId,
+            viewsCount: res.data.answers[0].views,
+            upvotesCount: res.data.answers[0].upvotes,
+            downvotesCount: res.data.answers[0].downvotes
+          });
+
+          axios
+            .get("v1/answers/:this.state.answerId/views?day=30", {
+              headers: {
+                authorization: token
+              }
+            })
+            .then(res => {
+              if (res.status === 200) {
+                console.log(
+                  "dropdown graph response data",
+                  res.data.data.graphData
+                );
+                this.setState({
+                  graphData: res.data.data.graphData
+                });
+              }
+            })
+            .catch(err => {
+              console.log("view error: ", err);
+            });
+        }
+      })
+      .catch(err => {
+        console.log("view error: ", err);
+      });
   };
 
   render() {
     const menu = (
       <Menu>
-        <Menu.Item>
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            href="http://www.alipay.com/"
-          >
-            Views
-          </a>
+        <Menu.Item onClick={() => this.dropDown("views")}>
+          <a>Views</a>
         </Menu.Item>
-        <Menu.Item>
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            href="http://www.taobao.com/"
-          >
-            Upvotes
-          </a>
+        <Menu.Item onClick={() => this.dropDown("upvotes")}>
+          <a>Upvotes</a>
         </Menu.Item>
-        <Menu.Item>
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            href="http://www.tmall.com/"
-          >
-            Downvotes
-          </a>
+        <Menu.Item onClick={() => this.dropDown("downvotes")}>
+          <a>Downvotes</a>
         </Menu.Item>
-        <Menu.Item>
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            href="http://www.tmall.com/"
-          >
-            Bookmark
-          </a>
+        <Menu.Item onClick={() => this.dropDown("bookmark")}>
+          <a>Bookmark</a>
         </Menu.Item>
-        <Menu.Item>
-          <a
-            target="_blank"
-            rel="noopener noreferrer"
-            href="http://www.tmall.com/"
-          >
-            Profile views
-          </a>
+        <Menu.Item onClick={() => this.dropDown("profile")}>
+          <a>Profile views</a>
         </Menu.Item>
       </Menu>
     );
@@ -356,70 +435,71 @@ class Stats extends Component {
           <Col span={4} />
           <Col span={4}>
             <Dropdown overlay={menu} placement="bottomCenter">
-              <Button>Answer</Button>
+              <Button style={{ float: "right" }}>Answer</Button>
             </Dropdown>
           </Col>
         </Row>
-        <Row>
-          <Col span={8} className="statsAnswerList">
-            <div>
-              <Menu
-                defaultSelectedKeys={["0"]}
-                defaultOpenKeys={["sub1"]}
-                mode={this.state.mode}
-                theme={this.state.theme}
-              >
-                {graphData.map((q, i) => (
+        {this.state.toggle && (
+          <Row>
+            <Col span={8} className="statsAnswerList">
+              <Menu defaultSelectedKeys={["0"]} defaultOpenKeys={["sub1"]}>
+                {(this.state.questionArray || []).map((q, i) => (
                   <Menu.Item
                     key={i}
                     onClick={() => this.onChangeQuestion(q.answerId)}
+                    style={{ whiteSpace: "unset" }}
                   >
                     <a>{q.question}</a>
                   </Menu.Item>
                 ))}
               </Menu>
-            </div>
-          </Col>
-          <Col span={16} className="statsgraph">
-            <button
-              name="views"
-              className={this.state.views}
-              onClick={() => this.graph("views")}
-              style={{
-                borderLeft: "none",
-                borderRight: "none",
-                borderTop: "none"
-              }}
-            >
-              <p className="viewsNum">{this.state.viewsCount}</p>
-              <p className="viewslabel">VIEWS</p>
-            </button>
-            <button
-              name="upvotes"
-              className={this.state.upvotes}
-              onClick={() => this.graph("upvotes")}
-              style={{
-                borderRight: "none",
-                borderTop: "none"
-              }}
-            >
-              <p className="upvotesNum">{this.state.upvotesCount}</p>
-              <p className="upvoteslabel">UPVOTES</p>
-            </button>
-            <button
-              name="downvotes"
-              className={this.state.downvotes}
-              onClick={() => this.graph("downvotes")}
-              style={{
-                borderTop: "none"
-              }}
-            >
-              <p className="downvotesNum">{this.state.downvotesCount}</p>
-              <p className="downvoteslabel">DOWNVOTES</p>
-            </button>
+            </Col>
+            <Col span={16} className="statsgraph">
+              <button
+                name="views"
+                className={this.state.views}
+                onClick={() => this.graph("views")}
+                style={{
+                  borderLeft: "none",
+                  borderRight: "none",
+                  borderTop: "none"
+                }}
+              >
+                <p className="viewsNum">{this.state.viewsCount}</p>
+                <p className="viewslabel">VIEWS</p>
+              </button>
+              <button
+                name="upvotes"
+                className={this.state.upvotes}
+                onClick={() => this.graph("upvotes")}
+                style={{
+                  borderRight: "none",
+                  borderTop: "none"
+                }}
+              >
+                <p className="upvotesNum">{this.state.upvotesCount}</p>
+                <p className="upvoteslabel">UPVOTES</p>
+              </button>
+              <button
+                name="downvotes"
+                className={this.state.downvotes}
+                onClick={() => this.graph("downvotes")}
+                style={{
+                  borderTop: "none"
+                }}
+              >
+                <p className="downvotesNum">{this.state.downvotesCount}</p>
+                <p className="downvoteslabel">DOWNVOTES</p>
+              </button>
+              <Col span={24}>{this.drawChart()}</Col>
+            </Col>
+          </Row>
+        )}
+        {!this.state.toggle && (
+          <Row>
             <Col span={24}>{this.drawChart()}</Col>
-          </Col>
-        </Row>
+          </Row>
+        )}
       </div>
     );
   }

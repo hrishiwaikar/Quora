@@ -18,14 +18,14 @@
 }
 
 .statsAnswerList {
-  /* overflow-y: scroll; */
+  overflow-y: scroll;
   position: relative;
   box-sizing: border-box;
   background: #fafafa;
   border-right: 1px solid #e2e2e2;
   border-top: 1px solid #e2e2e2;
   border-bottom: 1px solid #e2e2e2;
-  height: 600px;
+  height: 550px;
   color: #949494;
 }
 
