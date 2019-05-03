@@ -8,6 +8,7 @@ import Home from "./components/home/home";
 import Authentication from "./components/Authentication/Authentication";
 import PrivateRoute from "./components/common/PrivateRoute";
 import Stats from "./components/Stats/Stats";
+import Dashboard from "./components/Dashboard/Dashboard";
 
 class App extends Component {
   render = () => {
@@ -18,6 +19,7 @@ class App extends Component {
             <Route path="/" component={Home} exact />
             <Route path="/login" component={Authentication} />
             <Route path="/stats" component={Stats} />
+            <Route path="/dashboard" component={Dashboard} />
           </Switch>
         </Router>
       </div>
