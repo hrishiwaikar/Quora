@@ -43,8 +43,8 @@ var locationSchema = new mongoose.Schema({
 
 });
 var topicSchema = new mongoose.Schema({
-    topic: 'string',
-    experience: 'string'
+    topicId : 'string',
+    topicText: 'string',
 });
 var languageSchema = new mongoose.Schema({
     language: 'string',
