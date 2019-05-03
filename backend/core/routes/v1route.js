@@ -7,7 +7,11 @@ let conversationservice = require('./../services/conversationservice').router;
 let answerservice = require('../services/answerservice').router;
 let topicservice = require('../services/topicservice').router;
 let analyticService = require('../services/analyticservice');
+let uploadService = require('../services/uploadService');
 
+// const upload = require('../services/imageservice');
+
+// const singleUpload = upload.single('profileimage');
 module.exports = (express) => {
     let versionRouter = express.Router();
 
@@ -18,17 +22,34 @@ module.exports = (express) => {
 
     /* User Routes */
     //versionRouter.post('/users', userservice.create);
-    versionRouter.get('/users/:userId', userservice.read);
-    versionRouter.get('/users/:userId/image', userservice.readProfileImage);
-    versionRouter.put('/users/:userId', userservice.update);
-    versionRouter.delete('/users/:userId', userservice.delete);
+    versionRouter.get('/users/:userId', jwt.verifyRequest, userservice.read);
+    // versionRouter.put("/users/:userId/image", jwt.verifyRequest, function (req, res) {
+    //     singleUpload(req, res, function (err) {
+    //         if (err) {
+    //             return res.status(422).send({
+    //                 errors: [{
+    //                     title: 'Image Upload Error',
+    //                     detail: err.message
+    //                 }]
+    //             });
+    //         }
+
+    //         return res.json({
+    //             'imageUrl': req.file.location
+    //         });
+    //     });
+    // });
+    versionRouter.put("/users/:userId/image", jwt.verifyRequest, uploadService("profileUpload"), userservice.uploadImage);
+    //versionRouter.get("/users/:userId/image", uploadService('profileRead'));
+    versionRouter.put('/users/:userId', jwt.verifyRequest, userservice.update);
+    versionRouter.delete('/users/:userId', jwt.verifyRequest, userservice.delete);
     /* User Routes */
 
     /* Follow Routes */
     versionRouter.post('/follow/:userId', jwt.verifyRequest, followservice.markFollow); // only self can
     versionRouter.post('/unfollow/:userId', jwt.verifyRequest, followservice.markUnfollow); // only self can
-    versionRouter.get('/users/:userId/followers', followservice.getFollowers);
-    versionRouter.get('/users/:userId/following', followservice.getFollowing);
+    versionRouter.get('/users/:userId/followers', jwt.verifyRequest, followservice.getFollowers);
+    versionRouter.get('/users/:userId/following', jwt.verifyRequest, followservice.getFollowing);
     /* Follow Routes */
 
     /* Question Routes */

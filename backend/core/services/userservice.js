@@ -2,6 +2,7 @@ const rs = require("./../commons/responses");
 const utils = require("./../commons/utils");
 const _ = require("lodash");
 let pv = require("./../commons/passwordVerification");
+let s3 = require('./../commons/s3');
 let service = {
     create: (...args) => {
         return new Promise(function (resolve, reject) {
@@ -118,7 +119,13 @@ let service = {
                     "_id": 0
                 }).then((dbObj) => {
                     if (!!dbObj) {
-                        resolve(dbObj);
+                        let objKeys = Object.keys(updateObj);
+                        for (let i = 0; i < objKeys.length; i++) {
+                            if (!!dbObj[objKeys[i]]) {
+                                updateObj[objKeys[i]] = dbObj[objKeys[i]];
+                            }
+                        }
+                        resolve(updateObj);
                     } else {
                         reject(rs.notfound);
                     }
@@ -127,6 +134,29 @@ let service = {
                     reject(errors);
                     return;
                 })
+            } catch (e) {
+                console.error(e)
+                reject(e);
+            }
+        });
+    },
+    uploadImage: (...args) => {
+        return new Promise(function (resolve, reject) {
+            try {
+                let _session = args[0] || {};
+                let userId = args[1] || null;
+                let file = args[2] || {};
+                let userModel = require('./../models/usermodel');
+                let body = {};
+                body.userId = userId || null;
+                s3.up(process.cwd() + `/uploads/profiles/File_${userId}`, `profiles/${userId}`, {
+                    "ACL": "public-read"
+                }).then((d) => {
+                    console.log(d)
+                }, (e) => {
+                    console.log("err", e)
+                });
+                resolve({})
             } catch (e) {
                 console.error(e)
                 reject(e);
@@ -198,7 +228,8 @@ let router = {
                 response: [{
                     message: "User Updated Successfully",
                     code: "UPDATED"
-                }]
+                }],
+                user: data || {}
             })
         };
         service.update(req.user, req.params.userId, req.body).then(successCB, next);
@@ -214,6 +245,18 @@ let router = {
             })
         };
         service.delete(req.user, req.params.userId, req.body).then(successCB, next);
+    },
+    uploadImage: (req, res, next) => {
+        let successCB = (data) => {
+            res.json({
+                result: "success",
+                response: [{
+                    message: "User Updated Successfully",
+                    code: "UPDATED"
+                }]
+            })
+        };
+        service.uploadImage(req.user, req.params.userId, req.file).then(successCB, next);
     }
 };
 module.exports.service = service;
