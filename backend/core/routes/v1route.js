@@ -53,11 +53,14 @@ module.exports = (express) => {
     /* Follow Routes */
 
     /* Question Routes */
+
+    versionRouter.get('/feed', jwt.verifyRequest, questionservice.create); // one question one answer - most recent & most upvoted
+
     versionRouter.post('/questions', jwt.verifyRequest, questionservice.create);
     versionRouter.get('/questions/:questionId', jwt.verifyRequest, questionservice.read);
-    versionRouter.put('/questions/:questionId', jwt.verifyRequest, questionservice.update);
-    versionRouter.delete('/questions/:questionId', jwt.verifyRequest, questionservice.delete);
-    versionRouter.post('/questions/follow', jwt.verifyRequest, questionservice.questionFollow);
+    //versionRouter.put('/questions/:questionId', jwt.verifyRequest, questionservice.update);
+    //versionRouter.delete('/questions/:questionId', jwt.verifyRequest, questionservice.delete);
+    versionRouter.post('/questions/:questionId/follow', jwt.verifyRequest, questionservice.questionFollow); // NOtify Hrishi
     /* Question Routes */
 
     /* conversations Routes */
@@ -69,11 +72,11 @@ module.exports = (express) => {
 
     /* Answer Routes */
     versionRouter.post('/answers', jwt.verifyRequest, answerservice.create);
-    versionRouter.post('/answers/vote', jwt.verifyRequest, answerservice.upordownvote);
-    versionRouter.post('/answers/bookmark', jwt.verifyRequest, answerservice.answerBookmark);
-    versionRouter.get('/answers/:questionId', jwt.verifyRequest, answerservice.read);
-    versionRouter.put('/answers/:questionId', jwt.verifyRequest, answerservice.update);
-    versionRouter.delete('/answers/:questionId', jwt.verifyRequest, answerservice.delete);
+    versionRouter.post('/answers/:answerId/vote', jwt.verifyRequest, answerservice.upordownvote); // notify Hrishi
+    versionRouter.post('/answers/:answerId/bookmark', jwt.verifyRequest, answerservice.answerBookmark); // notify Hrishi
+    //versionRouter.get('/answers/:questionId', jwt.verifyRequest, answerservice.read);
+    //versionRouter.put('/answers/:questionId', jwt.verifyRequest, answerservice.update);
+    //versionRouter.delete('/answers/:questionId', jwt.verifyRequest, answerservice.delete);
 
     versionRouter.get('/answers', jwt.verifyRequest, analyticService.getAnswers);
     versionRouter.get('/answers/:answerId/:type', jwt.verifyRequest, analyticService.getAnswerStats);
