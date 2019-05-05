@@ -31,8 +31,8 @@ let service = {
                     //         { $regex: `/${query.q}/`,}
                     // };
                     search = {
-                        $text: {
-                            $search: query.q
+                        "topicText": {
+                            $regex: ".*" + query.q + ".*"
                         }
                     }
                 }
