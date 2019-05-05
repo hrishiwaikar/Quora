@@ -40,6 +40,7 @@ let service = {
                             if (!!dbObj && !!dbObj.length) {
                                 body.displayId = body.displayId + "-" + dbObj.length;
                             }
+                            body.displayId = body.displayId.split(" ").join("-");
                             return userModel.create(body)
                         })
                         .then(resolve, reject)
