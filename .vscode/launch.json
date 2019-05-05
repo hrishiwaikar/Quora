@@ -8,7 +8,13 @@
       "type": "node",
       "request": "launch",
       "name": "Launch Program",
-      "program": "${workspaceFolder}/Quora\\frontend\\src\\components\\Stats\\Stats.js"
+      "program": "${workspaceFolder}/app.js"
+    },
+    {
+      "type": "node",
+      "request": "launch",
+      "name": "Launch Program",
+      "program": "${workspaceFolder}/Quora\\frontend\\src\\components\\Dashboard\\Dashboard.js"
     }
   ]
 }
