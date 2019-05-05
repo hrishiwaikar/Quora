@@ -288,7 +288,8 @@ let router = {
                 response: [{
                     message: "Message Sent Successfully",
                     code: "MESSAGE"
-                }]
+                }],
+                conversation: data || {}
             })
         };
         service.sendMessage(req.user, req.body).then(successCB, next);

@@ -1,3 +1,4 @@
-core/configs/config.js
+**/configs/config.js
 node_modules/*
 logs/*.log
+uploads/profiles/*
