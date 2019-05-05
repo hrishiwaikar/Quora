@@ -4,18 +4,18 @@ const _ = require("lodash");
 let pv = require("./../commons/passwordVerification");
 let s3 = require('./../commons/s3');
 
-let notificationService = require('./notificationservice').service;
-notificationService.create(_session,{
-    userId : "", // the one who is following
-    notification : "<NAME> has answered a question you are following.",
-    question : {
-        question : "",
-        questionId : "",
-        userId : "", // the one who has created the question
-        firstName : "",// question creators firstName
-        lastName : ""// question creators lastName
-    }
-})
+// let notificationService = require('./notificationservice').service;
+// notificationService.create(_session,{
+//     userId : "", // the one who is following
+//     notification : "<NAME> has answered a question you are following.",
+//     question : {
+//         question : "",
+//         questionId : "",
+//         userId : "", // the one who has created the question
+//         firstName : "",// question creators firstName
+//         lastName : ""// question creators lastName
+//     }
+// })
 
 let service = {
     create: (...args) => {

@@ -119,7 +119,7 @@ let service = {
                                 message: 1,
                                 createdAt: 1
                             }).sort({
-                                updatedAt: -1
+                                updatedAt: 1
                             }).limit(limit)
                         } else {
                             return Promise.reject(rs.notfound);
