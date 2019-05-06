@@ -95,19 +95,18 @@ let service = {
                 let _session = args[0] || {};
                 let userId = args[1] || null;
                 let userservice = require('./userservice').service;
-                let myFollowers = [];
+                let myFollowers = {};
                 userservice.read(_session, userId)
                     .then((userObj) => {
-
                         return followModel.find({
                             following: userId
                         }).select({userId:1,followingBack:1})
                     })
                     .then((followers) => {
-                        myFollowers =followers;
                         if (!!followers || !!followers.length) {
                             let f = [];
                             for (let i = 0; i < followers.length; i++) {
+                                myFollowers[followers[i].userId] = followers[i].followingBack || false;
                                 f.push(followers[i].userId);
                             }
                             let userModel = require('../models/usermodel');
@@ -127,22 +126,10 @@ let service = {
                             return resolve([])
                         }
                     }).then((result) => {
-                        let obj = {};
                         for (let i = 0; i < result.length; i++) {
-                            obj[result[i].userId] =result[i];
+                            result[i].followingBack = myFollowers[result[i].userId];
                         }
-                        for (let i = 0; i < myFollowers.length; i++) {
-                            console.log(myFollowers[i],obj[myFollowers[i].userId])
-                            let keys = Object.keys(obj[myFollowers[i].userId]);
-                            for (let j = 0; j < keys.length; j++) {
-                                const element = keys[j];
-                                console.log(myFollowers[i][element])
-                                console.log(obj[myFollowers[i].userId][element])
-                                myFollowers[i][element] = obj[myFollowers[i].userId][element];
-                            }
-                            console.log(myFollowers[i])
-                        }
-                        resolve(myFollowers);
+                        resolve(result);
                     })
                     .then(resolve, reject)
                     .catch(reject)
