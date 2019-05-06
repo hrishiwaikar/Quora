@@ -100,7 +100,10 @@ let service = {
                     .then((userObj) => {
                         return followModel.find({
                             following: userId
-                        }).select({userId:1,followingBack:1})
+                        }).select({
+                            userId: 1,
+                            followingBack: 1
+                        })
                     })
                     .then((followers) => {
                         if (!!followers || !!followers.length) {
@@ -126,6 +129,7 @@ let service = {
                             return resolve([])
                         }
                     }).then((result) => {
+                        result = JSON.parse(JSON.stringify(result));
                         for (let i = 0; i < result.length; i++) {
                             result[i].followingBack = myFollowers[result[i].userId];
                         }
@@ -151,7 +155,10 @@ let service = {
 
                         return followModel.find({
                             userId: userId
-                        }).select({following:1,followingBack:1})
+                        }).select({
+                            following: 1,
+                            followingBack: 1
+                        })
                     })
                     .then((followings) => {
                         myFollowing = followings;
@@ -179,7 +186,7 @@ let service = {
                     }).then((result) => {
                         let obj = {};
                         for (let i = 0; i < result.length; i++) {
-                            obj[result[i].userId] =result[i];
+                            obj[result[i].userId] = result[i];
                         }
                         for (let i = 0; i < myFollowing.length; i++) {
                             let keys = Object.keys(obj[myFollowing[i].following]);
