@@ -60,13 +60,18 @@ module.exports = (express) => {
         /* Question Routes */
 
         /* UserFeed */
-        versionRouter.get('/userfeeds/:page', jwt.verifyRequest, questionservice.userFeedList);
-        /* UserFeed */
+     versionRouter.get('/userfeeds/:page',jwt.verifyRequest, questionservice.userFeedList);
+     /* UserFeed */
+     
+    /* User Profile Related Question, content routes*/
+    versionRouter.get('/user/:userId/questions',jwt.verifyRequest, questionservice.userQuestionList);
+    versionRouter.get('/user/:userId/answers',jwt.verifyRequest, questionservice.userAnswerList)
+    /* User Profile Related Question, content routes*/
 
-        /* User Profile Related Question, content routes*/
-        versionRouter.get('/user/:userId/questions', jwt.verifyRequest, questionservice.userQuestionList);
-        versionRouter.get('/user/:userId/answers', jwt.verifyRequest, questionservice.userAnswerList)
-        /* User Profile Related Question, content routes*/
+    /* User Content */
+    versionRouter.get('/user/:userId/content',jwt.verifyRequest, questionservice.userContentGet);
+    /* User Content */
+    
         versionRouter.post('/questions', jwt.verifyRequest, questionservice.create);
         versionRouter.get('/questions/:questionId', jwt.verifyRequest, questionservice.read);
         //versionRouter.put('/questions/:questionId', jwt.verifyRequest, questionservice.update);

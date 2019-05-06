@@ -216,7 +216,7 @@ let service = {
                 let pagination_start_index = pagination_end_index - page_limit
                 /* pagination logic */
 
-                questionModel.find({}).skip(pagination_start_index).limit(page_limit)
+                questionModel.find({}).sort('-createdAt').skip(pagination_start_index).limit(page_limit)
                 .then(async (questionObjs) => {
                     for(let index=0;index<questionObjs.length;index++){
                         let answerObj = await answersPerQuestion(_session,questionObjs[index].questionId,true)
@@ -252,7 +252,7 @@ let service = {
                 let output = []
                 let _session = args[0] || {};
                 let page_number = args[1] || 1;
-                questionModel.find({userId:_session.userId}).select({_id:0,"__v":0,topicsId:0,})
+                questionModel.find({userId:_session.userId}).sort('-createdAt').select({_id:0,"__v":0,topicsId:0,})
                 .then(async (questionObjs) => {
                     output["noOfQuestions"] = questionObjs.length;
                     for(let index=0;index<questionObjs.length;index++){
@@ -290,7 +290,7 @@ let service = {
                 let output = []
                 let _session = args[0] || {};
                 let page_number = args[1] || 1;
-                answerModel.find({userId:_session.userId})
+                answerModel.find({userId:_session.userId}).sort('-createdAt')
                 .then(async (answerObjs) => {
                     for(let index=0;index<answerObjs.length;index++){
                         let temp = await answerCommonAttributes(_session,answerObjs[index])
@@ -300,6 +300,99 @@ let service = {
                             temp["questionText"] = questionObj.questionText
                         }).catch(reject);
                         output.push(temp)
+                    }
+                    return resolve(output)
+                }).catch(reject);
+            }
+            catch (e) {
+                console.error(e)
+                return reject(e);
+            }
+        });
+    },
+    userContentGet : (...args) => {
+        return new Promise(async function (resolve, reject) {
+            try {
+                let output = []
+                let _session = args[0] || {};
+                let filters = args[1] || {};
+                
+                /* based on filters */
+                let questionIds = [];
+                let dbQuery = {}
+                let sortBy = ""
+                /* based on filters */
+
+                // all the filters
+                let content_types = filters["content_types"]
+                let year = filters["year"]
+                let order_direction = filters["order_direction"]
+                
+                /* all types filter logic */
+                let questionsAsked = []
+                let questionsFollowed = []
+                let questionsAnswered = []
+                if(content_types == "questions_asked" || content_types == "all_types"){
+                    await questionModel.find({userId:_session.userId}).select({questionId:1,_id:0})
+                    .then((questionIds) => {
+                        for(let index=0;index<questionIds.length;index++){
+                            questionsAsked.push(questionIds[index].questionId)
+                        }
+                    }).catch(reject);
+                }
+                if(content_types == "questions_followed" || content_types == "all_types"){
+                    await questionFollowModel.find({userId:_session.userId}).select({questionId:1,_id:0})
+                    .then((questionIds) => {
+                        for(let index=0;index<questionIds.length;index++){
+                            questionsFollowed.push(questionIds[index].questionId)
+                        }
+                    }).catch(reject);
+                }
+                if(content_types == "answers" || content_types == "all_types"){
+                    await answerModel.find({userId:_session.userId}).select({questionId:1,_id:0})
+                    .then((questionIds) => {
+                        for(let index=0;index<questionIds.length;index++){
+                            questionsAnswered.push(questionIds[index].questionId)
+                        }
+                    }).catch(reject);
+                }
+                /* all types filter logic */
+
+                questionIds = questionsAsked.concat(questionsFollowed).concat(questionsAnswered)
+                questionIds = Array.from(new Set(questionIds));
+                // console.log("List of questionIds\n",questionIds)
+                dbQuery["questionId"] = {"$in":questionIds}
+                
+                /* year filter logic*/
+                if (year != "all_time"){
+                    dbQuery["createdAt"] = {"$gte" : new Date(parseInt(year),0,1),"$lt": new Date(parseInt(year)+1,0,1)}
+                }   
+                // console.log("---dbQuery-----\n",dbQuery)
+                /* year filter logic*/
+
+                /* order direction logic*/
+                if(order_direction == "newest_first"){
+                    sortBy = "-createdAt"
+                }
+                else{
+                    sortBy = "createdAt"
+                }
+                // console.log("---sortBy-----\n",sortBy)
+                /* order direction logic*/
+
+                questionModel.find(dbQuery).sort(sortBy).select({questionId:1,questionText:1,createdAt:1,_id:0})
+                .then((questionObjs) => {
+                    console.log(questionsAnswered)
+                    for (let index=0;index<questionObjs.length;index++){
+                        console.log(questionObjs[index].questionId)
+                        if (questionsAnswered.includes(questionObjs[index].questionId)){
+                            let temp = Object.assign({answered:true},questionObjs[index]._doc)
+                            output.push(temp)
+                        }
+                        else{
+                            let temp = Object.assign({answered:false},questionObjs[index]._doc)
+                            output.push(temp)
+                        }
                     }
                     return resolve(output)
                 }).catch(reject);
@@ -422,6 +515,24 @@ let router = {
             })
         };
         service.userAnswerList(req.user,req.body).then(successCB, next);
+    },
+    userContentGet : (req, res, next) => {
+        let successCB = (data) => {
+            res.json({
+                result: "success",
+                response: [{
+                    message: "User content questions - filter based",
+                    code: "READ"
+                }],
+                data: data
+            })
+        };
+        let filters = {}
+        filters["content_types"] = req.param('content_types') ||  "all_types";
+        filters["year"] = req.param('year') ||  "all_time";
+        filters["order_direction"] = req.param('order_direction') ||  "newest_first";
+        console.log(filters)
+        service.userContentGet(req.user,filters).then(successCB, next);
     },
 };
 module.exports.service = service;
