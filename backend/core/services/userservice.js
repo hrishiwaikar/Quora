@@ -3,6 +3,7 @@ const utils = require("./../commons/utils");
 const _ = require("lodash");
 let pv = require("./../commons/passwordVerification");
 let s3 = require('./../commons/s3');
+const redis = require("./../commons/redis");
 let service = {
     create: (...args) => {
         return new Promise(function (resolve, reject) {
@@ -66,24 +67,33 @@ let service = {
                     "__v": 0,
                     "_id": 0
                 };
-                if (query.filter && !!query.filter.length) {
-                    select = {};
-                    query.filter = (query.filter || "").split(",");
-                    for (let index = 0; index < query.filter.length; index++) {
-                        select[query.filter[index]] = 1
-                    }
-                }
-                userModel.findOne(body).select(select).then((dbObj) => {
+                // if (query.filter && !!query.filter.length) {
+                //     select = {};
+                //     query.filter = (query.filter || "").split(",");
+                //     for (let index = 0; index < query.filter.length; index++) {
+                //         select[query.filter[index]] = 1
+                //     }
+                // }
+                let foundUser = (dbObj) => {
                     if (!!dbObj) {
+                        redis.hset("USERS", userId, dbObj).then(() => {}).catch(() => {});
                         resolve(dbObj);
                     } else {
                         reject(rs.notfound);
                     }
                     return;
-                }).catch((errors) => {
-                    reject(errors);
-                    return;
-                })
+                }
+                redis.hget("USERS", userId)
+                    .then(foundUser)
+                    .catch(e => {
+                        userModel.findOne(body).select(select)
+                            .then(foundUser)
+                            .catch((errors) => {
+                                reject(errors);
+                                return;
+                            })
+                    });
+
             } catch (e) {
                 console.error(e)
                 reject(e);
@@ -111,6 +121,7 @@ let service = {
                 let userModel = require('./../models/usermodel');
                 let body = {};
                 body.userId = userId || null;
+                delete(updateObj || {}).password
                 userModel.findOneAndUpdate(body, updateObj, {
                     new: true,
                     runValidators: true
@@ -126,6 +137,7 @@ let service = {
                                 updateObj[objKeys[i]] = dbObj[objKeys[i]];
                             }
                         }
+                        redis.hdel("USERS", userId).then(() => {}).catch(() => {})
                         resolve(updateObj);
                     } else {
                         reject(rs.notfound);
@@ -174,6 +186,7 @@ let service = {
                 body.userId = userId || null;
                 userModel.remove(body).then((dbObj) => {
                     if (!!dbObj.deletedCount) {
+                        redis.hdel("USERS", userId).then(() => {}).catch(() => {})
                         resolve({});
                     } else {
                         reject(rs.notfound);
