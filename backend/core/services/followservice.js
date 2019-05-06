@@ -2,6 +2,7 @@ const rs = require("../commons/responses");
 const utils = require("../commons/utils");
 const _ = require("lodash");
 let pv = require("../commons/passwordVerification");
+let followModel = require('../models/followmodel');
 let service = {
     markFollow: (...args) => {
         return new Promise(function (resolve, reject) {
@@ -15,7 +16,7 @@ let service = {
                     return;
                 }
                 let userservice = require('./userservice').service;
-                let followModel = require('../models/followmodel');
+                
                 userservice.read(_session, userId)
                     .then((dbObj) => {
                         return userservice.read(_session, toFollow)
@@ -96,7 +97,7 @@ let service = {
                 let userservice = require('./userservice').service;
                 userservice.read(_session, userId)
                     .then((userObj) => {
-                        let followModel = require('../models/followmodel');
+                        
                         return followModel.find({
                             following: userId
                         })
@@ -140,7 +141,7 @@ let service = {
                 let userservice = require('./userservice').service;
                 userservice.read(_session, userId)
                     .then((userObj) => {
-                        let followModel = require('../models/followmodel');
+                        
                         return followModel.find({
                             userId: userId
                         })
@@ -187,7 +188,7 @@ let service = {
                     return;
                 }
                 let userservice = require('./userservice').service;
-                let followModel = require('../models/followmodel');
+                
                 userservice.read(_session, userId)
                     .then((dbObj) => {
                         return userservice.read(_session, toUnFollow)
