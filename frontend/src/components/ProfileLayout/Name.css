@@ -1,5 +1,6 @@
 .name {
     margin-bottom: 10px;
+    display: flex;
 }
 .name input {
     display: inline;
@@ -10,6 +11,7 @@
     border-radius: 4px;
     border: 1px solid #c3c3c3;
     margin-right: 5px;
+    padding: 0;
 }
 
 .edit-name .ant-typography-secondary {

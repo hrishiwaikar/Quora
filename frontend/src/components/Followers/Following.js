@@ -1,41 +1,79 @@
 import React, { Component } from 'react'
-import FollowersList from './FollowersList';
+import { Col, Row, Skeleton } from 'antd';
+import FollowerCard from './FollowerCard';
+import { call } from '../../api'
 
-
-const data = [
-    {
-        _id: "1",
-        noOfFollowers: 1,
-        profileImage: null,
-        name: "Bhaskar Gurram",
-        profileCredential: "I am human",
-        followingBack: true
-    },
-    {
-        _id: "2",
-        noOfFollowers: 1,
-        profileImage: null,
-        name: "Bhaskar Gurram",
-        profileCredential: "I am human",
-        followingBack: false
-    },
-    {
-        _id: "3",
-        noOfFollowers: 1,
-        profileImage: null,
-        name: "Bhaskar Gurram",
-        profileCredential: "I am human",
-        followingBack: true
-    }
-]
 class Following extends Component {
-    handleFollowClick =(_id) => {
-        console.log(_id)
-    }
+  state = {
+    following: [],
+    loading: true
+  }
+
+  componentDidMount() {
+    const userId = localStorage.getItem("userId");
+    call({
+      method: "get",
+      url: `/users/${userId}/following`
+    })
+      .then(data => {
+        console.log(data)
+        const following = data.following;
+        this.setState({
+          following,
+          loading: false
+        })
+      })
+      .catch(err => {
+        console.log(err)
+      })
+  }
+  handleFollowClick = (userId) => {
+    console.log(userId)
+    call({
+      method: "post",
+      url: `/unfollow/${userId}`
+    })
+      .then(data => {
+        let { following } = this.state;
+        following = following.filter(following => following.userId !== userId)
+        this.setState({
+          following
+        })
+      })
+      .catch(err => {
+        console.log(err)
+      })
+
+  }
   render() {
+    let { following, loading } = this.state;
+    console.log(following)
+    following = following.map(d => {
+      const { followers, profileImage, firstName, lastName, profileCredential, followingBack, _id, userId } = d;
+      return <Col span={12} key={userId}>
+        <FollowerCard
+          _id={_id}
+          userId={userId}
+          noOfFollowers={followers}
+          profileImage={profileImage}
+          name={firstName + " " + lastName}
+          profileCredential={profileCredential}
+          followText="Following"
+          handleFollowClick={this.handleFollowClick}
+        />
+      </Col>
+    })
     return (
       <div>
-        <FollowersList data ={data} handleFollowClick={this.handleFollowClick}/>
+        <Row gutter={8}>
+          {
+            loading ?
+              <Skeleton active /> :
+              following
+          }
+
+        </Row>
+        {/* <FollowersList data={following} handleFollowClick={this.handleFollowClick} /> */}
       </div>
     )
   }

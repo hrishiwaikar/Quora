@@ -15,6 +15,7 @@ const { Title, Text } = Typography;
 export class TestDisplayQuestion extends Component {
 
     render = () => {
+        let { data } = this.props;
         console.log('Render of test');
         let questions = [
             {
@@ -62,10 +63,10 @@ export class TestDisplayQuestion extends Component {
         ]
 
         return (<>
-            {questions.map((question) => {
+            {data.map((question) => {
                 return (
                     <Row className="paddingTop-l marginTop-l">
-                        <Col offset={5} span={12} >
+                        <Col span={24} >
                             <DisplayQuestion data={question} />
                         </Col>
                     </Row>
@@ -86,14 +87,14 @@ class DisplayQuestion extends Component {
                 <Row>
                     <Title level={4} className="quora_question_text">{data.questionText}</Title>
                 </Row>
-                {data.hasAnswer === true ?
-                    <Row>
-                        <Answer data={data} />
-                    </Row>
+                {/* {data.hasAnswer === true ? */}
+                <Row>
+                    <Answer data={data} />
+                </Row>
 
-                    :
+                {/* :
                     null
-                }
+                } */}
 
             </>
         );
