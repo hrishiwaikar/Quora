@@ -10,12 +10,12 @@ class FollowCard extends Component {
         history.push(`/profile/${_id}`);
     }
     render() {
-        const { noOfFollowers, profileImage, name, profileCredential, followingBack, handleFollowClick, _id } = this.props;
-        const followText = followingBack ? "Following" : "Follow"
+        const { noOfFollowers, profileImage, name, profileCredential, followText, handleFollowClick, _id, userId } = this.props;
+       
         return (
             <div>
                 <Card
-                    actions={[<Button type="primary" icon="user" ghost disabled={followingBack} onClick={() => handleFollowClick(_id)}>{followText } &nbsp;{noOfFollowers}</Button>]}
+                    actions={[<Button type="primary" icon="user" ghost={followText === "Following"} onClick={() => handleFollowClick(userId)}>{followText } &nbsp;{noOfFollowers}</Button>]}
                 >
                     <Meta
                         avatar={profileImage ? <Avatar src={profileImage} /> : <Avatar icon="uesr" />}

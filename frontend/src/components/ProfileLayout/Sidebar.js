@@ -6,6 +6,8 @@ import './Sidebar.css';
 import Profile from '../Profile/Profile';
 import Followers from '../Followers/Followers';
 import Following from '../Followers/Following'
+import UserQuestions from '../UserQuestions.js/UserQuestions';
+import UserAnswers from '../UserAnswers/UserAnswers';
 
 const { Title, Text } = Typography;
 
@@ -20,14 +22,15 @@ class Sidebar extends Component {
     }
     handleClick = ({ key }) => {
         console.log(key)
+        const userId = localStorage.getItem("userId")
         const { match, history } = this.props;
         this.setState({
             selected: key
         });
         if (key === 'profile')
-            history.push(`/profile/1`)
+            history.push(`/profile/${userId}`)
         else
-            history.push(`/profile/1/${key}`)
+            history.push(`/profile/${userId}/${key}`)
     }
     render() {
         const { selected } = this.state;
@@ -58,7 +61,9 @@ class Sidebar extends Component {
                             <Switch>
                                 <Route path="/profile/:id/followers" component={Followers} />
                                 <Route path="/profile/:id/following" component={Following} />
-                                <Route path="/profile/:id" component={Profile} />
+                                <Route path="/profile/:id/questions" component={UserQuestions} />
+                                <Route path="/profile/:id/answers" component={UserAnswers} />
+                                <Route path="/profile/:id" component={UserQuestions} />
                             </Switch>
                         </div>
                     </Col>

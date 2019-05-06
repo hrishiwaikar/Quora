@@ -21,6 +21,13 @@ class Search extends Component {
 
     handleRedirection = (data) => {
         console.log('In handle redirrection ', data);
+        if (data.type === 'PERSON') {
+
+        } else if (data.type === 'QUESTION') {
+
+        } else if (data.type === 'TOPIC') {
+
+        }
     }
 
     handleChange = (value) => {

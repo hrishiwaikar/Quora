@@ -1,12 +1,19 @@
 import axios from 'axios';
 
+const getToken = () => {
+    const token = localStorage.getItem("token");
+    return "Bearer " + token;
+}
+
+
 export const post = (url, data, onSuccess, onFailure) => {
+    const token = getToken();
     axios({
         method: 'post', //you can set what request you want to be
         url: url,
         data: data,
         headers: {
-            'authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJkNjgxN2Q0MC02OTYzLTExZTktYWQ1My0wMTFlOGRhMWU1NGEiLCJjcmVhdGVkX2F0IjoxNTU2NDIxNDQwOTQwLCJpYXQiOjE1NTY0MjE0NDAsImV4cCI6MTU1OTAxMzQ0MH0.PL73dZ0c5u3_8_7kNrnBXVSALXS0pftlOi7dcEk9FPU'
+            'authorization': token
         }
     })
         .then(response => {
@@ -22,12 +29,12 @@ export const post = (url, data, onSuccess, onFailure) => {
 
 
 export const get = (url, id, onSuccess, onFailure) => {
-
+    const token = getToken();
     axios({
         method: 'get', //you can set what request you want to be
         url: url + id,
         headers: {
-            'authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJkNjgxN2Q0MC02OTYzLTExZTktYWQ1My0wMTFlOGRhMWU1NGEiLCJjcmVhdGVkX2F0IjoxNTU2NDIxNDQwOTQwLCJpYXQiOjE1NTY0MjE0NDAsImV4cCI6MTU1OTAxMzQ0MH0.PL73dZ0c5u3_8_7kNrnBXVSALXS0pftlOi7dcEk9FPU'
+            'authorization': token
         }
 
     })
@@ -40,5 +47,65 @@ export const get = (url, id, onSuccess, onFailure) => {
         });
 
 
+}
 
+export const call = (options) => {
+    return new Promise((resolve, reject) => {
+        if (!options.url || !options.method) {
+            reject({
+                result: "failure",
+                message: "Missing Parameters"
+            });
+            return;
+        }
+
+
+        options.headers = (options.headers || {
+            'Content-Type': 'application/json'
+        });
+        // mandatory
+        options.headers['Authorization'] = 'Bearer ' + (localStorage.getItem('token') === "undefined" ? null : localStorage.getItem('token'))
+
+        options.query = options.query || {};
+        axios({
+            params: options.query,
+            headers: options.headers,
+            data: options.data,
+            method: options.method,
+            url: options.url
+        }).then((response) => {
+            let data = response.data || {};
+            if (data.result === "success") {
+                resolve(data)
+            } else if (data.result === "failure") {
+                if (!!(data.response || {}).code) {
+                    data.response = [data.response]
+                }
+                data.response = data.response || [{
+                    code: "TOKENERROR"
+                }];
+                if (data.response[0].code === "TOKENERROR") {
+                    localStorage.setItem('token', null);
+                    window.location.pathname = "/";
+                } else {
+                    reject({
+                        result: "failure",
+                        message: data.response[0].message || "Some Error with the Server"
+                    });
+                }
+            } else {
+                reject({
+                    result: "failure",
+                    message: "Some Error with the Server"
+                });
+            }
+        }).catch((err) => {
+            console.log(err);
+            reject({
+                result: "failure",
+                message: err.response.data
+            });
+            return;
+        });
+    });
 }

@@ -1,6 +1,8 @@
 import React, { Component } from 'react'
 import { Modal, List, Typography, Button, Avatar, Input, Icon } from 'antd';
+import { withLastLocation } from 'react-router-last-location';
 import Chat from './Chat';
+import { call } from '../../api';
 import ThreadFooter from './ThreadFooter';
 
 import './Thread.css';
@@ -64,16 +66,24 @@ class Thread extends Component {
 
 
   componentDidMount() {
-    console.log(this.props.match.id)
-    axios.get()
-    .then(conversations => {
-      this.setState({
-        conversation
-      })
+    console.log(this.props.match.params.id)
+    call({
+      method: "get",
+      url: `/conversations/${this.props.match.params.id}`
     })
+      .then(data => {
+        const conversation = data.conversation;
+        this.setState({
+          conversation
+        })
+      })
+      .catch(err => {
+        console.log(err)
+      })
 
 
-    
+
+
   }
 
   handleSubmit = (message) => {
@@ -92,13 +102,32 @@ class Thread extends Component {
     this.setState({
       conversation
     })
+    call({
+      method: 'post',
+      url: "/conversations/message",
+      data
+    })
+      .then(data => {
+        console.log(data)
+      })
+      .catch(err => {
+        console.log(err)
+      })
+
   }
   handleBack = () => {
-    this.props.history.goBack();
+    if (this.props.lastLocation.pathname.split('/')[2])
+      this.props.history.go(-2);
+    else
+      this.props.history.goBack();
   }
 
   handleCancel = () => {
-    this.props.history.go(-2);
+    console.log(this.props.lastLocation)
+    if (this.props.lastLocation.pathname.split('/')[2])
+      this.props.history.go(-3);
+    else
+      this.props.history.go(-2);
   }
   render() {
     const { visible, conversation } = this.state;
@@ -161,4 +190,4 @@ class Thread extends Component {
     )
   }
 }
-export default Thread;
+export default withLastLocation(Thread);

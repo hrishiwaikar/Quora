@@ -3,10 +3,10 @@ import { Typography } from 'antd';
 
 const { Text } = Typography;
 
-export default function FollowerCount({numberOfFollowers}) {
+export default function FollowerCount({followers}) {
   return (
     <div>
-      <Text type="secondary">{numberOfFollowers} Followers</Text>
+      <Text type="secondary">{followers} Followers</Text>
     </div>
   )
 }

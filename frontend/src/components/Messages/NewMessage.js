@@ -2,6 +2,7 @@ import React, { Component } from 'react'
 import { Modal, Typography, Button, List, Avatar, Input, Icon } from 'antd';
 import "./NewMessage.css";
 import PeopleSearch from './PeopleSearch';
+import { call } from '../../api'
 const { TextArea } = Input;
 
 
@@ -38,8 +39,29 @@ class Message extends Component {
 
     handleSendMessage = () => {
         const { message, to } = this.state;
-
-        console.log(message, to)
+        let id = "1";
+        call({
+            method:"post",
+            url: "/conversations/message",
+            data: {
+                to,
+                message
+            }
+        })
+        .then(data => {
+            console.log(data.conversation.conversationId)
+            this.props.history.push({
+                pathname: `/messages/thread/${data.conversation.conversationId}`,
+                state: {
+                    modal: true
+                }
+            })
+            console.log(message, to)
+        })
+        .catch(err => {
+            console.log(err)
+        })
+        
     }
 
     hanldeClick = (_id) => {

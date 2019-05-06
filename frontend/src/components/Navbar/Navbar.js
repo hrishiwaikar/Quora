@@ -1,10 +1,12 @@
 import React, { Component } from 'react';
-import { Menu, Icon, Input, Button } from 'antd';
+import { Menu, Icon, Input, Button, List, Popover } from 'antd';
 import { withRouter } from 'react-router-dom';
 import logo from '../../assets/quora-logo.png';
 import './Navbar.css';
 import Search from './../Search/Search.js';
 import URL from '../../constants';
+
+import Notification from '../Notification/Notification';
 
 const SubMenu = Menu.SubMenu;
 const MenuItemGroup = Menu.ItemGroup;
@@ -12,10 +14,14 @@ const MenuItemGroup = Menu.ItemGroup;
 class Navbar extends Component {
     state = {
         current: 'home',
+        visible: false
     }
 
     handleClick = ({ key }) => {
         const { history } = this.props;
+        if (key === "notification") return false;
+        const userId = localStorage.getItem("userId");
+
         this.setState({
             current: key,
         });
@@ -25,7 +31,7 @@ class Navbar extends Component {
         if (key === "messages") modal = true;
 
         if (key === "profile")
-            url = "profile/123" // insert _id here
+            url = `profile/${userId}` // insert _id here
         else if (key !== "home")
             url = key
         history.push({
@@ -35,6 +41,9 @@ class Navbar extends Component {
 
     }
 
+    handleVisibleChange = (visible) => {
+        this.setState({ visible });
+    }
     render() {
         return (
             <div className="navbar">
@@ -56,12 +65,21 @@ class Navbar extends Component {
                     {/* <Menu.Item key="spaces">
                         <Icon type="team" />Spaces
                         </Menu.Item> */}
-                    <SubMenu title={<span className="submenu-title-wrapper"><Icon type="bell" />Notification</span>}>
-                        <MenuItemGroup >
-                            <Menu.Item key="1">Profile</Menu.Item>
-                            <Menu.Item key="2">Messages</Menu.Item>
-                        </MenuItemGroup>
-                    </SubMenu>
+                    <Menu.Item key="notification">
+
+                        <Popover
+                            visible={this.state.visible}
+                            onVisibleChange={this.handleVisibleChange}
+                            placement="bottom"
+                            title="Notifications"
+                            content={<Notification handleItemClick={this.handleVisibleChange} />}
+                            trigger="click">
+
+                            <Icon type="bell" />Notification
+
+                    </Popover>
+                    </Menu.Item>
+
                     <Menu.Item className="navbar-search" disabled>
                         <Search />
                     </Menu.Item>
