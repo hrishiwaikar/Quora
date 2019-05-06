@@ -8,6 +8,7 @@ let answerservice = require('../services/answerservice').router;
 let topicservice = require('../services/topicservice').router;
 let analyticService = require('../services/analyticservice');
 let uploadService = require('../services/uploadService');
+let notificationservice = require('../services/notificationservice').router;
 
 // const upload = require('../services/imageservice');
 
@@ -46,6 +47,7 @@ module.exports = (express) => {
         versionRouter.get("/users/:userId/image", uploadService('profileRead'));
         versionRouter.put('/users/:userId', jwt.verifyRequest, userservice.update);
         versionRouter.delete('/users/:userId', jwt.verifyRequest, userservice.delete);
+        versionRouter.get('/users/:userId/notifications', jwt.verifyRequest, notificationservice.readMany);
         /* User Routes */
 
         /* Follow Routes */
