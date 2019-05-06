@@ -43,7 +43,7 @@ class Layout extends Component {
                     <Switch location={isModal ? this.previousLocation : location}>
                         <Route path="/profile" component={ProfileLayout} />
                         <Route path="/answer" component={AnswerLayout} />
-                        <Route path="/question" component={QuestionPage} />
+                        <Route path="/question/:id" component={QuestionPage} />
                         <Route path="/displayQuestion" component={TestDisplayQuestion} />
                         <Route path="/" exact component={HomeLayout} />
                     </Switch>

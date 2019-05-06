@@ -7,72 +7,67 @@ import { post, get } from './../../api.js';
 import moment from 'moment';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { Typography, Avatar, Icon, Button, Skeleton, Spin, message } from 'antd';
-import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from 'react-html-parser';
+import { Typography, Avatar, Icon, Modal, Button, Skeleton, Spin, message } from 'antd';
+import { AskQuestion } from './../AskQuestion/AskQuestion.js';
 import './../../style.css';
 import { Answer, AnswererInfo } from './../answer/Answer.js';
+import { Input } from 'antd';
 
+const { TextArea } = Input;
 const { Title, Text } = Typography;
-
-const options = {
-    decodeEntities: true,
-    transform
-}
-
-function transform(node, index) {
-    if (node.type === 'tag' && node.name === 'p') {
-        node.attribs = { style: "margin-bottom: 0" };
-        return convertNodeToElement(node, index, transform);
-    }
-
-    if (node.type === 'tag' && node.name === 'img') {
-        return convertNodeToElement(node, index, transform);
-    }
-}
 
 class QuestionPage extends Component {
 
     state = {
         result: null,
+        thisUserData: null,
         new_answer: '',
         addNewAnswer: false,
         submitAnswerLoading: false,
         userHasAnswered: false,
-        related_questions: []
+        related_questions: [],
+        addQuestion: false,
+        isAnonymous: false,
+        userIsFollowingTheQuestion: null
     };
 
     componentDidMount = () => {
+        console.log('IN CDM ', this.props.match.params.id);
         this.getQuestionAndAnswers();
         this.getRelatedQuestions();
     }
 
     getQuestionAndAnswers = () => {
         let component = this;
+        console.log('in get quesiton and answ ');
+        // let url = '/v1/questions/'
+        // // let question_id = '  977716b0-695d-11e9-99d1-6fafc8c77cbc';
+        // let question_id = this.props.match.params.id;
+        // console.log('question ID for get ', question_id);
+        // let onSuccess = (response) => {
+        //     console.log('gOT Response ', response);
+        //     console.log('Result : ', response.data.data);
+        //     component.setState({
+        //         result: response.data.data,
+        //         userHasAnswered: response.data.data.userHasAnswered,
+        //         userIsFollowingTheQuestion: response.data.data.userIsFollowingTheQuestion
+        //     });
 
-        let url = 'v1/questions/'
-        let id = 'dca8fad0-688d-11e9-93ac-a76535bf90ea';
+        // }
 
-        let onSuccess = (response) => {
-            console.log('gOT Response ', response);
-            component.setState({
-                result: response.data.data,
-                userHasAnswered: response.data.data.userHasAnswered
-            });
+        // let onFailure = (error) => {
+        //     console.log('Error msg ', error.response.data);
+        // }
 
-        }
-
-        let onFailure = (error) => {
-            console.log('Error msg ', error.response.data);
-        }
-
-        get(url, id, onSuccess, onFailure);
+        // get(url, question_id, onSuccess, onFailure);
 
         let result = {
-            id: 2,
+            questionId: 2,
             questionText: "What's the most satisfying thing about working as a computer programmer?",
             userIsFollowingTheQuestion: false,
             profileImage: "https://qph.fs.quoracdn.net/main-thumb-19904714-200-uwrpnqdikmuzquejfxjkxurnvwytrqhs.jpeg",
             profileCredential: "Hrishikesh Waikar, Love building systems that transform my surroundings.",
+            userId: '12345',
             userHasAnswered: false,
             followersCount: 10,
             topics: ['Computer Science', 'Programming', 'Sc'],
@@ -114,9 +109,16 @@ class QuestionPage extends Component {
         }
         var delayInMilliseconds = 2000; //1 second
 
+        let thisUserData = {
+            profileName: 'Hrishikesh',
+            profileCredential: result.profileCredential,
+            userId: result.userId,
+            profileImage: result.profileImage
+        }
+
         setTimeout(function () {
             //your code to be executed after 1 second
-            component.setState({ result: result, userHasAnswered: result.userHasAnswered });
+            component.setState({ result: result, userHasAnswered: result.userHasAnswered, thisUserData: thisUserData });
         }, delayInMilliseconds);
 
 
@@ -217,23 +219,67 @@ class QuestionPage extends Component {
         })
     }
 
+    handleShowAddQuestion = (newQuestionId = null) => {
+        this.setState({
+            addQuestion: !this.state.addQuestion
+        })
+        console.log('New question ', newQuestionId);
+        if (newQuestionId !== undefined && newQuestionId !== null) {
+            this.props.history.push('/question/' + newQuestionId);
+            window.location.reload();
+        }
+    }
+
     handleNewAnswerChange = (value) => {
-        // console.log("In handle ans change ", value);
+        console.log("In handle ans change ", value);
         this.setState({ new_answer: value });
     }
 
     handleSubmitAnswer = () => {
         let answer = this.state.new_answer;
+        let component = this;
         //make an api call to submit the answer
+        if (this.state.answerText === null && this.state.answerText === '') {
+            message.error('Please provide an answer');
+        }
 
+        console.log('Result ', this.state.result);
+        let data = {
+            questionId: this.state.result.questionId,
+            answerText: this.state.new_answer,
+            isAnonymous: this.state.isAnonymous
+        }
+
+        console.log('DataBoyyy  ', data);
+
+        post('/v1/answers', data, (response) => {
+            console.log('pOSTED SUCCESSFULLY ')
+            console.log('gOT Response ', response);
+            console.log('Result : ', response.data.data);
+            this.setState({
+                new_answer: '',
+                userHasAnswered: true,
+                addNewAnswer: false
+            });
+            // this.getAnotherResult();
+            message.success('Answer posted successfully');
+
+            this.getQuestionAndAnswers();
+            // component.setState({
+            //     userHasAnswered: true
+            // });
+
+        }, () => {
+
+        })
         //in successs
-        this.setState({
-            new_answer: '',
-            userHasAnswered: true,
-            addNewAnswer: false
-        });
-        this.getAnotherResult();
-        message.success('Answer posted successfully');
+        // this.setState({
+        //     new_answer: '',
+        //     userHasAnswered: true,
+        //     addNewAnswer: false
+        // });
+        // this.getAnotherResult();
+        // message.success('Answer posted successfully');
     }
 
     handleUserWantsToAnswer = () => {
@@ -241,8 +287,35 @@ class QuestionPage extends Component {
             addNewAnswer: !this.state.addNewAnswer
         })
     }
+
+    handleFollowQuestion = () => {
+        let component = this;
+        let userIsFollowingTheQuestion = this.state.userIsFollowingTheQuestion;
+        let update = !userIsFollowingTheQuestion;
+        let data = {
+            "isFollow": update,
+            "questionId": this.state.result.questionId
+        }
+
+        post('/v1/questions/follow', data, (response) => {
+            console.log('got success in fpollow ');
+            component.setState({
+                userIsFollowingTheQuestion: update
+            });
+        }, () => {
+            message.error('Error in following');
+        })
+
+    }
+
+    handleOnRelatedQuestionClick = (questionId) => {
+        this.props.history.push('/question/' + questionId);
+    }
+
+
     render = () => {
         let result = this.state.result;
+        console.log('Result in render ', result);
         // console.log('Answer ', this.state.new_answer);
         return (
             <div>
@@ -262,10 +335,14 @@ class QuestionPage extends Component {
 
                         <Row type="flex" justify="start" align="top">
                             <Col span={4}>
-                                {result !== null && result.userHasAnswered !== true ? <Button shape="round" icon="edit" size="small" className="no_border" onClick={this.handleUserWantsToAnswer} style={{ paddingLeft: 0 }}>Answer</Button> : null}
+                                {result !== null ?
+                                    <Button shape="round" icon="edit" size="small" className="no_border pointer" onClick={this.handleUserWantsToAnswer} style={{ paddingLeft: 0 }} disabled={this.state.userHasAnswered}>
+                                        Answer
+                                    </Button>
+                                    : null}
                             </Col>
                             <Col span={4}>
-                                {result !== null && result.userIsFollowingTheQuestion !== true ? <Button shape="round" icon="wifi" size="small" className="no_border" style={{ paddingLeft: 0 }}>Follow &nbsp;·&nbsp;{result.followersCount}</Button> : null}
+                                {result !== null ? <Button shape="round" icon="wifi" size="small" className="no_border pointer" style={{ paddingLeft: 0 }} onClick={this.handleFollowQuestion} disabled={result.userIsFollowingTheQuestion}>Follow &nbsp;·&nbsp;{result.followersCount}</Button> : null}
                             </Col>
                         </Row>
 
@@ -281,13 +358,13 @@ class QuestionPage extends Component {
                                     <ReactQuill value={this.state.new_answer}
                                         style={{ height: 100 }}
                                         theme="snow"
-                                        onChange={this.handleAnswerChange}
+                                        onChange={this.handleNewAnswerChange}
                                         modules={QuestionPage.modules}
                                         formats={QuestionPage.formats}
                                     />
                                 </Row>
                                 <Row className="marginTop-l" type="flex" justify="start">
-                                    <Col><Button type="primary" size="small" className="quora_button_blue" onClick={this.handleSubmitAnswer}>
+                                    <Col><Button type="primary" size="small" className="quora_button_blue pointer" onClick={this.handleSubmitAnswer}>
                                         Submit
                                     </Button></Col>
                                 </Row>
@@ -316,7 +393,7 @@ class QuestionPage extends Component {
                                 ?
                                 result.answers.map((answer) => {
                                     return (
-                                        <Answer data={answer} new_answer={this.state.new_answer} />
+                                        <Answer data={answer} new_answer={this.state.new_answer} thisUserData={this.state.thisUserData} />
                                     )
                                 })
                                 :
@@ -334,7 +411,7 @@ class QuestionPage extends Component {
                             ?
                             this.state.related_questions.map((related_question) => {
                                 return (
-                                    <Row className="marginTop-m paddingTop-s text_color_quora_blue font_size_xs">
+                                    <Row className="marginTop-m paddingTop-s text_color_quora_blue font_size_xs pointer" onClick={() => { this.handleOnRelatedQuestionClick(related_question.id) }}>
                                         {related_question.questionText}
                                     </Row>
                                 )
@@ -344,7 +421,14 @@ class QuestionPage extends Component {
                             <Skeleton className="marginTop-l" active />
                         }
                         <Row className="marginTop-m paddingTop-s">
-                            <Button shape="round" icon="plus" size="small" className="no_border text_color_quora_blue font_bold" style={{ paddingLeft: 0, fontSize: 13 }}>Ask New Question</Button>
+                            <Button shape="round" icon="plus" size="small" className="no_border text_color_quora_blue font_bold pointer" style={{ paddingLeft: 0, fontSize: 13 }} onClick={() => { this.handleShowAddQuestion() }}>Ask New Question</Button>
+                            {result !== null
+                                ?
+                                <AskQuestion handleShowAddQuestion={this.handleShowAddQuestion} visible={this.state.addQuestion} userId={result.userId} profileCredential={result.profileCredential} />
+                                :
+                                null
+                            }
+
                         </Row>
                     </Col>
                 </Row>
@@ -385,5 +469,8 @@ QuestionPage.formats = [
     'list', 'bullet', 'indent',
     'link', 'image', 'video'
 ]
+
+
+
 
 export default QuestionPage;

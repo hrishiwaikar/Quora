@@ -7,23 +7,39 @@ import { post, get } from './../../api.js';
 import moment from 'moment';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { Typography, Avatar, Icon, Button, Skeleton, Spin, message } from 'antd';
+import { Typography, Avatar, Icon, Button, Tooltip, Comment, message, Form, Input } from 'antd';
 import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from 'react-html-parser';
 import './../../style.css';
 const { Title, Text } = Typography;
-
+const TextArea = Input.TextArea;
 
 export class Answer extends Component {
     state = {}
 
     render = () => {
         let data = this.props.data;
+        console.log(' dTATA ', data);
+        let cant_follow = this.props.data.cant_follow;
+        // console.log('Comments ', comments);
+        // console.log('Parse comments ', parseComments('1-0-0', null));
 
-        console.log('Data ', data);
+        // parseComments('1-0-0', 'I am awesome');
+        // console.log('Updated comments ', comments);
+        let showComments = true;
+        if (this.props.showComments !== undefined) {
+            showComments = this.props.showComments;
+        }
+        let answer_comments = null;
+
+        if (data.comments !== null && data.comments !== undefined) {
+            answer_comments = data.comments;
+        }
+        answer_comments = comments;
+        console.log('Answer comments ', answer_comments);
         return (
             <div className="AnswerBase">
                 <Row>
-                    <AnswererInfo answererId={data.answererId} profileCredential={data.profileCredential} answerDate={data.createdAt} />
+                    <AnswererInfo answererId={data.answererId} profileCredential={data.profileCredential} answerDate={data.createdAt} cant_follow={cant_follow} />
                 </Row>
                 <Row>
                     <AnswerText data={data} />
@@ -31,6 +47,15 @@ export class Answer extends Component {
                 <Row>
                     <VotingAndBookMark data={data} />
                 </Row>
+                {showComments === true
+                    ?
+                    <Row>
+                        <CommentFull comments={answer_comments} thisUserData={this.props.thisUserData} />
+                    </Row>
+                    :
+                    null
+                }
+
             </div>
         )
     }
@@ -67,7 +92,8 @@ export class AnswererInfo extends Component {
 
         let cant_follow = this.props.cant_follow;
         let image_src = 'http://10.0.0.86:7836/v1/users/' + answererId + '/image/';
-        image_src = "https://qph.fs.quoracdn.net/main-thumb-16193221-200-EO9EO7XcPOETr1ZfTiWvDKKVxqAzgtzG.jpeg"
+
+        // image_src = "https://qph.fs.quoracdn.net/main-thumb-16193221-200-EO9EO7XcPOETr1ZfTiWvDKKVxqAzgtzG.jpeg"
 
         let userIsFollowingAnswerer = this.state.userIsFollowingAnswerer;
 
@@ -77,7 +103,7 @@ export class AnswererInfo extends Component {
                     <Col span={2}>
                         <Avatar size="large" src={image_src} />
                     </Col>
-                    <Col span={20}>
+                    <Col span={19}>
                         <Row type="flex" justify="start" align="top">
                             {profileCredential}
                         </Row>
@@ -108,10 +134,26 @@ export class AnswererInfo extends Component {
                         <Col span={2}>
                         </Col>
                     }
-
                 </Row>
+
             </>
         )
+    }
+}
+
+const options = {
+    decodeEntities: true,
+    transform
+}
+
+function transform(node, index) {
+    if (node.type === 'tag' && node.name === 'p') {
+        node.attribs = { style: "margin-bottom: 0" };
+        return convertNodeToElement(node, index, transform);
+    }
+
+    if (node.type === 'tag' && node.name === 'img') {
+        return convertNodeToElement(node, index, transform);
     }
 }
 
@@ -119,18 +161,19 @@ export class AnswererInfo extends Component {
 class AnswerText extends Component {
     render = () => {
         let data = this.props.data;
+        console.log('DATA IN ANSER TEXT ', data);
 
         return (<>
             <Row className="marginTop-m">
                 <Text className="quora_answer_text">
 
-                    {/* {ReactHtmlParser(this.props.new_answer, options)} */}
-                    {data.answerText}
+                    {ReactHtmlParser(data.answerText, options)}
+                    {/* {data.answerText} */}
 
                 </Text>
             </Row>
             <Row className="marginTop-s">
-                <Text className="font_size_xs">{data.upvotes} Views</Text>
+                <Text className="font_size_xs">{data.noOfTimesViewed} Views</Text>
             </Row>
         </>)
     }
@@ -171,27 +214,33 @@ class VotingAndBookMark extends Component {
         //         console.log('Error msg ', error.response.data);
         //     });
 
-
-        post('', '', () => {
-
-        }, () => {
-
-        })
-
-        // In success
-
-        let upvotes = component.state.upvotes;
-
-        if (updatedUpvoteStatus === false) {
-            upvotes = upvotes - 1;
-        } else {
-            upvotes = upvotes + 1;
+        let data = {
+            "isUpvote": updatedUpvoteStatus,
+            "answerId": this.props.data.answerId
         }
 
-        component.setState({
-            userUpvoted: updatedUpvoteStatus,
-            upvotes: upvotes
-        });
+        post('v1/answers/vote', data, (response) => {
+            console.log('sUCEESSFULL UPVOTE CHANGE ', response.data);
+
+            // In success
+
+            let upvotes = component.state.upvotes;
+
+            if (updatedUpvoteStatus === false) {
+                upvotes = upvotes - 1;
+            } else {
+                upvotes = upvotes + 1;
+            }
+
+            component.setState({
+                userUpvoted: updatedUpvoteStatus,
+                upvotes: upvotes
+            });
+        }, () => {
+            message.error('Error in upvoting');
+        })
+
+
     }
 
 
@@ -202,10 +251,23 @@ class VotingAndBookMark extends Component {
 
         let updatedDownVoteStatus = !userDownvoted;
 
-        // in success 
-        component.setState({
-            userDownvoted: updatedDownVoteStatus
-        })
+        let data = {
+            "isDownvote": updatedDownVoteStatus,
+            "answerId": this.props.data.answerId
+        }
+
+        post('v1/answers/vote', data, (response) => {
+            console.log('sUCEESSFULL UPVOTE CHANGE ', response.data);
+
+            component.setState({
+                userDownvoted: updatedDownVoteStatus
+            })
+            component.setState({
+                userUpvoted: updatedDownVoteStatus
+            });
+        }, () => {
+            message.error('Error in upvoting');
+        });
     }
 
 
@@ -214,11 +276,17 @@ class VotingAndBookMark extends Component {
         let updatedBookMarkStatus = !this.state.userBookmarked;
 
         // Make an api call
+        let data = {
+            "isBookmark": updatedBookMarkStatus,
+            "answerId": this.props.data.answerId
+        };
 
-
-        // in success
-        component.setState({
-            userBookmarked: updatedBookMarkStatus
+        post('v1/answers/bookmark', data, () => {
+            component.setState({
+                userBookmarked: updatedBookMarkStatus
+            })
+        }, () => {
+            message.error('Failed bookmarking');
         })
     }
 
@@ -231,9 +299,9 @@ class VotingAndBookMark extends Component {
                     <Col span={3}>
                         {this.state.userUpvoted === true
                             ?
-                            <Button shape="round" icon="caret-up" size="small" className="no_border text_color_blue" style={{ paddingLeft: 0 }} onClick={this.handleUpvoteChange} onFocus={() => { }}>Upvoted &nbsp;·&nbsp;{this.state.upvotes}</Button>
+                            <Button shape="round" icon="caret-up" size="small" className="no_border text_color_blue pointer" style={{ paddingLeft: 0 }} onClick={this.handleUpvoteChange} onFocus={() => { }}>Upvoted &nbsp;·&nbsp;{this.state.upvotes}</Button>
                             :
-                            <Button shape="round" icon="caret-up" size="small" className="no_border" style={{ paddingLeft: 0 }} onClick={this.handleUpvoteChange} onFocus={() => { }}>Upvote &nbsp;·&nbsp;{this.state.upvotes}</Button>
+                            <Button shape="round" icon="caret-up" size="small" className="no_border pointer" style={{ paddingLeft: 0 }} onClick={this.handleUpvoteChange} onFocus={() => { }}>Upvote &nbsp;·&nbsp;{this.state.upvotes}</Button>
 
                         }
 
@@ -241,18 +309,18 @@ class VotingAndBookMark extends Component {
                     <Col offset={18} span={1}>
                         {this.state.userDownvoted === true
                             ?
-                            <Button shape="circle" icon="caret-down" theme="filled" size="small" className="no_border text_color_blue" onClick={this.handleDownVoting}></Button>
+                            <Button shape="circle" icon="caret-down" theme="filled" size="small" className="no_border text_color_blue pointer" onClick={this.handleDownVoting}></Button>
                             :
-                            <Button shape="circle" icon="caret-down" theme="empty" size="small" className="no_border" onClick={this.handleDownVoting}></Button>
+                            <Button shape="circle" icon="caret-down" theme="empty" size="small" className="no_border pointer" onClick={this.handleDownVoting}></Button>
                         }
 
                     </Col>
                     <Col span={2}>
                         {this.state.userBookmarked === true
                             ?
-                            <Button shape="circle" icon="book" size="small" className="no_border text_color_blue" onClick={this.handleBookMarking} ></Button>
+                            <Button shape="circle" icon="book" size="small" className="no_border text_color_blue pointer" onClick={this.handleBookMarking} ></Button>
                             :
-                            <Button shape="circle" icon="book" theme="filled" size="small" className="no_border" onClick={this.handleBookMarking}></Button>
+                            <Button shape="circle" icon="book" theme="filled" size="small" className="no_border pointer" onClick={this.handleBookMarking}></Button>
                         }
 
                     </Col>
@@ -261,3 +329,550 @@ class VotingAndBookMark extends Component {
         )
     }
 }
+
+
+
+
+class CommentComponentClass extends React.Component {
+    state = {
+        comment_upvotes: 0,
+        comment_downvotes: 0,
+        action: null,
+    }
+
+    like = () => {
+        this.setState({
+            comment_upvotes: 1,
+            comment_downvotes: 0,
+            action: 'comment_upvoted',
+        });
+    }
+
+    dislike = () => {
+        this.setState({
+            comment_upvotes: 0,
+            comment_downvotes: 1,
+            action: 'comment_downvoted',
+        });
+    }
+
+    render() {
+        const { comment_upvotes, comment_downvotes, action } = this.state;
+
+        const actions = [
+            <span>
+                <Tooltip title="Upvote">
+                    <Icon
+                        type="like"
+                        theme={action === 'comment_upvoted' ? 'filled' : 'outlined'}
+                        onClick={this.like}
+                    />
+                </Tooltip>
+                <span style={{ paddingLeft: 8, cursor: 'auto' }}>
+                    {comment_upvotes}
+                </span>
+            </span>,
+            <span>
+                <Tooltip title="Downvote">
+                    <Icon
+                        type="dislike"
+                        theme={action === 'comment_downvoted' ? 'filled' : 'outlined'}
+                        onClick={this.dislike}
+                    />
+                </Tooltip>
+                <span style={{ paddingLeft: 8, cursor: 'auto' }}>
+                    {comment_downvotes}
+                </span>
+            </span>,
+            <span style={{ marginTop: 0, marginBottom: 0 }}>Reply to</span>,
+        ];
+
+        return (
+            <Comment
+                actions={actions}
+                author={<a>Han Solo</a>}
+                avatar={(
+                    <Avatar
+                        src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
+                        alt="Han Solo"
+                    />
+                )}
+                content={(
+                    <p>We supply a series of design principles, practical patterns and high quality design resources (Sketch and Axure), to help people create their product prototypes beautifully and efficiently.</p>
+                )}
+                datetime={(
+                    <Tooltip title={moment().format('YYYY-MM-DD HH:mm:ss')}>
+                        <span>{moment().fromNow()}</span>
+                    </Tooltip>
+                )}
+            >
+            </Comment>
+        );
+    }
+}
+
+
+
+class TextEditor extends Component {
+
+    state = {
+        value: ''
+    }
+
+    onChange = (e) => {
+        console.log('In onchange ', e.target.value)
+        this.setState({
+            value: e.target.value
+        })
+    }
+    onSubmit = () => {
+        console.log('IN ON SUBMIT ');
+        let thisUserData = this.props.thisUserData;
+        //updateComments =  (new_comment_text, userId, profileCredential, profileImage, parentCommentId) => {
+        console.log('COmment id ', this.props.commentId);
+        this.props.updateComments(this.state.value, thisUserData.userId, thisUserData.profileCredential, thisUserData.profileImage, this.props.commentId);
+        this.props.handleCommentReply();
+    }
+    render = () => {
+        console.log('In render of TEXT EDITOR ', this.props.thisUserData);
+        console.log(this.props.comment);
+        let thisUserData = this.props.thisUserData;
+        return (<>
+            <div>
+                <AnswererInfo answererId={thisUserData.userId} profileCredential={thisUserData.profileCredential} cant_follow={false} />
+                <Form.Item style={{ marginBottom: 5 }}>
+                    <TextArea placeholder="Add a comment..." autosize={{ minRows: 1, maxRows: 6 }} onChange={this.onChange} value={this.state.value} />
+                </Form.Item>
+                <Form.Item>
+                    <Button
+                        htmlType="submit"
+                        onClick={this.onSubmit}
+                        type="primary"
+                        style={{ marginTop: 0, paddingTop: 0 }}
+                    >
+                        Add Comment
+                 </Button>
+                </Form.Item>
+            </div>
+        </>)
+    }
+}
+
+
+class CommentComponent extends Component {
+
+    state = {
+        reply: false
+    }
+
+    handleCommentReply = () => {
+        this.setState({
+            reply: !this.state.reply
+        });
+    };
+
+    render = () => {
+        let props = this.props;
+        return (<Comment
+            actions={[<span onClick={() => { this.handleCommentReply(props.comment) }} style={{ marginBottom: 0 }}>Reply to</span>]}
+            author={<a>{props.comment.profileCredential}</a>}
+            style={{ marginTop: '10px', marginBottom: 0, paddingTop: '0px', paddingBottom: '0px' }}
+            avatar={(
+                <Avatar
+                    src={props.comment.profileImage}
+                    alt={props.comment.profileCredential}
+                />
+            )}
+            content={<>{props.comment.commentText}
+
+            </>}
+        >
+            {this.state.reply === true ? <TextEditor thisUserData={this.props.thisUserData} commentId={this.props.commentId} comment={props.comment} updateComments={this.props.updateComments} handleCommentReply={this.handleCommentReply} /> : null}
+            {props.children}
+        </Comment>)
+    }
+
+}
+
+
+
+class CommentFull extends Component {
+
+    state = {
+        comments: this.props.comments,
+        answer_comment: null,
+        showButton: false,
+        view_comments: false
+    }
+
+    parseComments = (search_id, new_comment) => {
+
+
+        // convert the string to ['1', '1-0', '1-0-0']
+
+        // how?
+        var splits = search_id.split('-');
+        console.log('splits ', splits);
+
+        var path = []
+        let prev = null;
+        for (var i = 0; i < splits.length; i++) {
+            if (prev === null) {
+                path.push(splits[i]);
+                prev = splits[i];
+            } else {
+                path.push(prev + '-' + splits[i]);
+                prev = prev + '-' + splits[i];
+            }
+        }
+
+        console.log('path ', path);
+
+        // search for 1 in comments
+        // in 1's child search for 1-0
+        // in 1-0's child search for 1-0-0
+        let original_comments = this.state.comments;
+        let search_object = this.state.comments;
+        let search_key_index = 0;
+        let parent = null;
+        let found_child = null;
+        while (search_key_index < path.length) {
+            // console.log('For search object: ', search_object);
+            if (search_object.hasOwnProperty(path[search_key_index])) {
+                // console.log('Found child ', search_object[path[search_key_index]]);
+                found_child = search_object[path[search_key_index]];
+                search_object = found_child.comments;
+
+                search_key_index += 1;
+            }
+        }
+
+        console.log('Found comment: ', found_child.commentText)
+        // let new_comment = {
+        //     commentText: new_comment_text,
+        //     profileCredential: profileCredential,
+        //     profileImage: profileImage,
+        //     comments: {}
+        // }
+
+        if (new_comment !== null) {
+            var new_id_index = Object.keys(found_child.comments).length;
+
+            console.log('new id ', search_id + '-' + new_id_index)
+            var new_id = search_id + '-' + new_id_index;
+
+            found_child.comments[new_id] = new_comment;
+
+            // parseComments(new_id, null)
+        }
+
+        console.log('Search object finally ', original_comments);
+        this.setState({
+            comments: original_comments
+        })
+    }
+
+
+    updateComments = (new_comment_text, userId, profileCredential, profileImage, parentCommentId) => {
+        console.log('In update comments');
+
+        let new_comment = {
+            commentText: new_comment_text,
+            profileCredential: profileCredential,
+            profileImage: profileImage,
+            comments: {}
+        }
+        // console.log('nEW COMMENT ', new_comment, ' ', typeof parentCommentId, ' ', parentCommentId)
+        this.parseComments(parentCommentId, new_comment)
+    }
+
+    commentGenerator = (simple_comment_id, comment, thisUserData, updateComments) => {
+        // console.log(' Comment ', comment);
+        // console.log('Comment text ', comment.commentText);
+        // console.log('Object keys ', Object.keys(comment.comments));
+        return (
+            <CommentComponent commentId={simple_comment_id} comment={comment} thisUserData={thisUserData} updateComments={updateComments}>
+                {Object.keys(comment.comments).map((sub_comment_id) => {
+                    return (this.commentGenerator(sub_comment_id, comment.comments[sub_comment_id], thisUserData, updateComments))
+                })}
+            </CommentComponent>
+        )
+    }
+
+    onChange = (e) => {
+        console.log('E targe:', e.target.value, '.')
+        if (e.target.value.trim() !== "") {
+            this.setState({
+                showButton: true,
+                answer_comment: e.target.value
+            })
+        } else {
+            this.setState({
+                showButton: false,
+                answer_comment: e.target.value
+            })
+        }
+    }
+
+    onSubmit = () => {
+        console.log('IN on submit ');
+        let new_answer_comment = this.state.answer_comment;
+        let thisUserData = this.props.thisUserData;
+        let comments = this.state.comments;
+
+        let new_comment = {
+            commentText: new_answer_comment,
+            profileCredential: thisUserData.profileCredential,
+            profileImage: thisUserData.profileImage,
+            comments: {}
+        }
+        let update = {};
+        update[comments.length] = new_comment
+        let updated_comments = Object.assign({}, comments, update);
+        // do in success
+        this.setState({
+            comments: updated_comments,
+            showButton: false,
+            answer_comment: null,
+            view_comments: true
+        });
+    }
+
+    handleShowComments = () => {
+        this.setState({
+            view_comments: !this.state.view_comments
+        })
+    }
+
+    render = () => {
+        console.log('REnder of Comments full ', this.state.comments);
+        return (
+
+            <>
+                <Form.Item style={{ marginBottom: 5 }}>
+                    <Row>
+                        <Col span={18}>
+                            <TextArea placeholder="Add a comment..." autosize={{ minRows: 1, maxRows: 6 }} onChange={this.onChange} value={this.state.answer_comment} />
+                        </Col>
+                        <Col offset={1} span={5} style={{ paddingTop: 3 }}>
+                            {this.state.showButton === true
+                                ?
+                                <Button
+                                    htmlType="submit"
+                                    onClick={this.onSubmit}
+                                    type="primary"
+                                    style={{ marginTop: 0, paddingTop: 1, paddingBottom: 1 }}
+                                    className="font_size_xs"
+                                    shape="round"
+                                >
+                                    Add Comment
+                        </Button>
+                                :
+                                null
+                            }
+
+                        </Col>
+                    </Row>
+                </Form.Item>
+                {this.state.view_comments === true
+                    ?
+                    Object.keys(this.state.comments).map((simple_comment_id) => {
+
+                        return (this.commentGenerator(simple_comment_id, this.state.comments[simple_comment_id], this.props.thisUserData, this.updateComments))
+
+                    })
+                    :
+                    <Row type="flex" justify="center">
+                        <Text className="text_color_quora_blue paddingTop-m pointer" onClick={this.handleShowComments}>View Comments</Text>
+                    </Row>
+
+                }
+            </>
+        )
+    }
+}
+
+
+
+let simple_comments = {
+    '0': {
+        commentText: 'Good answer',
+        comments: {
+            '0-1': {
+                commentText: 'Thanks',
+                comments: {}
+            }
+        }
+    },
+    '1': {
+        commentText: 'Very well written',
+        comments: {
+            '0-1': {
+                commentText: 'Thanks buddy!',
+                comments: {}
+            }
+        }
+    }
+}
+
+var comments = {
+    '0': {
+        commentText: 'Nice answer. I always thought this was the right way of writing a piece of code or driving a vehical.',
+        profileCredential: "Chang Wu",
+        profileImage: "https://qph.fs.quoracdn.net/main-thumb-4287320-200-deggahgsqwmxhxzjpmfemzbepfhfjnso.jpeg",
+        comments: {
+            '0-1': {
+                commentText: 'Thanks!',
+                profileCredential: "Pat Peterson",
+                profileImage: "https://qph.fs.quoracdn.net/main-thumb-71919532-200-txffendnscaqwhwdprafbtwvlrcyrikn.jpeg",
+                comments: {}
+            }
+        },
+    },
+    '1': {
+        commentText: 'Average answer and I think this is the shitiest way to explain',
+        profileCredential: "David Seidman",
+        profileImage: "https://qph.fs.quoracdn.net/main-thumb-1155184-200-nxjuemypbvqvsfjqjthukshaszbqecmr.jpeg",
+        comments: {
+            '1-0': {
+                commentText: 'Alright! Thanks for feedback. Cannot have am answer that satisfies everyone. On another note, please check the answer by Scott Murpheys. That might apall you by any standards.',
+                profileCredential: "Pat Peterson",
+                profileImage: "https://qph.fs.quoracdn.net/main-thumb-71919532-200-txffendnscaqwhwdprafbtwvlrcyrikn.jpeg",
+                comments: {
+                    '1-0-0': {
+                        commentText: 'I dont think u get what i meant. I meant that your delivery was inadequate. Not the topic.',
+                        profileCredential: "David Seidman",
+                        profileImage: "https://qph.fs.quoracdn.net/main-thumb-1155184-200-nxjuemypbvqvsfjqjthukshaszbqecmr.jpeg",
+
+                        comments: {}
+                    }
+                }
+            },
+            '1-1': {
+                commentText: 'Hey that was mean!',
+                profileCredential: "Steve Baker",
+                profileImage: "https://qph.fs.quoracdn.net/main-thumb-195634334-200-btyhbjupjzglczcwwynktjgdktzjfcxk.jpeg",
+
+                comments: {
+                    '1-1-0': {
+                        commentText: 'No thats okay, I find criticism useful',
+                        profileCredential: "Pat Peterson",
+                        profileImage: "https://qph.fs.quoracdn.net/main-thumb-71919532-200-txffendnscaqwhwdprafbtwvlrcyrikn.jpeg",
+                        comments: {
+                            '1-1-0-0': {
+                                commentText: 'It was less of a criticism and more of a ignorant prejudice. I dont know why such people are still allowed on quora',
+                                profileCredential: "Steve Baker",
+                                profileImage: "https://qph.fs.quoracdn.net/main-thumb-195634334-200-btyhbjupjzglczcwwynktjgdktzjfcxk.jpeg",
+                                comments: {}
+                            }
+                        }
+                    }
+                }
+            }
+        }
+    },
+
+    '2': {
+        commentText: 'Why do you say that all this is meaningless?',
+        profileCredential: "Rob Neff",
+        profileImage: "https://qph.fs.quoracdn.net/main-thumb-443523572-200-cnosbuvvnhoooxdsqwvlvtyemeczyeov.jpeg",
+        comments: {
+            '2-0': {
+                commentText: 'Its just a feeling',
+                profileCredential: "Pat Peterson",
+                profileImage: "https://qph.fs.quoracdn.net/main-thumb-71919532-200-txffendnscaqwhwdprafbtwvlrcyrikn.jpeg",
+                comments: {}
+            }
+        },
+    },
+
+    '10': {
+        commentText: 'Reminds me of my childhood',
+        profileCredential: "Divyendra Patil",
+        profileImage: "https://qph.fs.quoracdn.net/main-thumb-199732985-200-woparytinkzfnnktzzdcnhdxunktttzl.jpeg",
+        comments: {
+            '10-0': {
+                commentText: 'Oh sure it does',
+                profileCredential: "Pat Peterson",
+                profileImage: "https://qph.fs.quoracdn.net/main-thumb-71919532-200-txffendnscaqwhwdprafbtwvlrcyrikn.jpeg",
+
+                comments: {}
+            }
+        }
+    }
+}
+
+
+let outer_parseComments = (search_id, new_comment) => {
+
+
+    // convert the string to ['1', '1-0', '1-0-0']
+
+    // how?
+    var splits = search_id.split('-');
+    console.log('splits ', splits);
+
+    var path = []
+    let prev = null;
+    for (var i = 0; i < splits.length; i++) {
+        if (prev === null) {
+            path.push(splits[i]);
+            prev = splits[i];
+        } else {
+            path.push(prev + '-' + splits[i]);
+            prev = prev + '-' + splits[i];
+        }
+    }
+
+    console.log('path ', path);
+
+    // search for 1 in comments
+    // in 1's child search for 1-0
+    // in 1-0's child search for 1-0-0
+
+    let search_object = comments;
+    let search_key_index = 0;
+    let parent = null;
+    let found_child = null;
+    while (search_key_index < path.length) {
+        // console.log('For search object: ', search_object);
+        if (search_object.hasOwnProperty(path[search_key_index])) {
+            // console.log('Found child ', search_object[path[search_key_index]]);
+            found_child = search_object[path[search_key_index]];
+            search_object = found_child.comments;
+
+            search_key_index += 1;
+        }
+    }
+
+    console.log('Found comment: ', found_child.commentText)
+    // let new_comment = {
+    //     commentText: new_comment_text,
+    //     profileCredential: profileCredential,
+    //     profileImage: profileImage,
+    //     comments: {}
+    // }
+
+    if (new_comment !== null) {
+        var new_id_index = Object.keys(found_child.comments).length;
+
+        console.log('new id ', search_id + '-' + new_id_index)
+        var new_id = search_id + '-' + new_id_index;
+
+        found_child.comments[new_id] = new_comment;
+
+        // parseComments(new_id, null)
+    }
+
+    console.log('Search object finally ', comments);
+}
+
+
+// parseComments('2', 'This is a new comment ');
+
+// // add a new comment
+// parseComments('1-0-0', 'This is a new comment')
+
+// // Find a node
+// parseComments('1-0', null);
+

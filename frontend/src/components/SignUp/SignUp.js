@@ -35,7 +35,7 @@ class SignUp extends Component {
         console.log("signup data ", data);
 
         axios
-          .post("http://10.0.0.188:7836/v1/signup", data)
+          .post("v1/signup", data)
           .then(res => {
             if (res.status === 200) {
               console.log("Signup response data", res.data.response[0].message);

@@ -32,7 +32,7 @@ class Login extends Component {
         console.log("login data ", data);
 
         axios
-          .post("http://10.0.0.188:7836/v1/signin", data)
+          .post("v1/signin", data)
           .then(res => {
             if (res.status === 200) {
               console.log("login response data", res.data);

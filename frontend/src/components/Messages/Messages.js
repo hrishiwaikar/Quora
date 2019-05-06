@@ -83,7 +83,7 @@ class Messages extends Component {
     }
 
     handleCancel = () => {
-        this.props.history.goBack();
+        this.props.goBack();
     }
 
     handleOk = () => {
@@ -91,7 +91,7 @@ class Messages extends Component {
     }
     handleNewMessage = () => {
         console.log("new message")
-        this.props.history.push({
+        this.props.push({
             pathname: "/messages/new",
             state: {
                 modal: true
@@ -101,7 +101,7 @@ class Messages extends Component {
 
     handleMessageClick = (conversationId) => {
         console.log(conversationId)
-        this.props.history.push({
+        this.props.push({
             pathname: `/messages/thread/${conversationId}`,
             state: {
                 modal: true
@@ -110,7 +110,7 @@ class Messages extends Component {
     }
 
     handleCancel = () => {
-        this.props.history.goBack();
+        this.props.goBack();
     }
 
 
