@@ -149,7 +149,7 @@ let service = {
                 let _session = args[0] || {};
                 let userId = args[1] || null;
                 let userservice = require('./userservice').service;
-                let myFollowing = [];
+                let myFollowing = {};
                 userservice.read(_session, userId)
                     .then((userObj) => {
 
@@ -161,11 +161,11 @@ let service = {
                         })
                     })
                     .then((followings) => {
-                        myFollowing = followings;
                         if (!!followings || !!followings.length) {
                             let f = [];
                             for (let i = 0; i < followings.length; i++) {
                                 f.push(followings[i].following);
+                                myFollowing[followings[i].following] = followings[i].followingBack;
                             }
                             let userModel = require('../models/usermodel');
                             return userModel.find({
@@ -184,20 +184,11 @@ let service = {
                             return resolve([])
                         }
                     }).then((result) => {
-                        let obj = {};
+                        result = JSON.parse(JSON.stringify(result));
                         for (let i = 0; i < result.length; i++) {
-                            obj[result[i].userId] = result[i];
+                            result[i].followingBack = myFollowing[result[i].userId];
                         }
-                        for (let i = 0; i < myFollowing.length; i++) {
-                            let keys = Object.keys(obj[myFollowing[i].following]);
-                            for (let j = 0; j < keys.length; j++) {
-                                const element = keys[j];
-                                let _k = myFollowing[i].following;
-                                delete myFollowing[i].following;
-                                myFollowing[i][element] = obj[_k][element];
-                            }
-                        }
-                        resolve(myFollowing);
+                        resolve(result);
                     })
                     .then(resolve, reject)
                     .catch(reject)
