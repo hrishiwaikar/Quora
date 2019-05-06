@@ -59,21 +59,44 @@ let service = {
                 let notificationModel = require('./../models/notificationmodel');
                 let body = {};
                 body.userId = userId || null;
-                userModel.findOne(body).select(select).then((dbObj) => {
-                    if (!!dbObj) {
-                        return notificationModel.find({
-                            userId: userId
-                        }).sort({
-                            crreatedAt: -1
-                        })
-                    } else {
-                        reject(rs.notfound);
-                    }
-                    return;
-                }).then(resolve).catch((errors) => {
-                    reject(errors);
-                    return;
-                })
+                resolve([{
+                    notificationId: "1234567890",
+                    notification: "<NAME> answered a Question you follow : What is your name ?",
+                    question: {
+                        userId: "d65dcff0-6f06-11e9-b3ea-d9f7d6a63f16",
+                        firstName: "vada bailey",
+                        lastName: "hodkiewicz",
+                        question: "What is your name?",
+                        questionId: "123456543456"
+                    },
+                    createdAt: 1556048063000,
+                }, {
+                    notificationId: "08765432345678987",
+                    notification: "<NAME> answered a Question you follow : 2 + 2 is ?",
+                    question: {
+                        userId: "d6807320-6f06-11e9-adfd-1d9384443f57",
+                        firstName: "benjamin jerde",
+                        lastName: "weber",
+                        question: " 2 + 2 is ?",
+                        questionId: "8756467865"
+                    },
+                    createdAt: 1556048063000,
+                }])
+                // userModel.findOne(body).select(select).then((dbObj) => {
+                //     if (!!dbObj) {
+                //         return notificationModel.find({
+                //             userId: userId
+                //         }).sort({
+                //             crreatedAt: -1
+                //         })
+                //     } else {
+                //         reject(rs.notfound);
+                //     }
+                //     return;
+                // }).then(resolve).catch((errors) => {
+                //     reject(errors);
+                //     return;
+                // })
             } catch (e) {
                 console.error(e)
                 reject(e);
