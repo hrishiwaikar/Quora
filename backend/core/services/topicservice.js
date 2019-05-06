@@ -26,20 +26,21 @@ let service = {
                 query.q = query.q || "";
                 let search = {};
                 if (!!query.q) {
+                    query.q = query.q.toLowerCase();
                     // search = {
                     //     "topicText": 
                     //         { $regex: `/${query.q}/`,}
                     // };
                     search = {
-                        $text: {
-                            $search: query.q
+                        "topicText": {
+                            $regex: ".*" + query.q + ".*"
                         }
                     }
                 }
                 topicModel.find(search).select({
                     topicId: 1,
                     topicText: 1,
-                    _id : 0
+                    _id: 0
                 }).then((topicsObj) => {
                     return resolve(topicsObj);
                 })

@@ -36,7 +36,7 @@ service.isGender = (gender) => {
 service.makeDirectory = (foldername) => {
     var mkdirp = require('mkdirp');
     return new Promise((resolve, reject) => {
-        mkdirp(foldername, function (err) {
+        mkdirp(foldername, function(err) {
             if (err) {
                 reject([{
                     title: "ERROR",
@@ -66,4 +66,43 @@ service.writeFileIntoLocal = (filePath, data) => {
         });
     });
 };
+
+service.getAnalyticsTimestamps = (ts) => {
+    let min = new Date(ts).setSeconds(0, 0);
+    let hour = new Date(ts).setMinutes(0, 0, 0);
+    let day = new Date(ts).setHours(0, 0, 0, 0);
+    let week = new Date(ts).setHours(0, 0, 0, 0);
+    let dayOfWeek = new Date(week).getDay();
+    week = week - (dayOfWeek * 24 * 60 * 60 * 1000);
+    let month = new Date(ts).setHours(0, 0, 0, 0)
+    month = new Date(month).setDate(1);
+    let year = new Date(ts).setHours(0, 0, 0, 0)
+    year = new Date(year).setDate(1);
+    year = new Date(year).setMonth(0);
+    console.log(new Date(min));
+    console.log(new Date(hour));
+    console.log(new Date(day));
+    console.log(new Date(week));
+    console.log(new Date(month));
+    console.log(new Date(year));
+    return [{
+        frequency: "min",
+        timestamp: min
+    }, {
+        frequency: "hour",
+        timestamp: hour
+    }, {
+        frequency: "day",
+        timestamp: day
+    }, {
+        frequency: "week",
+        timestamp: week
+    }, {
+        frequency: "month",
+        timestamp: month
+    }, {
+        frequency: "year",
+        timestamp: year
+    }]
+}
 module.exports = service;

@@ -40,6 +40,7 @@ let service = {
                             if (!!dbObj && !!dbObj.length) {
                                 body.displayId = body.displayId + "-" + dbObj.length;
                             }
+                            body.displayId = body.displayId.split(" ").join("-");
                             return userModel.create(body)
                         })
                         .then(resolve, reject)
@@ -146,16 +147,16 @@ let service = {
                 let _session = args[0] || {};
                 let userId = args[1] || null;
                 let file = args[2] || {};
-                let userModel = require('./../models/usermodel');
-                let body = {};
-                body.userId = userId || null;
-                s3.up(process.cwd() + `/uploads/profiles/File_${userId}`, `profiles/${userId}`, {
-                    "ACL": "public-read"
-                }).then((d) => {
-                    console.log(d)
-                }, (e) => {
-                    console.log("err", e)
-                });
+                // let userModel = require('./../models/usermodel');
+                // let body = {};
+                // body.userId = userId || null;
+                // s3.up(process.cwd() + `/uploads/profiles/File_${userId}`, `profiles/${userId}`, {
+                //     "ACL": "public-read"
+                // }).then((d) => {
+                //     console.log(d)
+                // }, (e) => {
+                //     console.log("err", e)
+                // });
                 resolve({})
             } catch (e) {
                 console.error(e)
