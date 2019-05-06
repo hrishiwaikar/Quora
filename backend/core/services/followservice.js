@@ -132,10 +132,11 @@ let service = {
                             obj[result[i].userId] =result[i];
                         }
                         for (let i = 0; i < myFollowers.length; i++) {
-                            console.log(myFollowers[i],obj[myFollowers[i].userId]);
-                            myFollowers[i] = Object.assign({},myFollowers[i],obj[myFollowers[i].userId])
-                            console.log(myFollowers[i]);
-                            
+                            let keys = Object.keys(obj[myFollowers[i].userId]);
+                            for (let j = 0; j < keys.length; j++) {
+                                const element = keys[j];
+                                myFollowers[i][element] = obj[myFollowers[i].userId][element];
+                            }
                         }
                         resolve(myFollowers);
                     })
@@ -190,9 +191,13 @@ let service = {
                             obj[result[i].userId] =result[i];
                         }
                         for (let i = 0; i < myFollowing.length; i++) {
-                            delete myFollowing[i].following;
-                            myFollowing[i] = Object.assign(myFollowing[i],obj[myFollowing[i].following])
-                            
+                            let keys = Object.keys(obj[myFollowing[i].following]);
+                            for (let j = 0; j < keys.length; j++) {
+                                const element = keys[j];
+                                let _k = myFollowing[i].following;
+                                delete myFollowing[i].following;
+                                myFollowing[i][element] = obj[_k][element];
+                            }
                         }
                         resolve(myFollowing);
                     })
