@@ -37,7 +37,7 @@ module.exports = (express) => {
         versionRouter.post('/signup', authservice.signup);
         /* Auth Routes */
 
-        versionRouter.get('/search', jwt.verifyRequest, searchservice.search);
+        //versionRouter.get('/search', jwt.verifyRequest, searchservice.search);
         /* User Routes */
         //versionRouter.post('/users', userservice.create);
         versionRouter.get('/users/:userId', jwt.verifyRequest, userservice.read);
