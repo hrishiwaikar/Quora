@@ -132,7 +132,9 @@ let service = {
                             obj[result[i].userId] =result[i];
                         }
                         for (let i = 0; i < myFollowers.length; i++) {
+                            console.log(myFollowers[i],obj[myFollowers[i].userId]);
                             myFollowers[i] = Object.assign(myFollowers[i],obj[myFollowers[i].userId])
+                            console.log(myFollowers[i]);
                             
                         }
                         resolve(myFollowers);
