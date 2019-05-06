@@ -16,7 +16,7 @@ let service = {
                     return;
                 }
                 let userservice = require('./userservice').service;
-                
+
                 userservice.read(_session, userId)
                     .then((dbObj) => {
                         return userservice.read(_session, toFollow)
@@ -95,14 +95,16 @@ let service = {
                 let _session = args[0] || {};
                 let userId = args[1] || null;
                 let userservice = require('./userservice').service;
+                let myFollowers = [];
                 userservice.read(_session, userId)
                     .then((userObj) => {
-                        
+
                         return followModel.find({
                             following: userId
-                        })
+                        }).select({userId:1,followingBack:1})
                     })
                     .then((followers) => {
+                        myFollowers =followers;
                         if (!!followers || !!followers.length) {
                             let f = [];
                             for (let i = 0; i < followers.length; i++) {
@@ -124,6 +126,16 @@ let service = {
                         } else {
                             return resolve([])
                         }
+                    }).then((result) => {
+                        let obj = {};
+                        for (let i = 0; i < result.length; i++) {
+                            obj[result[i].userId] =result[i];
+                        }
+                        for (let i = 0; i < myFollowers.length; i++) {
+                            myFollowers[i] = Object.assign(myFollowers[i],obj[myFollowers[i].userId])
+                            
+                        }
+                        resolve(myFollowers);
                     })
                     .then(resolve, reject)
                     .catch(reject)
@@ -139,14 +151,16 @@ let service = {
                 let _session = args[0] || {};
                 let userId = args[1] || null;
                 let userservice = require('./userservice').service;
+                let myFollowing = [];
                 userservice.read(_session, userId)
                     .then((userObj) => {
-                        
+
                         return followModel.find({
                             userId: userId
-                        })
+                        }).select({following:1,followingBack:1})
                     })
                     .then((followings) => {
+                        myFollowing = followings;
                         if (!!followings || !!followings.length) {
                             let f = [];
                             for (let i = 0; i < followings.length; i++) {
@@ -168,6 +182,17 @@ let service = {
                         } else {
                             return resolve([])
                         }
+                    }).then((result) => {
+                        let obj = {};
+                        for (let i = 0; i < result.length; i++) {
+                            obj[result[i].userId] =result[i];
+                        }
+                        for (let i = 0; i < myFollowing.length; i++) {
+                            delete myFollowing[i].following;
+                            myFollowing[i] = Object.assign(myFollowing[i],obj[myFollowing[i].following])
+                            
+                        }
+                        resolve(myFollowing);
                     })
                     .then(resolve, reject)
                     .catch(reject)
@@ -188,7 +213,7 @@ let service = {
                     return;
                 }
                 let userservice = require('./userservice').service;
-                
+
                 userservice.read(_session, userId)
                     .then((dbObj) => {
                         return userservice.read(_session, toUnFollow)
