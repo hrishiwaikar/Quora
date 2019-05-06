@@ -132,11 +132,13 @@ let service = {
                             obj[result[i].userId] =result[i];
                         }
                         for (let i = 0; i < myFollowers.length; i++) {
+                            console.log(myFollowers[i],obj[myFollowers[i].userId])
                             let keys = Object.keys(obj[myFollowers[i].userId]);
                             for (let j = 0; j < keys.length; j++) {
                                 const element = keys[j];
                                 myFollowers[i][element] = obj[myFollowers[i].userId][element];
                             }
+                            console.log(myFollowers[i])
                         }
                         resolve(myFollowers);
                     })
