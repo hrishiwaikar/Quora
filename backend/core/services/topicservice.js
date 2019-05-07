@@ -1,17 +1,63 @@
 const rs = require("./../commons/responses");
 const utils = require("./../commons/utils");
 const topicModel = require("../models/topicmodel");
-
+let userModel = require('./../models/usermodel');
 let service = {
     create: (...args) => {
         return new Promise(function (resolve, reject) {
             try {
                 let _session = args[0] || {};
                 let body = args[1] || {};
+                // body.topicId = body.topicId || utils.getUniqueId();
                 let topicObj = new topicModel(body);
                 topicObj.save().then(response => {
                     return resolve(response);
                 }).catch(reject);
+            } catch (e) {
+                console.error(e)
+                reject(e);
+            }
+        });
+    },
+    read: (...args) => {
+        return new Promise(function (resolve, reject) {
+            try {
+                let _session = args[0] || {};
+                let topicId = args[1].topicId || {};
+                let userId = _session.userId || {};
+                let topicsObj = null
+                topicModel.findOne({
+                    topicId : topicId
+                }).select({
+                    topicId: 1,
+                    topicText: 1,
+                    _id: 0
+                }).then((dbObj) => {
+                    if(!!dbObj){
+                        topicsObj = JSON.parse(JSON.stringify(dbObj));
+                        return userModel.findOne({
+                            userId : userId
+                        })
+                    }else{
+                        return Promise.reject(rs.notfound)
+                    }
+                
+                }).then((dbObj)=>{
+                    if(!!dbObj){
+                        let topics = dbObj.topic || [];
+                        topicsObj.following = false;
+                        for (let index = 0; index < topics.length; index++) {
+                            const element = topics[index];
+                            if(element.topicId === topicsObj.topicId){
+                                topicsObj.following = true;
+                            }
+                        }
+                        console.log(topicsObj)
+                        return Promise.resolve(topicsObj)
+                    }else{
+                        return Promise.reject(rs.notfound)
+                    }
+                }).then(resolve).catch(reject);
             } catch (e) {
                 console.error(e)
                 reject(e);
@@ -73,6 +119,19 @@ let router = {
             })
         };
         service.create(req.user, req.body).then(successCB, next);
+    },
+    read: (req, res, next) => {
+        let successCB = (data) => {
+            res.json({
+                result: "success",
+                response: [{
+                    message: "Topic Read Successfully",
+                    code: "READ"
+                }],
+                topic: data
+            })
+        };
+        service.read(req.user, req.params).then(successCB, next);
     },
     readMany: (req, res, next) => {
         let successCB = (data) => {

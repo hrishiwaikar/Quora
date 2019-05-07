@@ -1,3 +1,4 @@
+var uuid = require('uuid');
 let mongoose = require('mongoose')
 var educationSchema = new mongoose.Schema({
     school: 'string',

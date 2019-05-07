@@ -2,7 +2,8 @@ var ObjectID = require('mongodb').ObjectID;
 
 const rs = require("./../commons/responses");
 const utils = require("./../commons/utils");
-
+// let producer = require('./../commons/kafkarpc');
+// producer = producer.getInstance();
 let questionModel = require("../models/questionmodel")
 let answerModel = require("../models/answermodel")
 let topicModel = require("../models/topicmodel")
@@ -18,15 +19,25 @@ let service = {
                 let _session = args[0] || {};
                 let body = args[1] || {};
                 // console.log("Body\n",body)
-                let answerCreationParams = {}
-                answerCreationParams.userId = _session.userId
-                answerCreationParams.questionId = body.questionId
-                answerCreationParams.answerText = body.answerText
-                answerCreationParams.isAnonymous = body.isAnonymous
-
-                let creationAnswerQuery = new answerModel(answerCreationParams)
-                creationAnswerQuery.save().then(response => {
-                    return resolve(response);
+                answerModel.findOne({userId:_session.userId,questionId:body.questionId})
+                .then((response) => {
+                    if (response === null){
+                        let answerCreationParams = {}
+                        answerCreationParams.userId = _session.userId
+                        answerCreationParams.questionId = body.questionId
+                        answerCreationParams.answerText = body.answerText
+                        answerCreationParams.isAnonymous = body.isAnonymous
+                        let creationAnswerQuery = new answerModel(answerCreationParams)
+                        creationAnswerQuery.save().then(response => {
+                            return resolve(response);
+                        }).catch(reject);
+                    }
+                    else{
+                        return reject({
+                            message: "User has already answered the same question.",
+                            code: "USER_HAS_ANWSERED_SAME_QUESTION"
+                        })
+                    }
                 }).catch(reject);
             } catch (e) {
                 console.error(e)
@@ -155,7 +166,16 @@ let service = {
     },
     update: (...args) => {
         return new Promise(function (resolve, reject) {
-            
+            let _session = args[0] || {};
+            let body = args[1] || {};
+            console.log("body",body)
+            let answerId = body.answerId
+            let answerText = body.answerText || null;
+            let isAnonymous = body.isAnonymous || false
+            answerModel.findOneAndUpdate({answerId:answerId},{answerText:answerText,isAnonymous:isAnonymous})
+            .then((answerObj) => {
+                return resolve(answerObj)
+            }).catch(reject);
         });
     },
     delete: (...args) => {
@@ -173,7 +193,15 @@ let router = {
                     message: "Answer Created Successfully",
                     code: "CREATED"
                 }]
-            })
+            });
+            // producer.fire({
+            //     topic: 'counts',
+            //     type: 'newanswer',
+            //     payload: {
+            //         createdAt: Date.now()
+            //     },
+            //     partition: 0
+            // })
         };
         service.create(req.user, req.body).then(successCB, next);
     },
@@ -210,6 +238,14 @@ let router = {
                     code: "UPDATED"
                 }]
             })
+            // producer.fire({
+            //     topic: 'counts',
+            //     type: 'newcomment',
+            //     payload: {
+            //         createdAt: Date.now()
+            //     },
+            //     partition: 0
+            // })
         };
         service.answerComments(req.user, req.body).then(successCB, next);
     },
@@ -236,7 +272,7 @@ let router = {
                 }]
             })
         };
-        service.update(req.user, req.params.userId, req.body).then(successCB, next);
+        service.update(req.user,req.body).then(successCB, next);
     },
     delete: (req, res, next) => {
         let successCB = (data) => {

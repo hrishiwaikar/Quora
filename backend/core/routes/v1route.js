@@ -9,6 +9,7 @@ let topicservice = require('../services/topicservice').router;
 let analyticService = require('../services/analyticservice');
 let uploadService = require('../services/uploadService');
 let notificationservice = require('../services/notificationservice').router;
+let searchservice = require("../services/searchservice").router;
 
 // const upload = require('../services/imageservice');
 
@@ -38,7 +39,8 @@ module.exports = (express) => {
         versionRouter.post('/signup', authservice.signup);
         /* Auth Routes */
 
-        //versionRouter.get('/search', jwt.verifyRequest, searchservice.search);
+        versionRouter.post('/search', jwt.verifyRequest, searchservice.search);
+
         /* User Routes */
         //versionRouter.post('/users', userservice.create);
         versionRouter.get('/users/:userId', jwt.verifyRequest, userservice.read);
@@ -47,6 +49,8 @@ module.exports = (express) => {
         versionRouter.get("/users/:userId/image", uploadService('profileRead'));
         versionRouter.put('/users/:userId', jwt.verifyRequest, userservice.update);
         versionRouter.delete('/users/:userId', jwt.verifyRequest, userservice.delete);
+        versionRouter.post('/users/:userId/topic', jwt.verifyRequest, userservice.followTopic);
+        versionRouter.delete('/users/:userId/topic', jwt.verifyRequest, userservice.unFollowTopic);
         versionRouter.get('/users/:userId/notifications', jwt.verifyRequest, notificationservice.readMany);
         /* User Routes */
 
@@ -60,16 +64,16 @@ module.exports = (express) => {
         /* Question Routes */
 
         /* UserFeed */
-     versionRouter.get('/userfeeds/:page',jwt.verifyRequest, questionservice.userFeedList);
+     versionRouter.get('/userfeeds',jwt.verifyRequest, questionservice.userFeedList);
      /* UserFeed */
      
     /* User Profile Related Question, content routes*/
-    versionRouter.get('/user/:userId/questions',jwt.verifyRequest, questionservice.userQuestionList);
-    versionRouter.get('/user/:userId/answers',jwt.verifyRequest, questionservice.userAnswerList)
+    versionRouter.get('/users/:userId/questions',jwt.verifyRequest, questionservice.userQuestionList);
+    versionRouter.get('/users/:userId/answers',jwt.verifyRequest, questionservice.userAnswerList)
     /* User Profile Related Question, content routes*/
 
     /* User Content */
-    versionRouter.get('/user/content',jwt.verifyRequest, questionservice.userContentGet);
+    versionRouter.get('/user/:userId/content',jwt.verifyRequest, questionservice.userContentGet);
     /* User Content */
     
         versionRouter.post('/questions', jwt.verifyRequest, questionservice.create);
@@ -94,7 +98,7 @@ module.exports = (express) => {
         versionRouter.post('/answers/:answerId/comments', jwt.verifyRequest, answerservice.answerComments);
         versionRouter.get('/answers/:answerId/:type', jwt.verifyRequest, analyticService.getAnswerStats);
         //versionRouter.get('/answers/:questionId', jwt.verifyRequest, answerservice.read);
-        //versionRouter.put('/answers/:questionId', jwt.verifyRequest, answerservice.update);
+        versionRouter.put('/answers/:answerId', jwt.verifyRequest, answerservice.update);
         //versionRouter.delete('/answers/:questionId', jwt.verifyRequest, answerservice.delete);
 
         versionRouter.get('/views', analyticService.getViews);
@@ -102,10 +106,19 @@ module.exports = (express) => {
 
         /* Topic Routes */
         versionRouter.post('/topics', jwt.verifyRequest, topicservice.create);
+        versionRouter.get('/topics/:topicId', jwt.verifyRequest, topicservice.read);
         versionRouter.get('/topics', jwt.verifyRequest, topicservice.readMany);
         versionRouter.put('/topics/:questionId', jwt.verifyRequest, topicservice.update);
         versionRouter.delete('/topics/:questionId', jwt.verifyRequest, topicservice.delete);
         /* Topic Routes */
+
+        /* question related to topic*/
+        versionRouter.get('/topicQuestions', jwt.verifyRequest, questionservice.questionsRelatedToTopic); //user related topic questions as well as any topic question
+        /* question related to topic*/
+        
+        /* user bookmarked answers and question*/
+        versionRouter.get('/users/:userId/bookmarkedAnswers', jwt.verifyRequest, questionservice.userBookmarkedAnswers)
+        /* user bookmarked answers and question*/
 
         return versionRouter;
     } catch (error) {

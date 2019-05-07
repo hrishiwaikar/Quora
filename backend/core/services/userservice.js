@@ -4,6 +4,7 @@ const _ = require("lodash");
 let pv = require("./../commons/passwordVerification");
 let s3 = require('./../commons/s3');
 const redis = require("./../commons/redis");
+const topicModel = require("../models/topicmodel");
 let service = {
     create: (...args) => {
         return new Promise(function (resolve, reject) {
@@ -11,8 +12,8 @@ let service = {
                 let _session = args[0] || {};
                 let body = args[1] || {};
                 let userModel = require('./../models/usermodel');
-                body.firstName = (body.firstName || "").toLowerCase();
-                body.lastName = (body.lastName || "").toLowerCase();
+                body.firstName = utils.titleCase(body.firstName || "");
+                body.lastName = utils.titleCase(body.lastName || "");
                 body.userId = body.userId || utils.getUniqueId();
                 if (!body.password) {
                     throw rs.invalidrequest;
@@ -153,23 +154,127 @@ let service = {
             }
         });
     },
+    followTopic: (...args) => {
+        return new Promise(function (resolve, reject) {
+            try {
+                let _session = args[0] || {};
+                let userId = args[1] || null;
+                let updateObj = args[2] || {};
+                let userModel = require('./../models/usermodel');
+                let body = {};
+                body.userId = userId || null;
+                userModel.findOne({
+                    userId: userId
+                }).then((dbObj) => {
+                    if (!!dbObj) {
+                        body = dbObj || {};
+                        return topicModel.findOne({
+                            topicId: updateObj.topicId
+                        });
+                    } else {
+                        return reject(rs.notfound)
+                    }
+
+                }).then((dbObj) => {
+                    if (!!dbObj) {
+                        let _topics = body.topic || [];
+                        let push = 1;
+                        for (let i = 0; i < _topics.length; i++) {
+                            const element = _topics[i];
+                            if (element.topicId === updateObj.topicId) {
+                                push = 0;
+                            }
+                        }
+                        if (push) {
+                            _topics.push(dbObj)
+                        }
+                        redis.hdel("USERS", userId).then(() => {}).catch(() => {})
+                        return userModel.findOneAndUpdate({
+                            userId: userId
+                        }, {
+                            topic: _topics
+                        });
+                    } else {
+                        return reject(rs.notfound)
+                    }
+                }).then(resolve).catch((err) => {
+                    reject(err);
+                })
+            } catch (e) {
+                console.error(e)
+                reject(e);
+            }
+        });
+    },
+    unFollowTopic: (...args) => {
+        return new Promise(function (resolve, reject) {
+            try {
+                let _session = args[0] || {};
+                let userId = args[1] || null;
+                let updateObj = args[2] || {};
+                let userModel = require('./../models/usermodel');
+                let body = {};
+                body.userId = userId || null;
+                userModel.findOne({
+                    userId: userId
+                }).then((dbObj) => {
+                    if (!!dbObj) {
+                        body = dbObj || {};
+                        return topicModel.findOne({
+                            topicId: updateObj.topicId
+                        });
+                    } else {
+                        return reject(rs.notfound)
+                    }
+
+                }).then((dbObj) => {
+                    if (!!dbObj) {
+                        let _topics = body.topic || [];
+                        let _f = null;
+                        for (let i = 0; i < _topics.length; i++) {
+                            const element = _topics[i];
+                            if (element.topicId === updateObj.topicId) {
+                                _f = i;
+                            }
+                        }
+                        if (_f >= 0) {
+                            _topics.splice(_f,1)
+                        }
+                        redis.hdel("USERS", userId).then(() => {}).catch(() => {})
+                        return userModel.findOneAndUpdate({
+                            userId: userId
+                        }, {
+                            topic: _topics
+                        });
+                    } else {
+                        return reject(rs.notfound)
+                    }
+                }).then(resolve).catch((err) => {
+                    reject(err);
+                })
+            } catch (e) {
+                console.error(e)
+                reject(e);
+            }
+        });
+    },
     uploadImage: (...args) => {
         return new Promise(function (resolve, reject) {
             try {
                 let _session = args[0] || {};
                 let userId = args[1] || null;
                 let file = args[2] || {};
-                // let userModel = require('./../models/usermodel');
-                // let body = {};
-                // body.userId = userId || null;
-                // s3.up(process.cwd() + `/uploads/profiles/File_${userId}`, `profiles/${userId}`, {
-                //     "ACL": "public-read"
-                // }).then((d) => {
-                //     console.log(d)
-                // }, (e) => {
-                //     console.log("err", e)
-                // });
-                resolve({})
+                let userModel = require('./../models/usermodel');
+                let body = {};
+                body.userId = userId || null;
+                resolve({});
+                s3.up(process.cwd() + `/uploads/profiles/File_${userId}`, `profiles/${userId}`, {
+                    "ACL": "public-read"
+                }).then((d) => {
+                    console.log(d)
+                }, (e) => {
+                    console.log("err", e)
+                });
             } catch (e) {
                 console.error(e)
                 reject(e);
@@ -247,6 +352,30 @@ let router = {
             })
         };
         service.update(req.user, req.params.userId, req.body).then(successCB, next);
+    },
+    followTopic: (req, res, next) => {
+        let successCB = (data) => {
+            res.json({
+                result: "success",
+                response: [{
+                    message: "User Updated Successfully",
+                    code: "UPDATED"
+                }]
+            })
+        };
+        service.followTopic(req.user, req.params.userId, req.body).then(successCB, next);
+    },
+    unFollowTopic: (req, res, next) => {
+        let successCB = (data) => {
+            res.json({
+                result: "success",
+                response: [{
+                    message: "User Updated Successfully",
+                    code: "UPDATED"
+                }]
+            })
+        };
+        service.unFollowTopic(req.user, req.params.userId, req.body).then(successCB, next);
     },
     delete: (req, res, next) => {
         let successCB = (data) => {

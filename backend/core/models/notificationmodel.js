@@ -1,3 +1,4 @@
+var uuid = require('uuid');
 let mongoose = require('mongoose')
 var questionNotificationSchema = new mongoose.Schema({
     userId: 'string',
@@ -11,7 +12,9 @@ let notificationModel = new mongoose.Schema({
     notificationId: {
         type: String,
         required: true,
+        default : uuid.v1,
         trim: true,
+        unique: true,
     },
     notification: {
         type: String,

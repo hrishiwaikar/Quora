@@ -2,7 +2,8 @@ var ObjectID = require('mongodb').ObjectID;
 
 const rs = require("./../commons/responses");
 const utils = require("./../commons/utils");
-
+// let producer = require('./../commons/kafkarpc');
+// producer = producer.getInstance();
 let questionModel = require("../models/questionmodel")
 let answerModel = require("../models/answermodel")
 let userModel = require("../models/usermodel")
@@ -11,6 +12,29 @@ let answerUpvotesModel = require("../models/answerupvotesmodel")
 let answerDownvotesModel = require("../models/answerdownvotesmodel")
 let answerBookmarkModel = require("../models/answerbookmarkmodel")
 let questionFollowModel = require("../models/questionfollowmodel")
+
+
+let questionCommonAttributes = (_session,questionObj) => {
+    return new Promise(async function (resolve, reject) {
+        let temp = {}
+        temp["questionId"] = questionObj.questionId
+        temp["questionText"] = questionObj.questionText
+        temp['userIsFollowingTheQuestion'] = false
+        temp["createdAt"] = questionObj.createdAt
+        temp["updatedAt"] = questionObj.updatedAt
+        temp["followers"] = questionObj.followers
+        await questionFollowModel.findOne({userId:_session.userId,questionId:questionObj.questionId}).then((questionFollowObj) => {
+            if(questionFollowObj !== null){
+                temp['userIsFollowingTheQuestion'] = true
+            }
+        })
+        temp["noOfAnswers"] = 0
+        await answerModel.find({questionId:questionObj.questionId}).then((response) => {
+            temp["noOfAnswers"] = response.length
+        })
+        return resolve(temp)
+    });
+}
 
 let answerCommonAttributes = (_session,answerObj) => {
     return new Promise(async function (resolve, reject) {
@@ -48,7 +72,7 @@ let answerCommonAttributes = (_session,answerObj) => {
         await userModel.findOne({userId:answerObj.userId}).then((answererObj)=>{
             // console.log("answerObj\n",answererObj)
             if (answererObj !== null){
-                temp_answer['name'] = answerObj.firstName + " "+answerObj.lastName
+                temp_answer['answererName'] = answererObj.firstName + " "+answererObj.lastName
                 temp_answer['profileCredential'] = answererObj.profileCredential
             }
         })
@@ -90,11 +114,16 @@ let service = {
                 let body = args[1] || {};
                 let question_body = {}
                 let questionText = body.questionText || "";
-                let topics = body.topanswerBookmarkModelics || [];
-                let questionObj = new questionModel({userId:_session.userId,questionText:questionText,topicsId:topics});
-                questionObj.save().then(response => {
-                    // console.log(response.questionId)
-                    return resolve(response.questionId);
+                let topics = body.topics || [];
+                let questionObjQuery = new questionModel({userId:_session.userId,questionText:questionText,topicsId:topics});
+                questionObjQuery.save().then(questionObj => {
+                    let questionFollowObj = new questionFollowModel({userId:_session.userId,questionId:questionObj.questionId})
+                    questionFollowObj.save().then(response => {
+                        questionObj.followers += 1
+                        questionObj.save().then(response => {
+                            return resolve(response.questionId);
+                        }).catch(reject);
+                    }).catch(reject);
                 }).catch(reject);
                 
             } catch (e) {
@@ -138,7 +167,7 @@ let service = {
                         if (questionObj.topicsId.length > 0){
                             for (let topicIndex=0;topicIndex<questionObj.topicsId.length;topicIndex++){
                                 await topicModel.findOne({topicId:questionObj.topicsId[topicIndex]}).then((topicObj) =>{
-                                    output['topics'].push(topicObj.topicText)
+                                    output['topics'].push({"topicId":topicObj.topicId,"topicText":topicObj.topicText})
                                 })
                             }
                         }
@@ -212,24 +241,43 @@ let service = {
         });
     },
     userFeedList : (...args) => {
-        return new Promise(function (resolve, reject) {
+        return new Promise(async function (resolve, reject) {
             try {
                 let output = []
                 let _session = args[0] || {};
-                console.log(_session.userId)
-                let page_number = args[1] || 1;
-                /* pagination logic */
-                // let page_number = param('page')
-                // if(page_number === undefined){
-                //     page_number = 1
-                // }
+                let params = args[1] || 1;
+                let page_number = params['page']
+                let topic = params['topic']
                 let page_limit = 20
                 let pagination_end_index = page_number * page_limit
                 let pagination_start_index = pagination_end_index - page_limit
                 /* pagination logic */
+                
+                let topicIdList = []
+                if(topic === null){
+                    await userModel.findOne({userId:_session.userId})
+                    .then((userObj) => {
+                        console.log("---user topics---\n",userObj) //vinit fix
+                        for(let index=0;index<userObj.topic.length;index++){
+                            console.log(userObj.topic[index])
+                            topicIdList.push(userObj.topic[index].topicId)
+                        }
+                    }).catch(reject);
+                }
+                else{
+                    topicIdList.push(topic)
+                }
 
-                questionModel.find({}).sort('-createdAt').skip(pagination_start_index).limit(page_limit)
+                console.log("List of topic ids---\n",topicIdList)
+
+                let dbQuery = {}
+                if(topicIdList.length > 0 ){
+                    dbQuery['topicsId'] = {"$in":topicIdList}
+                }   
+
+                questionModel.find(dbQuery).sort('-createdAt').skip(pagination_start_index).limit(page_limit)
                 .then(async (questionObjs) => {
+                    console.log("Lit of questionObjs-------\n",questionObjs)
                     for(let index=0;index<questionObjs.length;index++){
                         let answerObj = await answersPerQuestion(_session,questionObjs[index].questionId,true)
                         if(answerObj.length > 0){
@@ -264,27 +312,13 @@ let service = {
                 let output = []
                 let _session = args[0] || {};
                 let page_number = args[1] || 1;
-                questionModel.find({userId:_session.userId}).sort('-createdAt').select({_id:0,"__v":0,topicsId:0,})
+                questionModel.find({userId:_session.userId}).sort('-createdAt').select({_id:0,"__v":0,topicsId:0})
                 .then(async (questionObjs) => {
-                    output["noOfQuestions"] = questionObjs.length;
+                    console.log(questionObjs)
+                    // output["noOfQuestions"] = questionObjs.length;
                     for(let index=0;index<questionObjs.length;index++){
                         let questionObj = questionObjs[index]
-                        console.log(questionObj)
-                        let temp = {}
-                        temp["questionText"] = questionObj.questionText
-                        temp['userIsFollowingTheQuestion'] = false
-                        temp["createdAt"] = questionObj.createdAt
-                        temp["updatedAt"] = questionObj.updatedAt
-                        temp["followers"] = questionObj.followers
-                        await questionFollowModel.findOne({userId:_session.userId,questionId:questionObj.questionId}).then((questionFollowObj) => {
-                            if(questionFollowObj !== null){
-                                temp['userIsFollowingTheQuestion'] = true
-                            }
-                        })
-                        temp["noOfAnswers"] = 0
-                        await answerModel.find({questionId:questionObj.questionId}).then((response) => {
-                            temp["noOfAnswers"] = response.length
-                        })
+                        let temp = questionCommonAttributes(_session,questionObj)
                         output.push(temp)
                     }
                     return resolve(output)
@@ -414,6 +448,111 @@ let service = {
             }
         });
     },
+    questionsRelatedToTopic : (...args) => {
+        return new Promise(async function (resolve, reject) {
+            try {
+                let output = []
+                let _session = args[0] || {};
+                let params = args[1] || 1;
+                let page_number = params['page']
+                let topic = params['topic']
+                let page_limit = 10
+                let pagination_end_index = page_number * page_limit
+                let pagination_start_index = pagination_end_index - page_limit
+
+                let topicIdList = []
+                if(topic === null){
+                    await userModel.findOne({userId:_session.userId})
+                    .then((userObj) => {
+                        console.log("---user topics---\n",userObj) //vinit fix
+                        for(let index=0;index<userObj.topic.length;index++){
+                            console.log(userObj.topic[index])
+                            topicIdList.push(userObj.topic[index].topicId)
+                        }
+                    }).catch(reject);
+                }
+                else{
+                    topicIdList.push(topic)
+                }
+                
+                console.log("List of topics---\n",topicIdList)
+
+                let dbQuery = {}
+                if(topicIdList.length > 0 ){
+                    dbQuery['topicsId'] = {"$in":topicIdList}
+                }   
+
+                //get list of questions answered by user
+                let userAnsweredQuestionList = []
+                await answerModel.find({userId:_session.userId}).distinct('questionId')
+                .then((questionIds) => {
+                    userAnsweredQuestionList = questionIds
+                }).catch(reject);
+
+                console.log("Lits of questions----\n",userAnsweredQuestionList)
+
+                if(userAnsweredQuestionList.length > 0){
+                    dbQuery['questionId'] = {"$nin":userAnsweredQuestionList}
+                }
+
+                console.log("-----dbQuery---",dbQuery)
+
+                await questionModel.find(dbQuery).sort('-createdAt').skip(pagination_start_index).limit(page_limit)
+                .then(async (questionObjs) => {
+                    for(let index=0;index<questionObjs.length;index++){
+                        let questionObj = questionObjs[index]
+                        let temp = await questionCommonAttributes(_session,questionObj)
+                        console.log(temp)
+                        temp['topics'] = []
+                        if (questionObj.topicsId.length > 0){
+                            for (let topicIndex=0;topicIndex<questionObj.topicsId.length;topicIndex++){
+                                await topicModel.findOne({topicId:questionObj.topicsId[topicIndex]}).then((topicObj) =>{
+                                    temp['topics'].push({"topicId":topicObj.topicId,"topicText":topicObj.topicText})
+                                })
+                            }
+                        }
+                        output.push(temp)
+                    }
+                    return resolve(output)
+                }).catch(reject);
+            }
+            catch (e) {
+                console.error(e)
+                return reject(e);
+            }
+        });
+    },
+    userBookmarkedAnswers : (...args) => {
+        return new Promise(function (resolve, reject) {
+            try {
+                let output = []
+                let _session = args[0] || {};
+                answerBookmarkModel.find({userId:_session.userId})
+                .then(async (answerBookmarkObjs) => {
+                    console.log("----answerBookmarkObjs----\n",answerBookmarkObjs)
+                    for(let index=0;index<answerBookmarkObjs.length;index++){
+                        let temp = {}
+                        await answerModel.findOne({answerId:answerBookmarkObjs[index].answerId})
+                        .then(async (answerObj) => {
+                            temp = await answerCommonAttributes(_session,answerObj)
+                            await questionModel.findOne({questionId:answerObj.questionId})
+                            .then((questionObj) => {
+                                temp["questionId"] = questionObj.questionId
+                                temp["questionText"] = questionObj.questionText
+                            }).catch(reject);
+                        }).catch(reject);
+                        console.log(temp);
+                        output.push(temp)
+                    }
+                    return resolve(output);
+                }).catch(reject);
+            }
+            catch (e) {
+                console.error(e)
+                return reject(e);
+            }
+        });
+    },
     update: (...args) => {
         return new Promise(function (resolve, reject) {
             
@@ -436,6 +575,14 @@ let router = {
                 }],
                 data: data
             })
+            // producer.fire({
+            //     topic: 'counts',
+            //     type: 'newquestion',
+            //     payload: {
+            //         createdAt: Date.now()
+            //     },
+            //     partition: 0
+            // })
         };
         service.create(req.user, req.body).then(successCB, next);
     },
@@ -499,7 +646,10 @@ let router = {
                 data: data
             })
         };
-        service.userFeedList(req.user,req.param('page')).then(successCB, next);
+        let params = {}
+        params['page'] = req.param('page') || 1;
+        params['topic'] = req.param('topic') || null
+        service.userFeedList(req.user,params).then(successCB, next);
     },
     userQuestionList : (req, res, next) => {
         let successCB = (data) => {
@@ -544,6 +694,35 @@ let router = {
         filters["order_direction"] = req.param('order_direction') ||  "newest_first";
         console.log(filters)
         service.userContentGet(req.user,filters).then(successCB, next);
+    },
+    questionsRelatedToTopic : (req, res, next) => {
+        let successCB = (data) => {
+            res.json({
+                result: "success",
+                response: [{
+                    message: "Questions related to topic",
+                    code: "READ"
+                }],
+                data: data
+            })
+        };
+        let params = {}
+        params['page'] = req.param('page') || 1;
+        params['topic'] = req.param('topic') || null
+        service.questionsRelatedToTopic(req.user,params).then(successCB, next);
+    },
+    userBookmarkedAnswers :(req, res, next) => {
+        let successCB = (data) => {
+            res.json({
+                result: "success",
+                response: [{
+                    message: "User bookmarked questions",
+                    code: "READ"
+                }],
+                data: data
+            })
+        };
+        service.userBookmarkedAnswers(req.user,req.body).then(successCB, next);
     },
 };
 module.exports.service = service;
