@@ -3,7 +3,6 @@ import { Menu, Icon, Input, Button, List, Popover } from 'antd';
 import { withRouter } from 'react-router-dom';
 import logo from '../../assets/quora-logo.png';
 import './Navbar.css';
-import Search from './../Search/Search.js';
 import URL from '../../constants';
 
 import Notification from '../Notification/Notification';
@@ -30,7 +29,7 @@ class Navbar extends Component {
         });
         let url = "";
 
-        let modal = false;
+        let modal = false
         if (key === "messages") modal = true;
 
         if (key === "profile")
@@ -84,7 +83,10 @@ class Navbar extends Component {
                     </Menu.Item>
 
                     <Menu.Item className="navbar-search" disabled>
-                        <Search />
+                        <Input
+                            placeholder="Search Quora"
+                            prefix={<Icon type="search" style={{ color: 'rgba(0,0,0,.25)' }} />}
+                        />
                     </Menu.Item>
                     <SubMenu title={<span className="submenu-title-wrapper">
                         <img src={logo} className="navbar-profile" alt="profile" /></span>}>
@@ -107,7 +109,5 @@ class Navbar extends Component {
         );
     }
 }
-
-
 
 export default withRouter(Navbar);
