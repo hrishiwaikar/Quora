@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Col, Row, Skeleton } from 'antd';
+import { Col, Row, Skeleton, message } from 'antd';
 import FollowerCard from './FollowerCard';
 // import FollowersList from './FollowersList';
 import { call } from '../../api';
@@ -52,6 +52,7 @@ class Followers extends Component {
     console.log(userId)
     let { followers } = this.state;
     let follower = followers.filter(follower => follower.userId === userId)[0]
+    console.log("Follower", follower, follower.followingBack)
     if (!follower.followingBack) {
       call({
         method: 'post',
@@ -59,6 +60,7 @@ class Followers extends Component {
       })
         .then(data => {
           console.log(data)
+          message.success(`followed ${follower.firstName}`)
           this.setFollowers(followers, userId);
         })
         .catch(err => {
@@ -71,7 +73,8 @@ class Followers extends Component {
       })
         .then(data => {
           console.log(data)
-          this.setFollowers(followers);
+          message.success(`Unfollowed ${follower.firstName}`)
+          this.setFollowers(followers, userId);
         })
         .catch(err => {
           console.log(err)
@@ -84,7 +87,7 @@ class Followers extends Component {
     let { followers, loading } = this.state;
     console.log(followers)
     followers = followers.map(d => {
-      const { followers, profileImage, firstName, lastName, profileCredential, followingBack, _id,userId } = d;
+      const { followers, profileImage, firstName, lastName, profileCredential, followingBack, _id, userId } = d;
       return <Col span={12} key={_id}>
         <FollowerCard
           _id={_id}

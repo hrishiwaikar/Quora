@@ -1,21 +1,20 @@
 import React, { Component } from 'react';
-import { Row, Col, Menu, Icon, Card, Typography, Avatar } from 'antd';
-import './HomeLayout.css';
+import { Row, Col, Menu, Icon, Card, Typography, Avatar, Button, Tabs } from 'antd';
+import './TopicLayout.css';
 import { call } from '../../api';
 import BottomScrollListener from 'react-bottom-scroll-listener';
 import { TestDisplayQuestion } from '../DisplayQuestion/DisplayQuestion';
 const { Title, Text } = Typography;
+const TabPane = Tabs.TabPane;
 
 
 
-
-class HomeLayout extends Component {
+class TopicLayout extends Component {
     state = {
         selected: "feed",
         data: [],
         pageNumber: 1,
-        allDataFetched: false,
-        topics: ["bhaskar"]
+        allDataFetched: false
     };
 
     setData = (pageNumber) => {
@@ -43,7 +42,6 @@ class HomeLayout extends Component {
             })
     }
 
-
     componentDidMount() {
         const { pageNumber } = this.state;
         this.setData(pageNumber)
@@ -59,14 +57,30 @@ class HomeLayout extends Component {
             this.setData(pageNumber + 1)
         console.log("botton")
     }
+    handleFollowClick = () => {
+        const topicId= this.props.match.params.id;
+            console.log(topicId)
+    }
+
+    onTabChange = (key) => {
+        console.log(key)
+    }
     render = () => {
-        const { data, topics } = this.state;
+        const { data } = this.state;
+        let userId = localStorage.getItem("userId")
         console.log(data)
-        let userId = localStorage.getItem("userId");
         const cardContent = <div>
-            <Avatar src={userId} />
-            < Text > Bhaskar Gurram</Text>
-            <Title level={3}>What is your question?</Title>
+            <Row gutter={24}>
+                <Col span={6}>
+                    <img alt="" style={{ width: "100%" }} src="https://os.alipayobjects.com/rmsportal/QBnOOoLaAfKPirc.png" />
+                </Col>
+                <Col span={18}>
+                    < Title level={2}> Bhaskar Gurram</Title>
+                    <Button icon="check" type="primary" ghost onClick={this.handleFollowClick}>Follow</Button>
+                </Col>
+            </Row>
+
+
         </div>
 
 
@@ -80,19 +94,23 @@ class HomeLayout extends Component {
                             mode="inline"
                         >
                             <Menu.Item key="feed"><Icon type="idcard" /> Feed</Menu.Item>
-                            {
-                                topics.map(topic => (
-                                    <Menu.Item key={topic}><Icon type="user" /> {topic}</Menu.Item>
-                                ))
-                            }
                             <Menu.Item key="bookmarks"><Icon type="book" /> Bookmarks</Menu.Item>
                         </Menu>
                     </Col>
                     <Col span={14}>
                         <Card className="card">
                             {cardContent}
-                            <TestDisplayQuestion data={data} />
-                            <BottomScrollListener onBottom={this.handleScrollToBottom} />
+                            <Tabs defaultActiveKey="read" onChange={this.onTabChange}>
+                                <TabPane tab="Read" key="read">
+                                    <TestDisplayQuestion data={data} />
+                                    <BottomScrollListener onBottom={this.handleScrollToBottom} />
+                                </TabPane>
+                                <TabPane tab="Answer" key="answer">
+                                    <TestDisplayQuestion data={data} />
+                                    <BottomScrollListener onBottom={this.handleScrollToBottom} />
+                                </TabPane>
+                            </Tabs>,
+
                         </Card>
 
                     </Col>
@@ -103,4 +121,4 @@ class HomeLayout extends Component {
 }
 
 
-export default HomeLayout;
+export default TopicLayout;

@@ -47,10 +47,11 @@ class Messages extends Component {
                     user_id: conversation.conversationWith.userId
                 }))
                 this.setState({
-                    conversations
+                    conversations,
+                    loading: false
                 })
             })
-       
+
     }
 
     handleCancel = () => {
@@ -86,7 +87,7 @@ class Messages extends Component {
 
 
     render() {
-        const { visible, conversations } = this.state;
+        const { visible, conversations, loading } = this.state;
         return (
             <div >
                 <Modal
@@ -104,20 +105,25 @@ class Messages extends Component {
                     ]}
 
                 >
-                    <List
+                    {
 
-                        itemLayout="horizontal"
-                        dataSource={conversations}
-                        renderItem={item => (
-                            <List.Item className="list-item" onClick={() => this.handleMessageClick(item.conversationId)}>
-                                <List.Item.Meta
-                                    avatar={<Avatar src={item.userId} />}
-                                    title={<a >{item.name}</a>}
-                                    description={item.conversation}
-                                />
-                            </List.Item>
-                        )}
-                    />
+                        !loading ?
+                            <List
+
+                                itemLayout="horizontal"
+                                dataSource={conversations}
+                                renderItem={item => (
+                                    <List.Item className="list-item" onClick={() => this.handleMessageClick(item.conversationId)}>
+                                        <List.Item.Meta
+                                            avatar={<Avatar src={item.userId} />}
+                                            title={<a >{item.name}</a>}
+                                            description={item.conversation}
+                                        />
+                                    </List.Item>
+                                )}
+                            /> :
+                            <Skeleton active paragraph={{ rows: 9 }} />
+                    }
                 </Modal>
             </div>
         )

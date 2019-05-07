@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import "antd/dist/antd.css";
 import "./../../style.css";
 import axios from "axios";
+import { call } from '../../api';
+import { withRouter } from 'react-router-dom';
 
 import { Form, Icon, Input, Button, Card, message } from "antd";
 
@@ -33,26 +35,43 @@ class SignUp extends Component {
           password: this.state.password
         };
         console.log("signup data ", data);
-
-        axios
-          .post("v1/signup", data)
+        call({
+          method: "post",
+          url: '/signup',
+          data
+        })
           .then(res => {
-            if (res.status === 200) {
-              console.log("Signup response data", res.data.response[0].message);
-              message.success(res.data.response[0].message);
-              //   window.localStorage.setItem("userId");
-              //   window.localStorage.setItem("token");
-            }
+            console.log("login response data", res);
+            message.success(res.response[0].message);
+            window.localStorage.setItem("userId", res.user.userId);
+            window.localStorage.setItem("token", res.token);
+            this.props.history.push("/")
+
           })
           .catch(err => {
-            console.log("signup error: ", err);
+            console.log("login error: ", err);
 
-            console.log(
-              "signup error response: ",
-              err.response.data.response.message
-            );
-            message.error(err.response.data.response.message);
+            message.error(err.message.response.message);
           });
+        // axios
+        //   .post("http://10.0.0.188:7836/v1/signup", data)
+        //   .then(res => {
+        //     if (res.status === 200) {
+        //       console.log("Signup response data", res.data.response[0].message);
+        //       message.success(res.data.response[0].message);
+        //       //   window.localStorage.setItem("userId");
+        //       //   window.localStorage.setItem("token");
+        //     }
+        //   })
+        //   .catch(err => {
+        //     console.log("signup error: ", err);
+
+        //     console.log(
+        //       "signup error response: ",
+        //       err.response.data.response.message
+        //     );
+        //     message.error(err.response.data.response.message);
+        //   });
       }
     });
   };
@@ -171,4 +190,4 @@ class SignUp extends Component {
 
 const signupForm = Form.create({ name: "signup" })(SignUp);
 
-export default signupForm;
+export default withRouter(signupForm);

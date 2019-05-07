@@ -12,6 +12,7 @@ import Messages from '../Messages/Messages';
 import NewMessage from '../Messages/NewMessage';
 import Thread from '../Messages/Thread';
 import YourContentLayout from '../YourContentLayout/YourContentLayout';
+import TopicLayout from '../TopicLayout/TopicLayout';
 
 class Layout extends Component {
     previousLocation = this.props.location;
@@ -43,6 +44,7 @@ class Layout extends Component {
                     <Navbar />
                     <div className="content">
                         <Switch location={isModal ? this.previousLocation : location}>
+                            <Route path="/topic/:id" component={TopicLayout} />
                             <Route path="/profile/:id" component={ProfileLayout} />
                             <Route path="/answer" component={AnswerLayout} />
                             <Route path="/question/:id" component={QuestionPage} />

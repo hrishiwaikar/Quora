@@ -13,8 +13,7 @@ export const post = (url, data, onSuccess, onFailure) => {
         url: url,
         data: data,
         headers: {
-            // 'authorization': token,
-            'authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjNWIwNWEyMC03MDU5LTExZTktOWRkMi1hMzFjNzIwMTk1M2MiLCJjcmVhdGVkX2F0IjoxNTU3MTg2NjU5OTE5LCJpYXQiOjE1NTcxODY2NTksImV4cCI6MTU1OTc3ODY1OX0.cWooKpnE8u-ZYVETvyhA9_Ow6-I68Hw4RqmdVE5UGcY'
+            'authorization': token
         }
     })
         .then(response => {
@@ -31,13 +30,11 @@ export const post = (url, data, onSuccess, onFailure) => {
 
 export const get = (url, id, onSuccess, onFailure) => {
     const token = getToken();
-    console.log('hitting url ', url + id);
     axios({
         method: 'get', //you can set what request you want to be
         url: url + id,
         headers: {
-            // 'authorization': token
-            'authorization': 'Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJjNWIwNWEyMC03MDU5LTExZTktOWRkMi1hMzFjNzIwMTk1M2MiLCJjcmVhdGVkX2F0IjoxNTU3MTg2NjU5OTE5LCJpYXQiOjE1NTcxODY2NTksImV4cCI6MTU1OTc3ODY1OX0.cWooKpnE8u-ZYVETvyhA9_Ow6-I68Hw4RqmdVE5UGcY'
+            'authorization': token
         }
 
     })

@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Col, Row, Skeleton } from 'antd';
+import { Col, Row, Skeleton, message } from 'antd';
 import FollowerCard from './FollowerCard';
 import { call } from '../../api'
 
@@ -35,7 +35,9 @@ class Following extends Component {
     })
       .then(data => {
         let { following } = this.state;
+        let person = following.filter(following => following.userId === userId)[0];
         following = following.filter(following => following.userId !== userId)
+        message.success(`Unfollowed ${person.firstName}`)
         this.setState({
           following
         })

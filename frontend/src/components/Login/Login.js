@@ -2,6 +2,8 @@ import React, { Component } from "react";
 import "antd/dist/antd.css";
 import "./../../style.css";
 import axios from "axios";
+import { call } from '../../api';
+import { withRouter } from 'react-router-dom';
 
 import { Form, Icon, Input, Button, Card, message } from "antd";
 
@@ -30,23 +32,25 @@ class Login extends Component {
           password: this.state.loginPassword
         };
         console.log("login data ", data);
-
-        axios
-          .post("v1/signin", data)
+        call({
+          method: "post",
+          url: '/signin',
+          data
+        })
           .then(res => {
-            if (res.status === 200) {
-              console.log("login response data", res.data);
-              message.success(res.data.response[0].message);
-              window.localStorage.setItem("userId", res.data.user.userId);
-              window.localStorage.setItem("token", res.data.token);
-            }
+            console.log("login response data", res);
+            message.success(res.response[0].message);
+            window.localStorage.setItem("userId", res.user.userId);
+            window.localStorage.setItem("token", res.token);
+            this.props.history.push("/")
+
           })
           .catch(err => {
             console.log("login error: ", err);
 
-            console.log("login error response: ", err.response);
-            message.error(err.response.data.response.message);
+            message.error(err.message.response.message);
           });
+
       }
     });
   };
@@ -120,4 +124,4 @@ class Login extends Component {
 
 const loginForm = Form.create({ name: "login" })(Login);
 
-export default loginForm;
+export default withRouter(loginForm);
