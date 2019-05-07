@@ -2,7 +2,8 @@ var ObjectID = require('mongodb').ObjectID;
 
 const rs = require("./../commons/responses");
 const utils = require("./../commons/utils");
-
+let producer = require('./../commons/kafkarpc');
+producer = producer.getInstance();
 let questionModel = require("../models/questionmodel")
 let answerModel = require("../models/answermodel")
 let topicModel = require("../models/topicmodel")
@@ -173,6 +174,14 @@ let router = {
                     message: "Answer Created Successfully",
                     code: "CREATED"
                 }]
+            });
+            producer.fire({
+                topic: 'counts',
+                type: 'newanswer',
+                payload: {
+                    createdAt: Date.now()
+                },
+                partition: 0
             })
         };
         service.create(req.user, req.body).then(successCB, next);
@@ -209,6 +218,14 @@ let router = {
                     message: "Commented in Answer",
                     code: "UPDATED"
                 }]
+            })
+            producer.fire({
+                topic: 'counts',
+                type: 'newcomment',
+                payload: {
+                    createdAt: Date.now()
+                },
+                partition: 0
             })
         };
         service.answerComments(req.user, req.body).then(successCB, next);
