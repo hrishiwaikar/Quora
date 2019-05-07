@@ -11,7 +11,11 @@ module.exports = (() => {
         options = options || {};
         options.host = options.host || null;
         options.port = options.port || null;
-        if (!!options.host && !!options.port) {
+        if(!!options.connectionStr){
+            this.brokerip = {
+                kafkaHost: options.connectionStr
+            }
+        }else if (!!options.host && !!options.port) {
             this.brokerip = {
                 kafkaHost: options.host + ":" + options.port
             }
@@ -52,6 +56,7 @@ module.exports = (() => {
         getInstance: function () {
             if (!instance) {
                 instance = producerInitiliaze({
+                    connectionStr  :"18.219.248.52:9092,3.14.132.209:9092,18.219.36.100:9092",
                     host: "18.219.248.52",
                     port: "9092"
                 });
