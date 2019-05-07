@@ -1,3 +1,4 @@
+var uuid = require('uuid');
 let mongoose = require('mongoose')
 let followSchema = new mongoose.Schema({
     userId: {
@@ -5,6 +6,7 @@ let followSchema = new mongoose.Schema({
         required: true,
         trim: true,
         unique: true,
+        default : uuid.v1,
     },
     following: {
         type: String,
