@@ -18,15 +18,25 @@ let service = {
                 let _session = args[0] || {};
                 let body = args[1] || {};
                 // console.log("Body\n",body)
-                let answerCreationParams = {}
-                answerCreationParams.userId = _session.userId
-                answerCreationParams.questionId = body.questionId
-                answerCreationParams.answerText = body.answerText
-                answerCreationParams.isAnonymous = body.isAnonymous
-
-                let creationAnswerQuery = new answerModel(answerCreationParams)
-                creationAnswerQuery.save().then(response => {
-                    return resolve(response);
+                answerModel.findOne({userId:_session.userId,questionId:body.questionId})
+                .then((response) => {
+                    if (response === null){
+                        let answerCreationParams = {}
+                        answerCreationParams.userId = _session.userId
+                        answerCreationParams.questionId = body.questionId
+                        answerCreationParams.answerText = body.answerText
+                        answerCreationParams.isAnonymous = body.isAnonymous
+                        let creationAnswerQuery = new answerModel(answerCreationParams)
+                        creationAnswerQuery.save().then(response => {
+                            return resolve(response);
+                        }).catch(reject);
+                    }
+                    else{
+                        return reject({
+                            message: "User has already answered the same question.",
+                            code: "USER_HAS_ANWSERED_SAME_QUESTION"
+                        })
+                    }
                 }).catch(reject);
             } catch (e) {
                 console.error(e)
