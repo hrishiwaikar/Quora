@@ -2,12 +2,15 @@ import React, { Component } from 'react'
 import { Icon, Tooltip, Modal, Upload, message } from 'antd';
 import logo from '../../assets/quora-logo.png';
 import goku from '../../assets/goku.jpg';
+import { call } from '../../api';
 import './Image.css';
 
 const Dragger = Upload.Dragger;
 class Image extends Component {
     state = {
-        visible: false
+        visible: false,
+        fileList: [],
+        userId: this.props.userId
     }
 
     toggleModal = () => {
@@ -16,39 +19,71 @@ class Image extends Component {
         }))
     }
     onChange = (info) => {
-        const status = info.file.status;
-        if (status !== 'uploading') {
-            console.log(info.file, info.fileList);
-        }
-        if (status === 'done') {
-            this.setState((state, props) => ({
-                visible: !state.visible
-            }))
-            message.success(`${info.file.name} file uploaded successfully.`);
-        } else if (status === 'error') {
-            message.error(`${info.file.name} file upload failed.`);
-        }
+        const { fileList } = this.state;
+        console.log("hello")
+        let userId = localStorage.getItem("userId");
+        const formData = new FormData();
+
+        formData.append('profileImage', fileList[0]);
+
+        this.setState({
+            uploading: true,
+        });
+        call({
+            method: 'put',
+            url: `/users/${userId}/image`,
+            data: formData
+        })
+            .then(response => {
+                console.log(response)
+                message.success("Profile image updated")
+                this.setState({
+                    visible: false,
+                    fileList: []
+                })
+            })
+            .catch(err => {
+                console.log(err)
+            })
+
     }
 
     render() {
-        const { visible } = this.state
+        const { visible, fileList, userId } = this.state
+
         const props = {
-            name: 'file',
-            multiple: true,
-            action: '//jsonplaceholder.typicode.com/posts/',
-            onChange: this.onChange
+            onRemove: (file) => {
+                this.setState((state) => {
+                    const index = state.fileList.indexOf(file);
+                    const newFileList = state.fileList.slice();
+                    newFileList.splice(index, 1);
+                    return {
+                        fileList: newFileList,
+                    };
+                });
+            },
+            beforeUpload: (file) => {
+                console.log(file)
+                this.setState(state => ({
+                    fileList: [...state.fileList, file],
+                }));
+                return false;
+            },
+            onChange: this.onChange,
+            multiple: false,
+            fileList,
         };
         return (
 
             <div className="profile-image-container">
 
                 <div className="profile-image-div">
-                    <img src={goku} alt="profile" className="profile-image" />
+                    <img src={`http://node-lb-1978766301.us-east-2.elb.amazonaws.com/v1/users/${userId}/image`} alt="profile" className="profile-image" />
                 </div>
-                <Tooltip title="Remove this photo" className="profile-image-remove">
+                {/* <Tooltip title="Remove this photo" className="profile-image-remove">
                     <Icon type="close" />
-                </Tooltip>
-                <div className="profile-image-edit">
+                </Tooltip> */}
+                <div className="profile-image-edit" style={userId !== localStorage.getItem("userId") ? { display: "none" } : {}}>
                     <span onClick={this.toggleModal}>Edit Photo</span>
                 </div>
                 <Modal

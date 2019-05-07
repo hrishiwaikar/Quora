@@ -166,6 +166,14 @@
 	color: #2b6dad;
 }
 
+.text_color_quora_red {
+	color: #b92b27
+}
+
+.bg_color_quora_red {
+	background-color: #b92b27
+}
+
 .bg_color_green {
 	background-color: #06b45b;
 }
@@ -228,13 +236,41 @@
 	font-family: 'q_serif',Georgia,Times,"Times New Roman","Hiragino Kaku Gothic Pro","Meiryo",serif
 }
 
+.quora_new_question_text {
+	font-size: 18px;
+	color: #333333;
+	font-family: 'q_serif',Georgia,Times,"Times New Roman","Hiragino Kaku Gothic Pro","Meiryo",serif
+}
 .quora_button_blue {
 	background-color: #3e78ad;
+}
+
+.quora_button_red {
+	background-color: #b92b27;
+	border: 1px solid #b92b27;
 }
 
 .no_hover:hover {
 	/* example color */
 	color:#FFFFFF;
+}
+
+.no_margin_top {
+	margin-top: 0
+}
+
+.no_margin_bottom {
+	margin-bottom: 0
+}
+
+.ant-comment-inner {
+    display: flex;
+    padding: 0px;
+}
+
+.ant-comment-actions {
+    margin-top: 0;
+    padding-left: 0;
 }
 /* .ant-btn:focus {
 	color:  #3e78ad;
@@ -246,3 +282,9 @@
 	background-color: #FFFFFF;
 	border-color: #333333;
 } */
+
+.ant-comment-actions {
+    margin-top: 0;
+	padding-left: 0;
+	margin-bottom: 0;
+}
