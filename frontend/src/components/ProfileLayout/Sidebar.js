@@ -63,7 +63,7 @@ class Sidebar extends Component {
                                 <Route path="/profile/:id/following" component={Following} />
                                 <Route path="/profile/:id/questions" component={UserQuestions} />
                                 <Route path="/profile/:id/answers" component={UserAnswers} />
-                                <Route path="/profile/:id" component={UserQuestions} />
+                                <Route path="/profile/:id" component={UserAnswers} />
                             </Switch>
                         </div>
                     </Col>

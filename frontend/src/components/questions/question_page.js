@@ -277,6 +277,7 @@ class QuestionPage extends Component {
     handleOnRelatedQuestionClick = (questionId) => {
         console.log('IN handle relatedd qu click');
         this.props.history.push('/question/' + questionId);
+        window.location.reload();
     }
 
     onAnonymousChange = () => {

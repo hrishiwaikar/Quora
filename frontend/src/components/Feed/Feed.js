@@ -101,7 +101,7 @@ class Feed extends Component {
         console.log(user)
 
         const cardContent = <div className="pointer" onClick={() => { this.handleShowAddQuestion() }}>
-            <Avatar src={profileImage} />
+            <Avatar src={`https://s3.ap-south-1.amazonaws.com/checkapp-dev/profiles/${userId}`} />
             {/* < Text >{`${user.firstName} ${user.lastName}`}</Text> */}
             <Text style={{ marginLeft: "10px" }}>{userName}</Text>
             <Title level={4} className="text_color_black" style={{ marginTop: 0, opacity: 0.5 }}>What is your question?</Title>

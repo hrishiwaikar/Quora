@@ -2,8 +2,8 @@ var ObjectID = require('mongodb').ObjectID;
 
 const rs = require("./../commons/responses");
 const utils = require("./../commons/utils");
-// let producer = require('./../commons/kafkarpc');
-// producer = producer.getInstance();
+let producer = require('./../commons/kafkarpc');
+producer = producer.getInstance();
 let questionModel = require("../models/questionmodel")
 let answerModel = require("../models/answermodel")
 let userModel = require("../models/usermodel")
@@ -592,14 +592,14 @@ let router = {
                 }],
                 data: data
             })
-            // producer.fire({
-            //     topic: 'counts',
-            //     type: 'newquestion',
-            //     payload: {
-            //         createdAt: Date.now()
-            //     },
-            //     partition: 0
-            // })
+            producer.fire({
+                topic: 'counts',
+                type: 'newquestion',
+                payload: {
+                    createdAt: Date.now()
+                },
+                partition: 0
+            })
         };
         service.create(req.user, req.body).then(successCB, next);
     },

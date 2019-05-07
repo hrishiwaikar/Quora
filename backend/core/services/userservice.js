@@ -5,6 +5,8 @@ let pv = require("./../commons/passwordVerification");
 let s3 = require('./../commons/s3');
 const redis = require("./../commons/redis");
 const topicModel = require("../models/topicmodel");
+let producer = require('./../commons/kafkarpc');
+producer = producer.getInstance();
 let service = {
     create: (...args) => {
         return new Promise(function (resolve, reject) {
@@ -75,13 +77,19 @@ let service = {
                     "__v": 0,
                     "_id": 0
                 };
-                // if (query.filter && !!query.filter.length) {
-                //     select = {};
-                //     query.filter = (query.filter || "").split(",");
-                //     for (let index = 0; index < query.filter.length; index++) {
-                //         select[query.filter[index]] = 1
-                //     }
-                // }
+                if(!!query.profile){
+                    producer.fire({
+                        topic: 'views',
+                        type: 'profileview',
+                        payload: {
+                            createdAt: Date.now(),
+                            viewedAt: Date.now(),
+                            feature : "profileview",
+                            id : body.userId
+                        },
+                        partition: 0
+                    })
+                }
                 let foundUser = (dbObj) => {
                     if (!!dbObj) {
                         redis.hset("USERS", userId, dbObj).then(() => {}).catch(() => {});
