@@ -35,7 +35,7 @@
   height: 577px;
 }
 
-.ant-menu-item {
+.ContentWrapper .ant-menu-item {
   position: relative;
   padding: 8px;
   background: #fafafa;
@@ -46,7 +46,7 @@
   margin: 0px !important;
 }
 
-.ant-menu-item-selected {
+.ContentWrapper .ant-menu-item-selected {
   background-color: #ffff !important;
   padding: 8px;
   font-size: 15px !important;
