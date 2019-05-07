@@ -12,7 +12,7 @@ service.titleCase = (str) => {
     return _.startCase(_.toLower(str));
 };
 service.getUniqueId = () => {
-    return uuid.v1();
+    return uuid.v4();
 };
 service.isEmail = (email) => {
     email = email || "";
