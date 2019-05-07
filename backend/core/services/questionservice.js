@@ -319,11 +319,12 @@ let service = {
 
                 questionModel.find({userId:_session.userId}).sort('-createdAt').select({_id:0,"__v":0,topicsId:0}).skip(pagination_start_index).limit(page_limit)
                 .then(async (questionObjs) => {
-                    console.log(questionObjs)
+                    // console.log(questionObjs)
                     // output["noOfQuestions"] = questionObjs.length;
                     for(let index=0;index<questionObjs.length;index++){
                         let questionObj = questionObjs[index]
-                        let temp = questionCommonAttributes(_session,questionObj)
+                        let temp = await questionCommonAttributes(_session,questionObj)
+                        console.log(temp)
                         output.push(temp)
                     }
                     return resolve(output)
