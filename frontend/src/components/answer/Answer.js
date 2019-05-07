@@ -60,11 +60,12 @@ export class Answer extends Component {
         }
 
         // console.log('Render has got the answ ', this.state.answerText);
+        let userIsFollowingAnswerer = this.props.data.userIsFollowingAnswerer;
 
         return (
             <div className="AnswerBase">
                 <Row>
-                    <AnswererInfo answererId={data.answererId} userName={userName} profileCredential={data.profileCredential} answerDate={data.createdAt} cant_follow={cant_follow} isAnonymous={data.isAnonymous} />
+                    <AnswererInfo answererId={data.answererId} userName={userName} profileCredential={data.profileCredential} answerDate={data.createdAt} cant_follow={cant_follow} isAnonymous={data.isAnonymous} userIsFollowingAnswerer={userIsFollowingAnswerer} />
                 </Row>
                 <Row>
                     {this.state.edit_answer === true
@@ -216,10 +217,12 @@ export class AnswererInfo extends Component {
 
         let cant_follow = this.props.cant_follow;
         // let image_src = 'http://10.0.0.86:7836/v1/users/' + answererId + '/image/';
-        let image_src = '/users/' + answererId + '/image/';
-        // image_src = "https://qph.fs.quoracdn.net/main-thumb-16193221-200-EO9EO7XcPOETr1ZfTiWvDKKVxqAzgtzG.jpeg"
 
+        // image_src = "https://qph.fs.quoracdn.net/main-thumb-16193221-200-EO9EO7XcPOETr1ZfTiWvDKKVxqAzgtzG.jpeg"
+        let image_src = `https://s3.ap-south-1.amazonaws.com/checkapp-dev/profiles/${answererId}`
         let userIsFollowingAnswerer = this.state.userIsFollowingAnswerer;
+
+        console.log('User is follwoing Answerer  ', userIsFollowingAnswerer);
 
         return (
             <>
@@ -508,16 +511,19 @@ class TextEditor extends Component {
     onSubmit = () => {
         // console.log('IN ON SUBMIT ');
         let thisUserData = this.props.thisUserData;
-        this.props.updateComments(this.state.value, thisUserData.userId, thisUserData.profileCredential, thisUserData.userName, this.props.commentId);
+        this.props.updateComments(this.state.value, this.props.commentId);
         this.props.handleCommentReply();
     }
     render = () => {
         // console.log('In render of TEXT EDITOR ', this.props.thisUserData);
         // console.log(this.props.comment);
         let thisUserData = this.props.thisUserData;
+        let thisUserId = localStorage.getItem("userId");
+        let thisUserName = localStorage.getItem("userName");
+        let thisprofileCredential = localStorage.getItem("profileCredential");
         return (<>
             <div>
-                <AnswererInfo answererId={thisUserData.userId} userName={thisUserData.userName} profileCredential={thisUserData.profileCredential} cant_follow={false} />
+                <AnswererInfo answererId={thisUserId} userName={thisUserName} profileCredential={thisprofileCredential} cant_follow={false} />
                 <Form.Item style={{ marginBottom: 5 }}>
                     <TextArea placeholder="Add a comment..." autosize={{ minRows: 1, maxRows: 6 }} onChange={this.onChange} value={this.state.value} />
                 </Form.Item>
@@ -551,7 +557,7 @@ class CommentComponent extends Component {
 
     render = () => {
         let props = this.props;
-        let image_src = '/users/' + props.comment.userId + '/image/';
+        let image_src = `https://s3.ap-south-1.amazonaws.com/checkapp-dev/profiles/${props.comment.userId}`
         return (<Comment
             actions={[<span onClick={() => { this.handleCommentReply(props.comment) }} style={{ marginBottom: 0 }}>Reply to</span>]}
             author={<a>{props.comment.userName}</a>}
@@ -647,7 +653,7 @@ class CommentFull extends Component {
     }
 
 
-    updateComments = (new_comment_text, userId, profileCredential, userName, parentCommentId) => {
+    updateComments = (new_comment_text, parentCommentId) => {
         let thisUserId = localStorage.getItem("userId");
         let thisUserName = localStorage.getItem("userName");
         let thisprofileCredential = localStorage.getItem("profileCredential");
