@@ -1,8 +1,10 @@
+var uuid = require('uuid');
 let mongoose = require('mongoose')
 let messageSchema = new mongoose.Schema({
     conversationId: {
         type: String,
         required: true,
+        default : uuid.v1,
         trim: true,
         unique: true,
     },

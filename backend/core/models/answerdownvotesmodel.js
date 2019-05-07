@@ -1,3 +1,4 @@
+var uuid = require('uuid');
 const utils = require("./../commons/utils");
 let mongoose = require('mongoose')
 let userSchema = require('./usermodel')
@@ -7,7 +8,7 @@ let answerDownvoteSchema = new mongoose.Schema({
         type: String,
         required: true,
         trim :true,
-        default : utils.getUniqueId(),
+        default : uuid.v1,
         unique: true,
     },
     userId : {
