@@ -52,8 +52,24 @@ let service = {
                 let _session = args[0] || {};
                 let body = args[1] || {};
                 console.log("body",body)
-                let isUpvote = body.isUpvote
+                let isUpvote = body.isUpvote || null
+                let isDownvote = body.isDownvote || null
                 let answerId = body.answerId
+
+                // answerModel.findOne({answerId:answerId}).then((answerObj) => {
+                //     if (isUpvote !== null){
+                //         if(isUpvote) {
+                //         }
+                //         else{
+    
+                //         }
+                //     }
+                //     else{
+                //         if()
+                //     }
+                // }).catch(reject);
+
+               
                 if(isUpvote) {
                     answerModel.findOne({answerId:answerId}).then((answerObj) => {
                         downvoteModel.findOne({userId:_session.userId,answerId:answerId}).then(async (downvoteObj) => {
