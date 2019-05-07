@@ -160,7 +160,7 @@ module.exports = {
             let promiseToCall = (obj) => {
                 return new Promise((resolve2, reject2) => {
                     obj.timestamp = obj.timestamp || Date.now();
-                    obj.timestamp = new Date(obj.timestamp).setSeconds(0, 0);
+                    obj.timestamp = new Date(obj.timestamp).set(0, 0);
                     profileViewModel.findOneAndUpdate({
                         feature: "profileview",
                         timestamp: obj.timestamp,

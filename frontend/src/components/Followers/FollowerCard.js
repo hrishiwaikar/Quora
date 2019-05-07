@@ -6,16 +6,16 @@ const { Meta } = Card;
 
 class FollowCard extends Component {
     handleClick = () => {
-        const { _id, history } = this.props;
-        history.push(`/profile/${_id}`);
+        const { userId, history } = this.props;
+        history.push(`/profile/${userId}`);
     }
     render() {
-        const { noOfFollowers, profileImage, name, profileCredential, followingBack, handleFollowClick, _id } = this.props;
-        const followText = followingBack ? "Following" : "Follow"
+        const { noOfFollowers, profileImage, name, profileCredential, followText, handleFollowClick, _id, userId } = this.props;
+       
         return (
             <div>
                 <Card
-                    actions={[<Button type="primary" icon="user" ghost disabled={followingBack} onClick={() => handleFollowClick(_id)}>{followText } &nbsp;{noOfFollowers}</Button>]}
+                    actions={[<Button type="primary" icon="user" ghost={followText === "Following"} onClick={() => handleFollowClick(userId)}>{followText } &nbsp;{noOfFollowers}</Button>]}
                 >
                     <Meta
                         avatar={profileImage ? <Avatar src={profileImage} /> : <Avatar icon="uesr" />}

@@ -1,5 +1,6 @@
 import React, { Component } from 'react';
 import { Route, Switch } from 'react-router-dom';
+import { LastLocationProvider } from 'react-router-last-location';
 import Navbar from '../Navbar/Navbar';
 import './Layout.css';
 import QuestionPage from '../questions/question_page.js';
@@ -10,6 +11,10 @@ import AnswerLayout from '../AnswerLayout/AnswerLayout';
 import Messages from '../Messages/Messages';
 import NewMessage from '../Messages/NewMessage';
 import Thread from '../Messages/Thread';
+import YourContentLayout from '../YourContentLayout/YourContentLayout';
+
+import Stats from "../Stats/Stats";
+import Dashboard from "../Dashboard/Dashboard";
 
 class Layout extends Component {
     previousLocation = this.props.location;
@@ -37,28 +42,30 @@ class Layout extends Component {
         );
         return (
             <div>
-
-                <Navbar />
-                <div className="content">
-                    <Switch location={isModal ? this.previousLocation : location}>
-                        <Route path="/profile" component={ProfileLayout} />
-                        <Route path="/answer" component={AnswerLayout} />
-                        <Route path="/question" component={QuestionPage} />
-                        <Route path="/displayQuestion" component={TestDisplayQuestion} />
-                        <Route path="/" exact component={HomeLayout} />
-                    </Switch>
-                    {isModal ?
-                        <>
-                            <Switch>
-                                <Route path="/messages/new" component={NewMessage} />
-                                <Route path="/messages/thread/:id" component={Thread} />
-                                <Route path="/messages" component={Messages} />
-                            </Switch>
-                        </>
-                        :
-                        null}
-                </div>
-
+                <LastLocationProvider>
+                    <Navbar />
+                    <div className="content">
+                        <Switch location={isModal ? this.previousLocation : location}>x
+                            <Route path="/profile/:id" component={ProfileLayout} />
+                            <Route path="/answer" component={AnswerLayout} />
+                            <Route path="/question/:id" component={QuestionPage} />
+                            <Route path="/displayQuestion" component={TestDisplayQuestion} />
+                            <Route path="/content" component={YourContentLayout} />
+                            <Route path="/stats" component={Stats} />
+                            <Route path="/" component={HomeLayout} />
+                        </Switch>
+                        {isModal ?
+                            <>
+                                <Switch>
+                                    <Route path="/messages/new" component={NewMessage} />
+                                    <Route path="/messages/thread/:id" component={Thread} />
+                                    <Route path="/messages" component={Messages} />
+                                </Switch>
+                            </>
+                            :
+                            null}
+                    </div>
+                </LastLocationProvider>
             </div>
         );
     };

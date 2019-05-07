@@ -1,5 +1,6 @@
 
-.people-search .list-item {
+.people-search .list {
+    width: 95% !important;
     cursor: pointer;
     padding: 15px;
     background: #fff;

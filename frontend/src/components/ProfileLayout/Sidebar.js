@@ -6,6 +6,8 @@ import './Sidebar.css';
 import Profile from '../Profile/Profile';
 import Followers from '../Followers/Followers';
 import Following from '../Followers/Following'
+import UserQuestions from '../UserQuestions.js/UserQuestions';
+import UserAnswers from '../UserAnswers/UserAnswers';
 
 const { Title, Text } = Typography;
 
@@ -21,20 +23,21 @@ class Sidebar extends Component {
     handleClick = ({ key }) => {
         console.log(key)
         const { match, history } = this.props;
+        const userId = match.params.id
         this.setState({
             selected: key
         });
         if (key === 'profile')
-            history.push(`/profile/1`)
+            history.push(`/profile/${userId}`)
         else
-            history.push(`/profile/1/${key}`)
+            history.push(`/profile/${userId}/${key}`)
     }
     render() {
         const { selected } = this.state;
         return (
             <div>
                 <Row gutter={16}>
-                    <Col span={6}>
+                    <Col span={4}>
                         <div className="profile-sidebar">
                             <Title level={4} >Feeds</Title>
                             <Divider />
@@ -51,14 +54,16 @@ class Sidebar extends Component {
                             </Menu>
                         </div>
                     </Col>
-                    <Col span={18}>
+                    <Col span={20}>
                         <div className="profile-sidebar-content">
                             <Title level={4} >{selected}</Title>
                             <Divider />
                             <Switch>
                                 <Route path="/profile/:id/followers" component={Followers} />
                                 <Route path="/profile/:id/following" component={Following} />
-                                <Route path="/profile/:id" component={Profile} />
+                                <Route path="/profile/:id/questions" component={UserQuestions} />
+                                <Route path="/profile/:id/answers" component={UserAnswers} />
+                                <Route path="/profile/:id" component={UserQuestions} />
                             </Switch>
                         </div>
                     </Col>

@@ -4,7 +4,7 @@ import { Input, Button } from 'antd';
 import './ThreadFooter.css';
 
 class ThreadFooter extends Component {
-    state = { 
+    state = {
         message: ""
     }
     handleChange = (e) => {
@@ -17,11 +17,14 @@ class ThreadFooter extends Component {
         const { message } = this.state;
         const { handleSubmit } = this.props;
         return (
-                <div className="thread-footer" key="1">
-                    <Input onChange={this.handleChange} value={message}/>
-                    <Button type="primary" onClick={() => handleSubmit(message)}>Send</Button>
-                </div>
-     
+            <div className="thread-footer" key="1">
+                <Input onChange={this.handleChange} value={message} />
+                <Button type="primary" onClick={() => {
+                    this.setState({ message: "" })
+                    handleSubmit(message)
+                }}>Send</Button>
+            </div>
+
         )
     }
 }

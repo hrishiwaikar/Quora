@@ -1,50 +1,64 @@
 import React, { Component } from 'react'
 import { Input, List, Avatar, Icon, Typography } from 'antd';
+import URL from '../../constants';
+import { call } from '../../api';
 
 import "./PeopleSearch.css"
 
 const { Text } = Typography;
 
-class PeopleSearch extends Component {
-    state = {
-        loading: false,
-        data: [],
-        user: null
-    }
 
-    handleChange = (e) => {
-        console.log(e.target.value);
-        this.setState({
-            loading: true
-        })
-
-        const data = [
-        {
-            "firstName": "Hrishikesh",
-            "lastName": "Waiker",
-            "userId": "221cf8c0-6805-11e9-b14f-67ed4350d048",
-            "followers": 1
-        },
-        {
-            "firstName": "vinit",
-            "lastName": "dholakia",
-            "userId": "d4b272d0-6814-11e9-b339-05da8f0f9c12",
-            "displayId": "vinit-dholakia-1"
-        },
-        {
-            "firstName": "atul",
-            "lastName": "gutal",
-            "userId": "d2c752f0-6888-11e9-8d07-f1003021cb4d",
-            "displayId": "atul-gutal"
+function debounce(fn, delay) {
+    let timerId;
+    return function (...args) {
+        if (timerId) {
+            clearTimeout(timerId);
         }
-    ]
-        setTimeout(() => {
-            this.setState({
-                loading: false,
-                data
-            })
-        }, 1000)
+        timerId = setTimeout(() => {
+            fn(...args);
+            timerId = null;
+        }, delay);
     }
+}
+
+class PeopleSearch extends Component {
+    constructor() {
+        super();
+        this.state = {
+            loading: false,
+            data: [],
+            user: {}
+        }
+        // this.deboucedChange = debounce(this.handleChange.bind(this), 300)
+    }
+
+
+    debounceChange = debounce((text) => {
+        if (text.length > 2) {
+
+            this.setState({
+                loading: true
+            })
+            call({
+                method: "get",
+                url: `/conversations/sendto?q=${text}&limit=5`
+                // conversations/sendto?q=wef&limit=1&token={{token}}
+            })
+                .then(data => {
+                    data = data.users;
+                    this.setState({
+                        loading: false,
+                        data
+                    })
+                })
+                .catch(err => {
+                    console.log(err)
+                    this.setState({
+                        loading: true
+                    })
+                })
+        }
+    }, 300)
 
     handleClick = (item) => {
         const { handleClick } = this.props;
@@ -57,41 +71,41 @@ class PeopleSearch extends Component {
 
     handleClearSelection = () => {
         this.setState({
-            user: null
+            user: {}
         })
     }
 
     render() {
         const { loading, data, user } = this.state;
-
+        console.log(data)
         return (
             <div className="people-search">
                 {
-                    user ?
+                    Object.keys(user).length > 0 ?
                         <>
-                            <Avatar src={user.userId} /> 
+                            <Avatar src={`${URL}/users/${user.userId}/image`} />
                             <Text>{user.firstName + " " + user.lastName} </Text>
                             <a onClick={this.handleClearSelection}> Change </a>
                         </>
                         :
-                        <Input type="text"
-                            onChange={this.handleChange}
-
+                        <Input
+                            onChange={(e) => this.debounceChange(e.target.value)}
+                            placeholder="Please enter minimun 3 characters to start searching"
                         />
                 }
                 {loading ? <Icon type="loading" /> : null}
                 {
                     data.length > 0 ?
                         <List
-
+                            className="list"
                             itemLayout="horizontal"
                             dataSource={data}
                             renderItem={item => (
-                                <List.Item className="list-item" onClick={() => this.handleClick(item)}>
+                                <List.Item onClick={() => this.handleClick(item)}>
                                     <List.Item.Meta
-                                        avatar={<Avatar src={item.userId} />}
-                                        title={<a >{item.firstName + " " + item.lastName} </a>}
-                                        description={"description"}
+                                        avatar={<Avatar src={`${URL}/users/${user.userId}/image`} />}
+                                        title={<a >{"  " + item.firstName + " " + item.lastName} </a>}
+                                        description={item.profileCredential}
                                     />
                                 </List.Item>
                             )}
