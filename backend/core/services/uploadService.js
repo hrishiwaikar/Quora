@@ -28,7 +28,8 @@ service.profileUpload = multer({
 service.profileRead = (req, res, next) => {
     let userId = req.params.userId || null;
     res.header("Content-Type" , 'application/png')
-    res.sendFile(path.resolve("uploads/profiles/File_" + userId+".png"));
+    // res.sendFile(path.resolve("uploads/profiles/File_" + userId+".png"));
+    res.sendFile(path.resolve("uploads/profiles/mydefaultimage.png"));
 };
 module.exports = (type) => {
     return service[type];

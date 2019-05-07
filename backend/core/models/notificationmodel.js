@@ -45,4 +45,4 @@ notificationModel.pre('save', function (next) {
     }
     next()
 });
-module.exports = mongoose.model('follow', notificationModel)
+module.exports = mongoose.model('notification', notificationModel)
