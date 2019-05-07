@@ -2,11 +2,12 @@ var answers = ["Wednesday comes from the Middle English Wednes dei, which is fro
 var questions = ["Why is Wednesday spelled Wednesday", "Can you ever really be friends with an ex", "Are pit bulls good pets ?", "Which Game of Thrones actor has appeared in the most episodes", "What classical theories are still in use today?", "How should you answer the intrrview question - Why should we recruit you?", "What are the cliques in high school?", "What is the role of computer in statistics?", "Is Bournemouth University good at media?", "Where did belts come from?", "Can you work in a store at 14 years old?"];
 var timeModel = require('./../models/timemodel');
 let answerModel = require("../models/answermodel")
+let questionModel = require("../models/questionmodel")
 module.exports = {
     getAnswers: (req, res, next) => {
         let limit = parseInt(req.query.top || 10);
         let sort = req.query.sort || "noOfTimesviewed";
-        answerModel.findMany({}).select({
+        answerModel.find({}).select({
             answerId: 1,
             questionId: 1,
             answer: 1,
@@ -16,7 +17,19 @@ module.exports = {
             downvotes: 1,
         }).sort({
             [sort]: -1
-        }).limit(limit).then((da) => {
+        }).limit(limit).then(async (da) => {
+            da =JSON.parse(JSON.stringify(da));
+            for (let i = 0; i < da.length; i++) {
+                const element = da[i];
+                let q = await questionModel.findOne({
+                    questionId: element.questionId
+                });
+                if (!!(q || {}).questionText) {
+                    console.log(q.questionText)
+                    da[i].question = (q || {}).questionText;
+                }
+            }
+
             res.json({
                 result: "success",
                 response: {
@@ -30,33 +43,63 @@ module.exports = {
         })
     },
     getAnswerStats: (req, res, next) => {
-        let ans = [];
         let days = parseInt(req.query.days || 30);
-        let type = (req.params.type || "views").toLowerCase();
-        let obj = {
-            answerId: "1234",
-            questionId: "456",
-            answer: answers[parseInt(Math.random() * 10)],
-            question: questions[parseInt(Math.random() * 10)],
-            graphData: [],
-        }
-        let startDate = Date.now() - (days * 24 * 60 * 60 * 1000) - 1;
-        for (let i = 1; i <= days; i++) {
-            let x = {
-                count: parseInt(Math.random() * 100)
+        startDate = Date.now() - ((days * 24) * 60 * 60 * 1000);
+        startDate = new Date(startDate).setHours(0, 0, 0, 0);
+        profileViewModel.find({
+            userId: (req.params || {}).answerId || null,
+            frequency: "day",
+            feature: "answerview",
+            timestamp: {
+                $gte: new Date(startDate)
             }
-            x.timestamp = (new Date(startDate).getMonth() + 1) + "/" + new Date(startDate).getDate();
-            obj.graphData.push(x)
-            startDate = startDate + (24 * 60 * 60 * 1000)
-        }
-        res.json({
-            result: "success",
-            response: {
-                message: "Data fetched Successfully",
-                code: "DATA"
-            },
-            data: obj
-        });
+        }).sort({
+            timestamp: 1
+        }).select({
+            timestamp: 1,
+            count: 1
+        }).then((data) => {
+            res.json({
+                result: "success",
+                response: {
+                    message: "Data fetched Successfully",
+                    code: "DATA"
+                },
+                data: data
+            });
+        }).catch((err) => {
+            next(err)
+        })
+
+
+
+        // let ans = [];
+        // let days = parseInt(req.query.days || 30);
+        // let type = (req.params.type || "views").toLowerCase();
+        // let obj = {
+        //     answerId: "1234",
+        //     questionId: "456",
+        //     answer: answers[parseInt(Math.random() * 10)],
+        //     question: questions[parseInt(Math.random() * 10)],
+        //     graphData: [],
+        // }
+        // let startDate = Date.now() - (days * 24 * 60 * 60 * 1000) - 1;
+        // for (let i = 1; i <= days; i++) {
+        //     let x = {
+        //         count: parseInt(Math.random() * 100)
+        //     }
+        //     x.timestamp = (new Date(startDate).getMonth() + 1) + "/" + new Date(startDate).getDate();
+        //     obj.graphData.push(x)
+        //     startDate = startDate + (24 * 60 * 60 * 1000)
+        // }
+        // res.json({
+        //     result: "success",
+        //     response: {
+        //         message: "Data fetched Successfully",
+        //         code: "DATA"
+        //     },
+        //     data: obj
+        // });
     },
     getProfileViews: (req, res, next) => {
         let days = parseInt(req.query.days || 30);
@@ -85,7 +128,36 @@ module.exports = {
             });
         }).catch((err) => {
             next(err)
-        })        
+        })
+    },
+    getBookmarksView: (req, res, next) => {
+        let days = parseInt(req.query.days || 30);
+        startDate = Date.now() - ((days * 24) * 60 * 60 * 1000);
+        startDate = new Date(startDate).setHours(0, 0, 0, 0);
+        profileViewModel.find({
+            userId: (req.params || {}).answerId || null,
+            frequency: "day",
+            feature: "bookmarkview",
+            timestamp: {
+                $gte: new Date(startDate)
+            }
+        }).sort({
+            timestamp: 1
+        }).select({
+            timestamp: 1,
+            count: 1
+        }).then((data) => {
+            res.json({
+                result: "success",
+                response: {
+                    message: "Data fetched Successfully",
+                    code: "DATA"
+                },
+                data: data
+            });
+        }).catch((err) => {
+            next(err)
+        })
     },
     getViews: (req, res, next) => {
         try {
