@@ -43,6 +43,10 @@ let answerSchema = new mongoose.Schema({
     noOfTimesviewed : {
         type : Number,
         default : 0
+    },
+    comments : {
+        type : Object,
+        default : {}
     }
 },
 {

@@ -69,7 +69,7 @@ module.exports = (express) => {
     /* User Profile Related Question, content routes*/
 
     /* User Content */
-    versionRouter.get('/user/:userId/content',jwt.verifyRequest, questionservice.userContentGet);
+    versionRouter.get('/user/content',jwt.verifyRequest, questionservice.userContentGet);
     /* User Content */
     
         versionRouter.post('/questions', jwt.verifyRequest, questionservice.create);
@@ -91,6 +91,7 @@ module.exports = (express) => {
         versionRouter.get('/answers', jwt.verifyRequest, analyticService.getAnswers);
         versionRouter.post('/answers/:answerId/vote', jwt.verifyRequest, answerservice.upordownvote); // notify Hrishi
         versionRouter.post('/answers/:answerId/bookmark', jwt.verifyRequest, answerservice.answerBookmark); // notify Hrishi
+        versionRouter.post('/answers/:answerId/comments', jwt.verifyRequest, answerservice.answerComments);
         versionRouter.get('/answers/:answerId/:type', jwt.verifyRequest, analyticService.getAnswerStats);
         //versionRouter.get('/answers/:questionId', jwt.verifyRequest, answerservice.read);
         //versionRouter.put('/answers/:questionId', jwt.verifyRequest, answerservice.update);
