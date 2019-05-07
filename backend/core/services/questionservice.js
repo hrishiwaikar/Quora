@@ -312,9 +312,10 @@ let service = {
                 let output = []
                 let _session = args[0] || {};
                 let page_number = args[1] || 1;
-                questionModel.find({userId:_session.userId}).sort('-createdAt').select({_id:0,"__v":0,topicsId:0,})
+                questionModel.find({userId:_session.userId}).sort('-createdAt').select({_id:0,"__v":0,topicsId:0})
                 .then(async (questionObjs) => {
-                    output["noOfQuestions"] = questionObjs.length;
+                    console.log(questionObjs)
+                    // output["noOfQuestions"] = questionObjs.length;
                     for(let index=0;index<questionObjs.length;index++){
                         let questionObj = questionObjs[index]
                         let temp = questionCommonAttributes(_session,questionObj)
