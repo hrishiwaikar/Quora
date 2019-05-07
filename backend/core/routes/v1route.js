@@ -116,6 +116,9 @@ module.exports = (express) => {
         versionRouter.get('/topicQuestions', jwt.verifyRequest, questionservice.questionsRelatedToTopic); //user related topic questions as well as any topic question
         /* question related to topic*/
         
+        /* user bookmarked answers and question*/
+        versionRouter.get('/users/:userId/bookmarkedAnswers', jwt.verifyRequest, questionservice.userBookmarkedAnswers)
+        /* user bookmarked answers and question*/
 
         return versionRouter;
     } catch (error) {
