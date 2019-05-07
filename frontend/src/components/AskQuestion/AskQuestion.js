@@ -153,8 +153,6 @@ export class AskQuestion extends React.Component {
             console.log('Question id ', questionId);
             this.props.handleShowAddQuestion(questionId);
 
-
-
         }, () => {
             message.error('Error posting question');
         })

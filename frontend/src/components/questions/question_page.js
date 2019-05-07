@@ -124,7 +124,6 @@ class QuestionPage extends Component {
         //     component.setState({ result: result, userHasAnswered: result.userHasAnswered, thisUserData: thisUserData });
         // }, delayInMilliseconds);
 
-
     }
 
 
@@ -265,7 +264,7 @@ class QuestionPage extends Component {
     }
 
     onAnonymousChange = () => {
-        console.log('In onchange anonymou');
+        // console.log('In onchange anonymou');
         this.setState({
             isAnonymous: !this.state.isAnonymous
         })
@@ -274,7 +273,7 @@ class QuestionPage extends Component {
     render = () => {
         let result = this.state.result;
         // console.log('Result in render ', result);
-        console.log('Is anonymous ', this.state.isAnonymous);
+
         return (
             <div>
                 <Row className="marginTop-l text_color_black">
@@ -385,7 +384,7 @@ class QuestionPage extends Component {
                             <Button shape="round" icon="plus" size="small" className="no_border text_color_quora_blue font_bold pointer" style={{ paddingLeft: 0, fontSize: 13 }} onClick={() => { this.handleShowAddQuestion() }}>Ask New Question</Button>
                             {result !== null
                                 ?
-                                <AskQuestion handleShowAddQuestion={this.handleShowAddQuestion} visible={this.state.addQuestion} userId={result.userId} userName={this.state.thisUserData.userName} profileCredential={result.profileCredential} />
+                                <AskQuestion handleShowAddQuestion={this.handleShowAddQuestion} visible={this.state.addQuestion} userId={result.userId} userName={this.state.thisUserData.userName} profileCredential={this.state.thisUserData.profileCredential} />
                                 :
                                 null
                             }
@@ -398,6 +397,7 @@ class QuestionPage extends Component {
         );
     };
 }
+
 
 
 

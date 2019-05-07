@@ -10,15 +10,22 @@ import { TestDisplayQuestion } from '../DisplayQuestion/DisplayQuestion';
 import Topic from '../Topic/Topic';
 import Bookmarks from '../Bookmarks/Bookmarks';
 import Feed from '../Feed/Feed';
+import { AskQuestion } from './../AskQuestion/AskQuestion.js';
 const { Title, Text } = Typography;
 
 
 
 
 class HomeLayout extends Component {
+
     state = {
         selected: "feed",
-        topics: []
+        topics: [],
+        data: [],
+        pageNumber: 1,
+        allDataFetched: false,
+        topics: ["bhaskar"],
+        addQuestion: false
     };
     componentDidMount() {
         let userId = localStorage.getItem("userId");
@@ -56,7 +63,7 @@ class HomeLayout extends Component {
         return (
             <div className="home">
                 <Row gutter={16}>
-                    <Col span={5}>
+                    <Col span={4}>
                         <Menu
                             onClick={this.handleClick}
                             defaultSelectedKeys={["feed"]}

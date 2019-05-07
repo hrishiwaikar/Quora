@@ -6,6 +6,7 @@ import './Navbar.css';
 import URL from '../../constants';
 
 import Notification from '../Notification/Notification';
+import { AskQuestion } from './../AskQuestion/AskQuestion.js'
 
 const SubMenu = Menu.SubMenu;
 const MenuItemGroup = Menu.ItemGroup;
@@ -13,7 +14,8 @@ const MenuItemGroup = Menu.ItemGroup;
 class Navbar extends Component {
     state = {
         current: 'home',
-        visible: false
+        visible: false,
+        addQuestion: false,
     }
 
     handleClick = ({ key }) => {
@@ -46,7 +48,28 @@ class Navbar extends Component {
     handleVisibleChange = (visible) => {
         this.setState({ visible });
     }
+
+    handleShowAddQuestion = (newQuestionId = null) => {
+        console.log('IN SHOW ADD QUESTION');
+        this.setState({
+            addQuestion: !this.state.addQuestion
+        })
+        // console.log('New question ', newQuestionId);
+        if (newQuestionId !== undefined && newQuestionId !== null) {
+
+            console.log('in ifff ', newQuestionId);
+
+            this.props.history.push('/question/' + newQuestionId);
+            window.location.reload();
+        }
+    }
+
     render() {
+        let userId = localStorage.getItem("userId");
+        let userName = localStorage.getItem("userName");
+        let profileCredential = localStorage.getItem("profileCredential");
+        console.log('in Navbar render ', userId);
+        let profileImage = '/users/' + userId + '/image/';
         return (
             <div className="navbar">
 
@@ -89,7 +112,7 @@ class Navbar extends Component {
                         />
                     </Menu.Item>
                     <SubMenu title={<span className="submenu-title-wrapper">
-                        <img src={logo} className="navbar-profile" alt="profile" /></span>}>
+                        <img src={profileImage} className="navbar-profile" alt="profile" /></span>}>
                         <MenuItemGroup >
                             <Menu.Item key="profile">Profile</Menu.Item>
                             <Menu.Item key="messages">Messages</Menu.Item>
@@ -98,8 +121,9 @@ class Navbar extends Component {
                             <Menu.Item key="logout">Logout</Menu.Item>
                         </MenuItemGroup>
                     </SubMenu>
-                    <Menu.Item className="navbar-button" disabled>
-                        <Button type="primary">Add Question or Link</Button>
+                    <Menu.Item className="navbar-button" style={{ paddingLeft: 0 }} disabled>
+                        <Button type="primary" size="small" className="quora_button_red text_color_white font_size_xs" onClick={() => { this.handleShowAddQuestion() }}>Add Question or Link</Button>
+                        <AskQuestion handleShowAddQuestion={this.handleShowAddQuestion} visible={this.state.addQuestion} userId={userId} userName={userName} profileCredential={profileCredential} />
                     </Menu.Item>
 
 

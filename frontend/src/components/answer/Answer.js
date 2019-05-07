@@ -18,7 +18,7 @@ export class Answer extends Component {
 
     render = () => {
         let data = this.props.data;
-        console.log(' dTATA ', data);
+        console.log('Answer data ', data);
         let cant_follow = this.props.data.cant_follow;
         // console.log('Comments ', comments);
         // console.log('Parse comments ', parseComments('1-0-0', null));
@@ -35,14 +35,10 @@ export class Answer extends Component {
             console.log('Data is not null');
             answer_comments = data.comments;
         }
-        // answer_comments = comments;
-        console.log('Answer comments ', answer_comments);
 
         let userName = '';
 
-        if (this.props.thisUserData !== undefined && this.props.thisUserData !== null) {
-            userName = this.props.thisUserData.userName;
-        } else if (data.hasOwnProperty('answererName')) {
+        if (data.hasOwnProperty('answererName')) {
             userName = data.answererName;
         }
         return (
@@ -185,7 +181,7 @@ function transform(node, index) {
 class AnswerText extends Component {
     render = () => {
         let data = this.props.data;
-        console.log('DATA IN ANSER TEXT ', data);
+        // console.log('DATA IN ANSER TEXT ', data);
 
         return (<>
             <Row className="marginTop-m">
@@ -213,7 +209,7 @@ class VotingAndBookMark extends Component {
 
     handleUpvoteChange = () => {
         let component = this;
-        console.log("In handle upvote change ");
+        // console.log("In handle upvote change ");
         let userUpvoted = this.state.userUpvoted;
         let updatedUpvoteStatus = !userUpvoted;
 
@@ -282,7 +278,7 @@ class VotingAndBookMark extends Component {
         }
 
         post('/answers/' + answerId + '/vote', data, (response) => {
-            console.log('sUCEESSFULL dowbvote CHANGE ', response.data);
+            // console.log('sUCEESSFULL dowbvote CHANGE ', response.data);
 
             component.setState({
                 userDownvoted: updatedDownVoteStatus
@@ -317,7 +313,6 @@ class VotingAndBookMark extends Component {
 
     render = () => {
 
-        console.log('User has downvoted ', this.props.data.userDownvoted);
         return (
             <>
                 <Row className="marginTop-m" gutter={16}>
@@ -364,20 +359,20 @@ class TextEditor extends Component {
     }
 
     onChange = (e) => {
-        console.log('In onchange ', e.target.value)
+        // console.log('In onchange ', e.target.value)
         this.setState({
             value: e.target.value
         })
     }
     onSubmit = () => {
-        console.log('IN ON SUBMIT ');
+        // console.log('IN ON SUBMIT ');
         let thisUserData = this.props.thisUserData;
         this.props.updateComments(this.state.value, thisUserData.userId, thisUserData.profileCredential, thisUserData.userName, this.props.commentId);
         this.props.handleCommentReply();
     }
     render = () => {
-        console.log('In render of TEXT EDITOR ', this.props.thisUserData);
-        console.log(this.props.comment);
+        // console.log('In render of TEXT EDITOR ', this.props.thisUserData);
+        // console.log(this.props.comment);
         let thisUserData = this.props.thisUserData;
         return (<>
             <div>
@@ -455,7 +450,7 @@ class CommentFull extends Component {
 
         // how?
         var splits = search_id.split('-');
-        console.log('splits ', splits);
+        // console.log('splits ', splits);
 
         var path = []
         let prev = null;
@@ -469,7 +464,7 @@ class CommentFull extends Component {
             }
         }
 
-        console.log('path ', path);
+        // console.log('path ', path);
 
         // search for 1 in comments
         // in 1's child search for 1-0
@@ -490,7 +485,7 @@ class CommentFull extends Component {
             }
         }
 
-        console.log('Found comment: ', found_child.commentText)
+        // console.log('Found comment: ', found_child.commentText)
         if (new_comment !== null) {
             var new_id_index = Object.keys(found_child.comments).length;
 
@@ -502,7 +497,7 @@ class CommentFull extends Component {
             // parseComments(new_id, null)
         }
 
-        console.log('Search object finally ', original_comments);
+        // console.log('Search object finally ', original_comments);
         // this.setState({
         //     comments: original_comments
         // })
@@ -512,7 +507,7 @@ class CommentFull extends Component {
 
 
     updateComments = (new_comment_text, userId, profileCredential, userName, parentCommentId) => {
-        console.log('In update comments');
+        // console.log('In update comments');
         let component = this;
         let new_comment = {
             commentText: new_comment_text,
@@ -523,7 +518,7 @@ class CommentFull extends Component {
         }
         // console.log('nEW COMMENT ', new_comment, ' ', typeof parentCommentId, ' ', parentCommentId)
         let updated_comments = this.parseComments(parentCommentId, new_comment)
-        console.log('Posting updated  comments ', updated_comments);
+        // console.log('Posting updated  comments ', updated_comments);
 
         // api call answer id,
         let post_data = {
@@ -531,7 +526,7 @@ class CommentFull extends Component {
             'answerId': this.props.answerId
         }
 
-        console.log('Post data for comments ', post_data);
+        // console.log('Post data for comments ', post_data);
         post('/answers/' + this.props.answerId + '/comments', post_data, (response) => {
 
             // do in success
@@ -562,7 +557,7 @@ class CommentFull extends Component {
     }
 
     onChange = (e) => {
-        console.log('E targe:', e.target.value, '.')
+        // console.log('E targe:', e.target.value, '.')
         if (e.target.value.trim() !== "") {
             this.setState({
                 showButton: true,
@@ -577,7 +572,7 @@ class CommentFull extends Component {
     }
 
     onSubmit = () => {
-        console.log('IN on submit ');
+        // console.log('IN on submit ');
         let new_answer_comment = this.state.answer_comment;
         let thisUserData = this.props.thisUserData;
         let comments = this.state.comments;
@@ -600,7 +595,7 @@ class CommentFull extends Component {
             'answerId': this.props.answerId
         }
 
-        console.log('Post data for comments ', post_data);
+        // console.log('Post data for comments ', post_data);
         post('/answers/' + this.props.answerId + '/comments', post_data, (response) => {
 
             // do in success
@@ -624,7 +619,7 @@ class CommentFull extends Component {
     }
 
     render = () => {
-        console.log('REnder of Comments full ', this.state.comments);
+        // console.log('REnder of Comments full ', this.state.comments);
         return (
 
             <>
