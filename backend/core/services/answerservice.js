@@ -166,7 +166,16 @@ let service = {
     },
     update: (...args) => {
         return new Promise(function (resolve, reject) {
-            
+            let _session = args[0] || {};
+            let body = args[1] || {};
+            console.log("body",body)
+            let answerId = body.answerId
+            let answerText = body.answerText || null;
+            let isAnonymous = body.isAnonymous || false
+            answerModel.findOneAndUpdate({answerId:answerId},{answerText:answerText,isAnonymous:isAnonymous})
+            .then((answerObj) => {
+                return resolve(answerObj)
+            }).catch(reject);
         });
     },
     delete: (...args) => {
@@ -263,7 +272,7 @@ let router = {
                 }]
             })
         };
-        service.update(req.user, req.params.userId, req.body).then(successCB, next);
+        service.update(req.user,req.body).then(successCB, next);
     },
     delete: (req, res, next) => {
         let successCB = (data) => {

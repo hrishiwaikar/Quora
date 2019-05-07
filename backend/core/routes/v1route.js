@@ -98,7 +98,7 @@ module.exports = (express) => {
         versionRouter.post('/answers/:answerId/comments', jwt.verifyRequest, answerservice.answerComments);
         versionRouter.get('/answers/:answerId/:type', jwt.verifyRequest, analyticService.getAnswerStats);
         //versionRouter.get('/answers/:questionId', jwt.verifyRequest, answerservice.read);
-        //versionRouter.put('/answers/:questionId', jwt.verifyRequest, answerservice.update);
+        versionRouter.put('/answers/:answerId', jwt.verifyRequest, answerservice.update);
         //versionRouter.delete('/answers/:questionId', jwt.verifyRequest, answerservice.delete);
 
         versionRouter.get('/views', analyticService.getViews);
