@@ -73,7 +73,7 @@ module.exports = (express) => {
     /* User Profile Related Question, content routes*/
 
     /* User Content */
-    versionRouter.get('/user/content',jwt.verifyRequest, questionservice.userContentGet);
+    versionRouter.get('/user/:userId/content',jwt.verifyRequest, questionservice.userContentGet);
     /* User Content */
     
         versionRouter.post('/questions', jwt.verifyRequest, questionservice.create);
