@@ -18,7 +18,7 @@ module.exports = {
         }).sort({
             [sort]: -1
         }).limit(limit).then(async (da) => {
-            da =JSON.parse(JSON.stringify(da));
+            da = JSON.parse(JSON.stringify(da));
             for (let i = 0; i < da.length; i++) {
                 const element = da[i];
                 let q = await questionModel.findOne({
@@ -43,6 +43,7 @@ module.exports = {
         })
     },
     getAnswerStats: (req, res, next) => {
+        let ans = [];
         let days = parseInt(req.query.days || 30);
         startDate = Date.now() - ((days * 24) * 60 * 60 * 1000);
         startDate = new Date(startDate).setHours(0, 0, 0, 0);
@@ -59,13 +60,37 @@ module.exports = {
             timestamp: 1,
             count: 1
         }).then((data) => {
+            for (let i = 1; i <= days; i++) {
+                let _f = 0;
+                abc: for (let j = 0; j < data.length; j++) {
+                    const element = data[j];
+                    console.log(new Date(startDate), element.timestamp)
+                    if (new Date(startDate) === element.timestamp) {
+                        ans.push({
+                            count: element.count,
+                            timestamp: element.timestamp
+                        });
+                        _f = 1;
+                        break abc;
+                    }
+                }
+                if (!_f) {
+                    ans.push({
+                        count: 0,
+                        timestamp: new Date(startDate)
+                    });
+                }
+                startDate = startDate + (24 * 60 * 60 * 1000)
+            }
             res.json({
                 result: "success",
                 response: {
                     message: "Data fetched Successfully",
                     code: "DATA"
                 },
-                data: data
+                data: {
+                    graphData: ans
+                }
             });
         }).catch((err) => {
             next(err)
@@ -102,6 +127,7 @@ module.exports = {
         // });
     },
     getProfileViews: (req, res, next) => {
+        let ans = [];
         let days = parseInt(req.query.days || 30);
         startDate = Date.now() - ((days * 24) * 60 * 60 * 1000);
         startDate = new Date(startDate).setHours(0, 0, 0, 0);
@@ -118,19 +144,44 @@ module.exports = {
             timestamp: 1,
             count: 1
         }).then((data) => {
+            for (let i = 1; i <= days; i++) {
+                let _f = 0;
+                abc: for (let j = 0; j < data.length; j++) {
+                    const element = data[j];
+                    console.log(new Date(startDate), element.timestamp)
+                    if (new Date(startDate) === element.timestamp) {
+                        ans.push({
+                            count: element.count,
+                            timestamp: element.timestamp
+                        });
+                        _f = 1;
+                        break abc;
+                    }
+                }
+                if (!_f) {
+                    ans.push({
+                        count: 0,
+                        timestamp: new Date(startDate)
+                    });
+                }
+                startDate = startDate + (24 * 60 * 60 * 1000)
+            }
             res.json({
                 result: "success",
                 response: {
                     message: "Data fetched Successfully",
                     code: "DATA"
                 },
-                data: data
+                data: {
+                    graphData: ans
+                }
             });
         }).catch((err) => {
             next(err)
         })
     },
     getBookmarksView: (req, res, next) => {
+        let ans = []
         let days = parseInt(req.query.days || 30);
         startDate = Date.now() - ((days * 24) * 60 * 60 * 1000);
         startDate = new Date(startDate).setHours(0, 0, 0, 0);
@@ -147,13 +198,37 @@ module.exports = {
             timestamp: 1,
             count: 1
         }).then((data) => {
+            for (let i = 1; i <= days; i++) {
+                let _f = 0;
+                abc: for (let j = 0; j < data.length; j++) {
+                    const element = data[j];
+                    console.log(new Date(startDate), element.timestamp)
+                    if (new Date(startDate) === element.timestamp) {
+                        ans.push({
+                            count: element.count,
+                            timestamp: element.timestamp
+                        });
+                        _f = 1;
+                        break abc;
+                    }
+                }
+                if (!_f) {
+                    ans.push({
+                        count: 0,
+                        timestamp: new Date(startDate)
+                    });
+                }
+                startDate = startDate + (24 * 60 * 60 * 1000)
+            }
             res.json({
                 result: "success",
                 response: {
                     message: "Data fetched Successfully",
                     code: "DATA"
                 },
-                data: data
+                data: {
+                    graphData: ans
+                }
             });
         }).catch((err) => {
             next(err)

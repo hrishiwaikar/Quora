@@ -162,15 +162,15 @@ module.exports = {
                     obj.timestamp = obj.timestamp || Date.now();
                     obj.timestamp = new Date(obj.timestamp).set(0, 0);
                     profileViewModel.findOneAndUpdate({
-                        feature: "profileview",
+                        feature: payload.feature,
                         timestamp: obj.timestamp,
                         frequency: "day",
-                        userId: obj.userId,
+                        userId: payload.id,
                     }, {
-                        feature: "profileview",
+                        feature: payload.feature,
                         timestamp: obj.timestamp,
                         frequency: "day",
-                        userId: obj.userId,
+                        userId: payload.id,
                         $inc: {
                             count: 1
                         }
