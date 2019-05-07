@@ -43,6 +43,13 @@ let service = {
                                 body.displayId = body.displayId + "-" + dbObj.length;
                             }
                             body.displayId = body.displayId.split(" ").join("-");
+                            s3.up(process.cwd() + `/uploads/profiles/mydefaultimage.png`, `profiles/${userId}`, {
+                                "ACL": "public-read"
+                            }).then((d) => {
+                                console.log(d)
+                            }, (e) => {
+                                console.log("err", e)
+                            });
                             return userModel.create(body)
                         })
                         .then(resolve, reject)
