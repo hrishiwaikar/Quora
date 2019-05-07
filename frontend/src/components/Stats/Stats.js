@@ -6,6 +6,7 @@ import "./Stats.css";
 import { Element } from "react-faux-dom";
 import * as d3 from "d3";
 import { Button, Row, Col, Menu, Dropdown } from "antd";
+import { call } from "../../api";
 
 class Stats extends Component {
   constructor(props) {
@@ -27,46 +28,52 @@ class Stats extends Component {
   }
 
   componentDidMount() {
-    const token =
-      "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJhMTY0MDIyMC02ODAyLTExZTktOGUxYS1iZDE3NmJmNjdkYWEiLCJjcmVhdGVkX2F0IjoxNTU2NzQzMTcwMzIyLCJpYXQiOjE1NTY3NDMxNzAsImV4cCI6MTU1OTMzNTE3MH0.CNknpZADc05g6Un4ogHzO8pmdW5mDB3QnhRLQKHcmm0";
+    // const token =
+    //   "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJhMTY0MDIyMC02ODAyLTExZTktOGUxYS1iZDE3NmJmNjdkYWEiLCJjcmVhdGVkX2F0IjoxNTU2NzQzMTcwMzIyLCJpYXQiOjE1NTY3NDMxNzAsImV4cCI6MTU1OTMzNTE3MH0.CNknpZADc05g6Un4ogHzO8pmdW5mDB3QnhRLQKHcmm0";
 
-    axios
-      .get("v1/answers?top=10&sort=views", {
-        headers: {
-          authorization: token
-        }
-      })
+    // let token = localStorage.getItem("token");
+    // console.log(token);
+
+    // axios
+    //   .get("/answers?top=10&sort=views", {
+    //     headers: {
+    //       authorization: "Bearer " + token
+    //     }
+    //   })
+    call({
+      method: "get",
+      url: "/answers?top=10&sort=views"
+    })
       .then(res => {
-        if (res.status === 200) {
-          console.log("view response data", res.data.answers);
+        console.log("view response data", res.answers);
 
-          this.setState({
-            questionArray: res.data.answers,
-            answerId: res.data.answers[0].answerId,
-            viewsCount: res.data.answers[0].views,
-            upvotesCount: res.data.answers[0].upvotes,
-            downvotesCount: res.data.answers[0].downvotes
-          });
+        this.setState({
+          questionArray: res.answers,
+          answerId: res.answers[0].answerId,
+          viewsCount: res.answers[0].noOfTimesviewed,
+          upvotesCount: res.answers[0].upvotes,
+          downvotesCount: res.answers[0].downvotes
+        });
 
-          axios
-            .get("v1/answers/:this.state.answerId/views?day=30", {
-              headers: {
-                authorization: token
-              }
-            })
-            .then(res => {
-              if (res.status === 200) {
-                console.log("graph response data", res.data.data.graphData);
-                this.setState({
-                  graphOriginalData: res.data,
-                  graphData: res.data.data.graphData
-                });
-              }
-            })
-            .catch(err => {
-              console.log("view error: ", err);
+        // axios.get("/answers/" + this.state.answerId + "/views?day=30", {
+        //   headers: {
+        //     authorization: "Bearer " + token
+        //   }
+        // });
+        call({
+          method: "get",
+          url: "/answers/" + res.answers[0].answerId + "/views?day=30"
+        })
+          .then(res => {
+            console.log("graph response", res.data);
+            this.setState({
+              graphOriginalData: res.data,
+              graphData: res.data.graphData
             });
-        }
+          })
+          .catch(err => {
+            console.log("view error: ", err);
+          });
       })
       .catch(err => {
         console.log("view error: ", err);
@@ -82,71 +89,74 @@ class Stats extends Component {
   graph = name => {
     //e.preventDefault();
     // console.log(e.target.name, name);
-    const token =
-      "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJhMTY0MDIyMC02ODAyLTExZTktOGUxYS1iZDE3NmJmNjdkYWEiLCJjcmVhdGVkX2F0IjoxNTU2NzQzMTcwMzIyLCJpYXQiOjE1NTY3NDMxNzAsImV4cCI6MTU1OTMzNTE3MH0.CNknpZADc05g6Un4ogHzO8pmdW5mDB3QnhRLQKHcmm0";
+    // const token =
+    //   "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJhMTY0MDIyMC02ODAyLTExZTktOGUxYS1iZDE3NmJmNjdkYWEiLCJjcmVhdGVkX2F0IjoxNTU2NzQzMTcwMzIyLCJpYXQiOjE1NTY3NDMxNzAsImV4cCI6MTU1OTMzNTE3MH0.CNknpZADc05g6Un4ogHzO8pmdW5mDB3QnhRLQKHcmm0";
 
     if (name === "views") {
-      axios
-        .get("v1/answers/:this.state.answerId/views?day=30", {
-          headers: {
-            authorization: token
-          }
-        })
+      // axios
+      //   .get("v1/answers/:this.state.answerId/views?day=30", {
+      //     headers: {
+      //       authorization: token
+      //     }
+      //   })
+      call({
+        method: "get",
+        url: "/answers/" + this.state.answerId + "/views?day=30"
+      })
         .then(res => {
-          if (res.status === 200) {
-            console.log("graph views response data", res.data.data.graphData);
-            this.setState({
-              graphData: res.data.data.graphData,
-              views: "statsTab-active",
-              upvotes: "statsTab",
-              downvotes: "statsTab"
-            });
-          }
+          console.log("graph views response data", res.data.graphData);
+          this.setState({
+            graphData: res.data.graphData,
+            views: "statsTab-active",
+            upvotes: "statsTab",
+            downvotes: "statsTab"
+          });
         })
         .catch(err => {
           console.log("views graph error: ", err);
         });
     } else if (name === "upvotes") {
-      axios
-        .get("v1/answers/:this.state.answerId/upvotes?day=30", {
-          headers: {
-            authorization: token
-          }
-        })
+      // axios
+      //   .get("v1/answers/:this.state.answerId/upvotes?day=30", {
+      //     headers: {
+      //       authorization: token
+      //     }
+      //   })
+      call({
+        method: "get",
+        url: "/answers/" + this.state.answerId + "/upvotes?day=30"
+      })
         .then(res => {
-          if (res.status === 200) {
-            console.log("graph upvotes response data", res.data.data.graphData);
-            this.setState({
-              graphData: res.data.data.graphData,
-              upvotes: "statsTab-active",
-              views: "statsTab",
-              downvotes: "statsTab"
-            });
-          }
+          console.log("graph upvotes response data", res.data.graphData);
+          this.setState({
+            graphData: res.data.graphData,
+            upvotes: "statsTab-active",
+            views: "statsTab",
+            downvotes: "statsTab"
+          });
         })
         .catch(err => {
           console.log("upvotes graph error: ", err);
         });
     } else if (name === "downvotes") {
-      axios
-        .get("v1/answers/:this.state.answerId/downvotes?day=30", {
-          headers: {
-            authorization: token
-          }
-        })
+      // axios
+      //   .get("v1/answers/:this.state.answerId/downvotes?day=30", {
+      //     headers: {
+      //       authorization: token
+      //     }
+      //   })
+      call({
+        method: "get",
+        url: "/answers/" + this.state.answerId + "/downvotes?day=30"
+      })
         .then(res => {
-          if (res.status === 200) {
-            console.log(
-              "graph downvotes response data",
-              res.data.data.graphData
-            );
-            this.setState({
-              graphData: res.data.data.graphData,
-              downvotes: "statsTab-active",
-              upvotes: "statsTab",
-              views: "statsTab"
-            });
-          }
+          console.log("graph downvotes response data", res.data.graphData);
+          this.setState({
+            graphData: res.data.graphData,
+            downvotes: "statsTab-active",
+            upvotes: "statsTab",
+            views: "statsTab"
+          });
         })
         .catch(err => {
           console.log("downvotes graph error: ", err);
@@ -167,7 +177,7 @@ class Stats extends Component {
       .range([0, width]);
     const yScale = d3
       .scaleLinear()
-      .domain([0, d3.max(this.state.graphData, d => d.value)])
+      .domain([0, d3.max(this.state.graphData, d => d.count)])
       .range([height, 0]);
     //  const colorScale = d3.scaleOrdinal(d3.schemeCategory10);
 
@@ -178,8 +188,8 @@ class Stats extends Component {
       .append("rect")
       .classed("bar", true)
       .attr("x", d => xScale(d.timestamp))
-      .attr("y", d => yScale(d.value))
-      .attr("height", d => height - yScale(d.value))
+      .attr("y", d => yScale(d.count))
+      .attr("height", d => height - yScale(d.count))
       .attr("width", d => xScale.bandwidth() - 1)
       .style("fill", "#84B1E1");
     //.style("fill", (d, i) => colorScale(i));
@@ -252,7 +262,7 @@ class Stats extends Component {
   drawChart() {
     let width, height;
     if (this.state.toggle) {
-      width = 800;
+      width = 820;
       height = 500;
     } else {
       width = 1200;
@@ -295,27 +305,29 @@ class Stats extends Component {
         //   console.log("key ", i);
         this.setState({
           answerId: data.answerId,
-          viewsCount: data.views,
+          viewsCount: data.noOfTimesviewed,
           upvotesCount: data.upvotes,
           downvotesCount: data.downvotes
         });
 
-        const token =
-          "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJhMTY0MDIyMC02ODAyLTExZTktOGUxYS1iZDE3NmJmNjdkYWEiLCJjcmVhdGVkX2F0IjoxNTU2NzQzMTcwMzIyLCJpYXQiOjE1NTY3NDMxNzAsImV4cCI6MTU1OTMzNTE3MH0.CNknpZADc05g6Un4ogHzO8pmdW5mDB3QnhRLQKHcmm0";
+        // const token =
+        //   "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJhMTY0MDIyMC02ODAyLTExZTktOGUxYS1iZDE3NmJmNjdkYWEiLCJjcmVhdGVkX2F0IjoxNTU2NzQzMTcwMzIyLCJpYXQiOjE1NTY3NDMxNzAsImV4cCI6MTU1OTMzNTE3MH0.CNknpZADc05g6Un4ogHzO8pmdW5mDB3QnhRLQKHcmm0";
 
-        axios
-          .get("/v1/answers/:this.state.answerId/views?day=30", {
-            headers: {
-              authorization: token
-            }
-          })
+        // axios
+        //   .get("/v1/answers/:this.state.answerId/views?day=30", {
+        //     headers: {
+        //       authorization: token
+        //     }
+        //   })
+        call({
+          method: "get",
+          url: "/answers/" + this.state.answerId + "/views?day=30"
+        })
           .then(res => {
-            if (res.status === 200) {
-              console.log("graph response data", res.data.data.graphData);
-              this.setState({
-                graphData: res.data.data.graphData
-              });
-            }
+            console.log("graph response data", res.data.graphData);
+            this.setState({
+              graphData: res.data.graphData
+            });
           })
           .catch(err => {
             console.log("view error: ", err);
@@ -325,8 +337,8 @@ class Stats extends Component {
   };
 
   dropDown = value => {
-    const token =
-      "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJhMTY0MDIyMC02ODAyLTExZTktOGUxYS1iZDE3NmJmNjdkYWEiLCJjcmVhdGVkX2F0IjoxNTU2NzQzMTcwMzIyLCJpYXQiOjE1NTY3NDMxNzAsImV4cCI6MTU1OTMzNTE3MH0.CNknpZADc05g6Un4ogHzO8pmdW5mDB3QnhRLQKHcmm0";
+    // const token =
+    //   "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJhMTY0MDIyMC02ODAyLTExZTktOGUxYS1iZDE3NmJmNjdkYWEiLCJjcmVhdGVkX2F0IjoxNTU2NzQzMTcwMzIyLCJpYXQiOjE1NTY3NDMxNzAsImV4cCI6MTU1OTMzNTE3MH0.CNknpZADc05g6Un4ogHzO8pmdW5mDB3QnhRLQKHcmm0";
 
     console.log("value", value);
     if (value === "views") {
@@ -357,40 +369,43 @@ class Stats extends Component {
       });
     }
 
-    axios
-      .get("v1/answers?top=10&sort=this.state.filter", {
-        headers: {
-          authorization: token
-        }
-      })
+    // axios
+    //   .get("v1/answers?top=10&sort=this.state.filter", {
+    //     headers: {
+    //       authorization: token
+    //     }
+    //   })
+    call({
+      method: "get",
+      url: "/answers?top=10&sort=" + this.state.filter
+    })
       .then(res => {
         if (res.status === 200) {
           console.log("dropdown view response data", res.data.answers);
 
           this.setState({
-            questionArray: res.data.answers,
-            answerId: res.data.answers[0].answerId,
-            viewsCount: res.data.answers[0].views,
-            upvotesCount: res.data.answers[0].upvotes,
-            downvotesCount: res.data.answers[0].downvotes
+            questionArray: res.answers,
+            answerId: res.answers[0].answerId,
+            viewsCount: res.answers[0].noOfTimesviewed,
+            upvotesCount: res.answers[0].upvotes,
+            downvotesCount: res.answers[0].downvotes
           });
 
-          axios
-            .get("v1/answers/:this.state.answerId/views?day=30", {
-              headers: {
-                authorization: token
-              }
-            })
+          // axios
+          //   .get("v1/answers/:this.state.answerId/views?day=30", {
+          //     headers: {
+          //       authorization: token
+          //     }
+          //   })
+          call({
+            method: "get",
+            url: "/answers/" + this.state.answerId + "/views?day=30"
+          })
             .then(res => {
-              if (res.status === 200) {
-                console.log(
-                  "dropdown graph response data",
-                  res.data.data.graphData
-                );
-                this.setState({
-                  graphData: res.data.data.graphData
-                });
-              }
+              console.log("dropdown graph response data", res.data.graphData);
+              this.setState({
+                graphData: res.data.graphData
+              });
             })
             .catch(err => {
               console.log("view error: ", err);
@@ -424,7 +439,7 @@ class Stats extends Component {
     );
 
     return (
-      <div className="ContentWrapper">
+      <Row className="ContentWrapper">
         <Row>
           <Col span={4}>
             <p className="statsTitle">Stats</p>
@@ -441,7 +456,7 @@ class Stats extends Component {
         </Row>
         {this.state.toggle && (
           <Row>
-            <Col span={8} className="statsAnswerList">
+            <Col span={7} className="statsAnswerList">
               <Menu defaultSelectedKeys={["0"]} defaultOpenKeys={["sub1"]}>
                 {(this.state.questionArray || []).map((q, i) => (
                   <Menu.Item
@@ -454,7 +469,7 @@ class Stats extends Component {
                 ))}
               </Menu>
             </Col>
-            <Col span={16} className="statsgraph">
+            <Col span={17} className="statsgraph">
               <button
                 name="views"
                 className={this.state.views}
@@ -500,7 +515,7 @@ class Stats extends Component {
             <Col span={24}>{this.drawChart()}</Col>
           </Row>
         )}
-      </div>
+      </Row>
     );
   }
 }

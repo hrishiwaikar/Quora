@@ -2,6 +2,7 @@ import React, { Component } from "react";
 import "antd/dist/antd.css";
 import "./DashboardCharts.css";
 import axios from "axios";
+import { call } from "../../api";
 
 import DashboardCharts from "./DashboardCharts";
 // import { Element } from "react-faux-dom";
@@ -19,39 +20,41 @@ class Dashboard extends Component {
   }
   makeGraph = (graphRange, graphType) => {
     console.log(graphRange, graphType);
-    const token =
-      "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJhMTY0MDIyMC02ODAyLTExZTktOGUxYS1iZDE3NmJmNjdkYWEiLCJjcmVhdGVkX2F0IjoxNTU2NzQzMTcwMzIyLCJpYXQiOjE1NTY3NDMxNzAsImV4cCI6MTU1OTMzNTE3MH0.CNknpZADc05g6Un4ogHzO8pmdW5mDB3QnhRLQKHcmm0";
+    // const token =
+    //   "Bearer eyJhbGciOiJIUzI1NiIsInR5cCI6IkpXVCJ9.eyJ1c2VySWQiOiJhMTY0MDIyMC02ODAyLTExZTktOGUxYS1iZDE3NmJmNjdkYWEiLCJjcmVhdGVkX2F0IjoxNTU2NzQzMTcwMzIyLCJpYXQiOjE1NTY3NDMxNzAsImV4cCI6MTU1OTMzNTE3MH0.CNknpZADc05g6Un4ogHzO8pmdW5mDB3QnhRLQKHcmm0";
 
-    axios
-      .get("/v1/views?frequency=" + graphRange + "&type=" + graphType, {
-        headers: {
-          authorization: token
-        }
-      })
+    // axios
+    //   .get("/views?frequency=" + graphRange + "&type=" + graphType, {
+    //     headers: {
+    //       authorization: token
+    //     }
+    //   })
+    call({
+      method: "get",
+      url: "/views?frequency=" + graphRange + "&type=" + graphType
+    })
       .then(res => {
-        if (res.status === 200) {
-          // console.log("view response data", res.data.data.graphData);
+        // console.log("view response data", res.data.data.graphData);
 
-          let result = res.data.data.graphData.map((value, i) => {
-            return value["value"];
-          });
+        let result = res.data.graphData.map((value, i) => {
+          return value["count"];
+        });
 
-          let result1 = res.data.data.graphData.map((date, i) => {
-            return date["timestamp"];
-          });
+        let result1 = res.data.graphData.map((date, i) => {
+          return date["timestamp"];
+        });
 
-          //   console.log("result", result1);
-          let graphData = this.state.graphData || {};
-          let xAxis = this.state.xAxis || {};
+        //   console.log("result", result1);
+        let graphData = this.state.graphData || {};
+        let xAxis = this.state.xAxis || {};
 
-          graphData[graphType] = result;
-          xAxis[graphType] = result1;
+        graphData[graphType] = result;
+        xAxis[graphType] = result1;
 
-          this.setState({
-            graphData: graphData,
-            xAxis: xAxis
-          });
-        }
+        this.setState({
+          graphData: graphData,
+          xAxis: xAxis
+        });
       })
       .catch(err => {
         console.log("view error: ", err);
@@ -60,7 +63,7 @@ class Dashboard extends Component {
   makeAllGraph = value => {
     let graphRange = value;
     let graphAttr = [
-      { graphRange: graphRange, graphType: "login" },
+      { graphRange: graphRange, graphType: "signin" },
       { graphRange: graphRange, graphType: "signup" },
       { graphRange: graphRange, graphType: "questions" },
       { graphRange: graphRange, graphType: "answers" },
@@ -78,10 +81,10 @@ class Dashboard extends Component {
   render() {
     let chartData = [
       {
-        name: "Login",
+        name: "SignIn",
         color: "#ff6361",
-        graphData: this.state.graphData["login"],
-        xAxis: this.state.xAxis["login"]
+        graphData: this.state.graphData["signin"],
+        xAxis: this.state.xAxis["signin"]
       },
       {
         name: "Signup",
@@ -120,14 +123,14 @@ class Dashboard extends Component {
     return (
       <Row
         style={{
-          marginTop: "100px",
+          marginTop: "30px",
           marginLeft: "40px"
         }}
       >
         <Row>
           <Col span={24}>
             <Col span={8}>
-              <h4 className="dashboardChartTitle">Quora Dashboard</h4>
+              <h3 className="dashboardChartTitle">Dashboard</h3>
             </Col>
             <Col span={8} />
             <Col span={8} style={{ float: "right", marginRight: "80px" }}>
