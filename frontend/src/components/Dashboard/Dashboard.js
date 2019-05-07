@@ -90,15 +90,15 @@ class Dashboard extends Component {
     },
     {
       graphRange: graphRange,
-      graphType: "questions"
+      graphType: "newquestion"
     },
     {
       graphRange: graphRange,
-      graphType: "answers"
+      graphType: "newanswer"
     },
     {
       graphRange: graphRange,
-      graphType: "comments"
+      graphType: "newcomment"
     }
     ];
 
@@ -124,22 +124,22 @@ class Dashboard extends Component {
       xAxis: this.state.xAxis["signup"]
     },
     {
-      name: "Questions",
+      name: "New Questions",
       color: "#58508d",
-      graphData: this.state.graphData["questions"],
-      xAxis: this.state.xAxis["questions"]
+      graphData: this.state.graphData["newquestion"],
+      xAxis: this.state.xAxis["newquestion"]
     },
     {
-      name: "Answer",
+      name: "New Answers",
       color: "#003f5c",
-      graphData: this.state.graphData["answers"],
-      xAxis: this.state.xAxis["answers"]
+      graphData: this.state.graphData["newanswer"],
+      xAxis: this.state.xAxis["newanswer"]
     },
     {
-      name: "Comments",
+      name: "New Comments",
       color: "#ffa600",
-      graphData: this.state.graphData["comments"],
-      xAxis: this.state.xAxis["comments"]
+      graphData: this.state.graphData["newcomment"],
+      xAxis: this.state.xAxis["newcomment"]
     }
     ];
 
