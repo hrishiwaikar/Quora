@@ -28,7 +28,7 @@ class SignUp extends Component {
     this.props.form.validateFields((err, values) => {
       if (!err) {
         //  console.log("Received values of form: ", values);
-        const data = {
+        let data = {
           firstName: this.state.firstName,
           lastName: this.state.lastName,
           email: this.state.email,
@@ -41,10 +41,33 @@ class SignUp extends Component {
           data
         })
           .then(res => {
-            console.log("login response data", res);
-            message.success(res.response[0].message);
-            window.localStorage.setItem("userId", res.user.userId);
-            window.localStorage.setItem("token", res.token);
+            // console.log("signup response data", res);
+            // message.success(res.response[0].message);
+            // window.localStorage.setItem("userId", res.user.userId);
+            // window.localStorage.setItem("token", res.token);
+            data = {
+              email: data.email,
+              password: data.password
+            }
+            call({
+              method: "post",
+              url: '/signin',
+              data
+            })
+              .then(res => {
+                console.log("login response data", res);
+                message.success(res.response[0].message);
+                window.localStorage.setItem("userId", res.user.userId);
+                localStorage.setItem("user", res.user)
+                window.localStorage.setItem("token", res.token);
+                this.props.history.push("/")
+
+              })
+              .catch(err => {
+                console.log("login error: ", err);
+
+                message.error(err.message.response.message);
+              });
             this.props.history.push("/")
 
           })

@@ -1,9 +1,11 @@
 import React, { Component } from 'react';
 import { Row, Col, Menu, Icon, Card, Typography, Avatar } from 'antd';
+import jwtDecode from 'jwt-decode'
 import './HomeLayout.css';
 import { call } from '../../api';
 import BottomScrollListener from 'react-bottom-scroll-listener';
 import { TestDisplayQuestion } from '../DisplayQuestion/DisplayQuestion';
+
 const { Title, Text } = Typography;
 
 
@@ -63,9 +65,13 @@ class HomeLayout extends Component {
         const { data, topics } = this.state;
         console.log(data)
         let userId = localStorage.getItem("userId");
+        let user = localStorage.getItem("user")
+        console.log(user)
+
         const cardContent = <div>
             <Avatar src={userId} />
-            < Text > Bhaskar Gurram</Text>
+            {/* < Text >{`${user.firstName} ${user.lastName}`}</Text> */}
+            <Text>User Name</Text>
             <Title level={3}>What is your question?</Title>
         </div>
 

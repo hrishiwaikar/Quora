@@ -22,7 +22,7 @@ export class TestDisplayQuestion extends Component {
     render = () => {
         let { data } = this.props;
         console.log('Render of test');
-        data = [
+        let test_data = [
             {
                 questionId: 'ba20d1d0-706d-11e9-aa18-2d2b40f23af0',
                 questionText: 'What is the first thing a child learns as it comes out of the womb?',
@@ -93,7 +93,7 @@ class DisplayQuestion extends Component {
             <Row className="pointer" onClick={() => { this.props.handleRedirection(data.questionId) }}>
 
                 <Row>
-                    <Title level={4} className="quora_question_text">{data.questionText}</Title>
+                    <Title level={3} className="quora_question_text">{data.questionText}</Title>
                 </Row>
                 {/* {data.hasAnswer === true ? */}
                 <Row>

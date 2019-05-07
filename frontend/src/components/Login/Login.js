@@ -42,6 +42,7 @@ class Login extends Component {
             message.success(res.response[0].message);
             window.localStorage.setItem("userId", res.user.userId);
             window.localStorage.setItem("token", res.token);
+            localStorage.setItem("user", res.user)
             this.props.history.push("/")
 
           })
