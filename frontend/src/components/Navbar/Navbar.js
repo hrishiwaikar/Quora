@@ -65,6 +65,22 @@ class Navbar extends Component {
         }
     }
 
+
+    handleRedirection = (selected_data) => {
+        console.log('In handle redirrection ', selected_data);
+        if (selected_data.type === 'PROFILE') {
+            this.props.history.push('/profile/' + selected_data.id);
+        } else if (selected_data.type === 'QUESTION') {
+            console.log('IN SELECTED DATA TYPE')
+            this.props.history.push('/question/' + selected_data.id);
+
+        } else if (selected_data.type === 'TOPIC') {
+            this.props.history.push('/topic/' + selected_data.id);
+        }
+
+        window.location.reload();
+    }
+
     render() {
         let userId = localStorage.getItem("userId");
         let userName = localStorage.getItem("userName");
@@ -109,7 +125,7 @@ class Navbar extends Component {
 
 
                     <Menu.Item className="navbar-search" disabled>
-                        <Search />
+                        <Search handleRedirection={this.handleRedirection} />
                     </Menu.Item>
                     <SubMenu title={<span className="submenu-title-wrapper">
                         <img src={profileImage} className="navbar-profile" alt="profile" /></span>}>
