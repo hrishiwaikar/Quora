@@ -18,7 +18,7 @@ class FollowCard extends Component {
                     actions={[<Button type="primary" icon="user" ghost={followText === "Following"} onClick={() => handleFollowClick(userId)}>{followText } &nbsp;{noOfFollowers}</Button>]}
                 >
                     <Meta
-                        avatar={profileImage ? <Avatar src={profileImage} /> : <Avatar icon="uesr" />}
+                        avatar={<Avatar src={`https://s3.ap-south-1.amazonaws.com/checkapp-dev/profiles/${userId}`} />}
                         title={<a onClick={this.handleClick}>{name}</a>}
                         description={profileCredential}
                     />

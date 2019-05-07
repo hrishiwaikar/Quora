@@ -10,7 +10,8 @@ class Image extends Component {
     state = {
         visible: false,
         fileList: [],
-        userId: this.props.userId
+        userId: this.props.userId,
+        file: null
     }
 
     toggleModal = () => {
@@ -19,12 +20,12 @@ class Image extends Component {
         }))
     }
     onChange = (info) => {
-        const { fileList } = this.state;
+        const { fileList, file } = this.state;
         console.log("hello")
         let userId = localStorage.getItem("userId");
         const formData = new FormData();
-
-        formData.append('profileImage', fileList[0]);
+        console.log(fileList, file)
+        formData.append('profileImage', file);
 
         this.setState({
             uploading: true,
@@ -52,24 +53,39 @@ class Image extends Component {
         const { visible, fileList, userId } = this.state
 
         const props = {
-            onRemove: (file) => {
-                this.setState((state) => {
-                    const index = state.fileList.indexOf(file);
-                    const newFileList = state.fileList.slice();
-                    newFileList.splice(index, 1);
-                    return {
-                        fileList: newFileList,
-                    };
-                });
-            },
+
             beforeUpload: (file) => {
                 console.log(file)
                 this.setState(state => ({
-                    fileList: [...state.fileList, file],
+                    file,
                 }));
+                let userId = localStorage.getItem("userId");
+                const formData = new FormData();
+                console.log(file)
+                formData.append('profileImage', file);
+
+                this.setState({
+                    uploading: true,
+                });
+                call({
+                    method: 'put',
+                    url: `/users/${userId}/image`,
+                    data: formData
+                })
+                    .then(response => {
+                        console.log(response)
+                        message.success("Profile image updated")
+                        this.setState({
+                            visible: false,
+                            fileList: []
+                        })
+                    })
+                    .catch(err => {
+                        console.log(err)
+                    })
                 return false;
             },
-            onChange: this.onChange,
+            // onChange: this.onChange,
             multiple: false,
             fileList,
         };

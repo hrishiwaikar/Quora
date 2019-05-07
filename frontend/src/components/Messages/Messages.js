@@ -115,7 +115,7 @@ class Messages extends Component {
                                 renderItem={item => (
                                     <List.Item className="list-item" onClick={() => this.handleMessageClick(item.conversationId)}>
                                         <List.Item.Meta
-                                            avatar={<Avatar src={item.userId} />}
+                                            avatar={<Avatar src={`https://s3.ap-south-1.amazonaws.com/checkapp-dev/profiles/${item.userId}`} />}
                                             title={<a >{item.name}</a>}
                                             description={item.conversation}
                                         />

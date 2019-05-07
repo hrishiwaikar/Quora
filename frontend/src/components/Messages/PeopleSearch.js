@@ -83,7 +83,7 @@ class PeopleSearch extends Component {
                 {
                     Object.keys(user).length > 0 ?
                         <>
-                            <Avatar src={`${URL}/users/${user.userId}/image`} />
+                            <Avatar src={`https://s3.ap-south-1.amazonaws.com/checkapp-dev/profiles/${user.userId}`} />
                             <Text>{user.firstName + " " + user.lastName} </Text>
                             <a onClick={this.handleClearSelection}> Change </a>
                         </>
@@ -103,7 +103,7 @@ class PeopleSearch extends Component {
                             renderItem={item => (
                                 <List.Item onClick={() => this.handleClick(item)}>
                                     <List.Item.Meta
-                                        avatar={<Avatar src={`${URL}/users/${user.userId}/image`} />}
+                                        avatar={<Avatar src={`https://s3.ap-south-1.amazonaws.com/checkapp-dev/profiles/${user.userId}`} />}
                                         title={<a >{"  " + item.firstName + " " + item.lastName} </a>}
                                         description={item.profileCredential}
                                     />
