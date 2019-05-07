@@ -93,6 +93,7 @@ let userSchema = new mongoose.Schema({
     profileCredential: {
         type: String,
         trim: true,
+        default : null,
     },
     description: {
         type: String,

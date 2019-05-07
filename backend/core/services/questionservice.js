@@ -23,10 +23,12 @@ let answerCommonAttributes = (_session,answerObj) => {
         temp_answer['upvotes'] = answerObj.upvotes
         temp_answer['downvotes'] = answerObj.downvotes
         temp_answer['noOfTimesViewed'] = answerObj.noOfTimesviewed
+        temp_answer['answererName'] = null
         temp_answer['profileCredential'] = null
         temp_answer['userUpvoted'] = false
         temp_answer['userDownvoted'] = false
         temp_answer['userBookmarked'] = false
+        temp_answer['comments'] = answerObj.comments
         temp_answer['userisfollowinganswerer'] = false //vinit dependency
         await answerUpvotesModel.findOne({userId:_session.userId,answerId:answerObj.answerId}).then((answerUpvoteObj)=>{
             if(answerUpvoteObj !== null){
@@ -46,11 +48,10 @@ let answerCommonAttributes = (_session,answerObj) => {
         await userModel.findOne({userId:answerObj.userId}).then((answererObj)=>{
             // console.log("answerObj\n",answererObj)
             if (answererObj !== null){
+                temp_answer['name'] = answerObj.firstName + " "+answerObj.lastName
                 temp_answer['profileCredential'] = answererObj.profileCredential
             }
         })
-        //comments I have to do
-        temp_answer['comments'] = []
         return resolve(temp_answer)
     });
 }
@@ -117,13 +118,23 @@ let service = {
                 questionModel.findOne(body).then(async (questionObj) => {
                     if (!!questionObj){
                         output['userId'] = _session.userId
+                        output['userName'] = null
+                        output['profileCredential'] = null
                         output['questionId'] = questionObj.questionId
                         output['questionText'] = questionObj.questionText
                         output['followersCount'] = questionObj.followers
                         output['questionerId'] = questionObj.userId
                         output['topics'] = []
                         output['userIsFollowingTheQuestion'] = false
-                        output['profileCredential'] = "Hrishi, SJSU" //CODE THIS
+
+                        await userModel.findOne({userId:_session.userId}).then((userObj)=>{
+                            // console.log("answerObj\n",answererObj)
+                            if (userObj !== null){
+                                output['userName'] =userObj.firstName + " "+userObj.lastName 
+                                output['profileCredential'] = userObj.profileCredential
+                            }
+                        })
+
                         if (questionObj.topicsId.length > 0){
                             for (let topicIndex=0;topicIndex<questionObj.topicsId.length;topicIndex++){
                                 await topicModel.findOne({topicId:questionObj.topicsId[topicIndex]}).then((topicObj) =>{
@@ -205,6 +216,7 @@ let service = {
             try {
                 let output = []
                 let _session = args[0] || {};
+                console.log(_session.userId)
                 let page_number = args[1] || 1;
                 /* pagination logic */
                 // let page_number = param('page')
@@ -360,14 +372,12 @@ let service = {
 
                 questionIds = questionsAsked.concat(questionsFollowed).concat(questionsAnswered)
                 questionIds = Array.from(new Set(questionIds));
-                // console.log("List of questionIds\n",questionIds)
                 dbQuery["questionId"] = {"$in":questionIds}
                 
                 /* year filter logic*/
                 if (year != "all_time"){
                     dbQuery["createdAt"] = {"$gte" : new Date(parseInt(year),0,1),"$lt": new Date(parseInt(year)+1,0,1)}
                 }   
-                // console.log("---dbQuery-----\n",dbQuery)
                 /* year filter logic*/
 
                 /* order direction logic*/
@@ -377,17 +387,18 @@ let service = {
                 else{
                     sortBy = "createdAt"
                 }
-                // console.log("---sortBy-----\n",sortBy)
                 /* order direction logic*/
 
                 questionModel.find(dbQuery).sort(sortBy).select({questionId:1,questionText:1,createdAt:1,_id:0})
-                .then((questionObjs) => {
-                    console.log(questionsAnswered)
+                .then(async (questionObjs) => {
                     for (let index=0;index<questionObjs.length;index++){
-                        console.log(questionObjs[index].questionId)
                         if (questionsAnswered.includes(questionObjs[index].questionId)){
                             let temp = Object.assign({answered:true},questionObjs[index]._doc)
-                            output.push(temp)
+                            await answerModel.findOne({userId:_session.userId,questionId:questionObjs[index].questionId}).select({createdAt:1})
+                            .then((answerObj) => {
+                                temp["createdAt"] = answerObj.createdAt
+                                output.push(temp)
+                            }).catch(reject);
                         }
                         else{
                             let temp = Object.assign({answered:false},questionObjs[index]._doc)
