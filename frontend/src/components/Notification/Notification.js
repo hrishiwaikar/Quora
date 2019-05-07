@@ -88,7 +88,7 @@ class Notification extends Component {
                     renderItem={item => (
                         <List.Item>
                             <List.Item.Meta
-                                avatar={<Avatar src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png" />}
+                                avatar={<Avatar src={`https://s3.ap-south-1.amazonaws.com/checkapp-dev/profiles/${item.question.userId}`} />}
                                 title={<div className="title">
                                     <Text className="name" strong onClick={() => this.handleNameClick(item.question.userId)}>
                                         {item.question.firstName + " " + item.question.lastName}
