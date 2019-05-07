@@ -3,8 +3,8 @@ const utils = require("./../commons/utils");
 const _ = require("lodash");
 let pv = require("./../commons/passwordVerification");
 let jwt = require("./../commons/jwt");
-let producer = require('./../commons/kafkarpc');
-producer = producer.getInstance();
+// let producer = require('./../commons/kafkarpc');
+// producer = producer.getInstance();
 let service = {
     signup: (...args) => {
         return new Promise(function (resolve, reject) {
@@ -60,14 +60,14 @@ let service = {
 let router = {
     signup: (req, res, next) => {
         let successCB = (data) => {
-            producer.fire({
-                topic: 'counts',
-                type: 'signup',
-                payload: {
-                    createdAt: Date.now()
-                },
-                partition: 0
-            })
+            // producer.fire({
+            //     topic: 'counts',
+            //     type: 'signup',
+            //     payload: {
+            //         createdAt: Date.now()
+            //     },
+            //     partition: 0
+            // })
             res.json({
                 result: "success",
                 response: [{
@@ -80,14 +80,14 @@ let router = {
     },
     signin: (req, res, next) => {
         let successCB = (data) => {
-            producer.fire({
-                topic: 'counts',
-                type: 'signin',
-                payload: {
-                    createdAt: Date.now()
-                },
-                partition: 0
-            })
+            // producer.fire({
+            //     topic: 'counts',
+            //     type: 'signin',
+            //     payload: {
+            //         createdAt: Date.now()
+            //     },
+            //     partition: 0
+            // })
             res.json({
                 result: "success",
                 response: [{

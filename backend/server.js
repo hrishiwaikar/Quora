@@ -41,8 +41,14 @@ if (cluster.isMaster) {
     let db = require('./core/commons/db');
     // app.use(require('body-parser').json());
     var bodyParser = require('body-parser');
-    app.use(bodyParser.json({limit: "50mb"}));
-    app.use(bodyParser.urlencoded({limit: "50mb", extended: true, parameterLimit:50000}));
+    app.use(bodyParser.json({
+        limit: "50mb"
+    }));
+    app.use(bodyParser.urlencoded({
+        limit: "50mb",
+        extended: true,
+        parameterLimit: 50000
+    }));
     app.use(middlewares.cors);
     app.use(middlewares.apiTimeout(60000));
     process.on('uncaughtException', function (err) {
@@ -52,6 +58,11 @@ if (cluster.isMaster) {
     app.use((req, res, next) => {
         log.info("Incoming Request : " + req.url)
         next();
+    })
+    app.get('/ping', (req, res, next) => {
+        res.json({
+            result: "success"
+        })
     })
     app.use('/v1', versionV1Routes);
     app.use(middlewares.error404);
