@@ -4,6 +4,7 @@ const _ = require("lodash");
 let pv = require("./../commons/passwordVerification");
 let s3 = require('./../commons/s3');
 const redis = require("./../commons/redis");
+const topicModel = require("../models/topicmodel");
 let service = {
     create: (...args) => {
         return new Promise(function (resolve, reject) {
@@ -153,6 +154,57 @@ let service = {
             }
         });
     },
+    followTopic: (...args) => {
+        return new Promise(function (resolve, reject) {
+            try {
+                let _session = args[0] || {};
+                let userId = args[1] || null;
+                let updateObj = args[2] || {};
+                let userModel = require('./../models/usermodel');
+                let body = {};
+                body.userId = userId || null;
+                userModel.findOne({
+                    userId: userId
+                }).then((dbObj) => {
+                    if (!!dbObj) {
+                        body = dbObj || {};
+                        return topicModel.findOne({
+                            topicId: updateObj.topicId
+                        });
+                    } else {
+                        return reject(rs.notfound)
+                    }
+
+                }).then((dbObj) => {
+                    if (!!dbObj) {
+                        let _topics = body.topic || [];
+                        let push = 1;
+                        for (let i = 0; i < _topics.length; i++) {
+                            const element = _topics[i];
+                            if (element.topicId === updateObj.topicId) {
+                                push = 0;
+                            }
+                        }
+                        if (push) {
+                            _topics.push(dbObj)
+                        }
+                        return userModel.findOneAndUpdate({
+                            userId: userId
+                        }, {
+                            topic: _topics
+                        });
+                    } else {
+                        return reject(rs.notfound)
+                    }
+                }).then(resolve).catch((err) => {
+                    reject(err);
+                })
+            } catch (e) {
+                console.error(e)
+                reject(e);
+            }
+        });
+    },
     uploadImage: (...args) => {
         return new Promise(function (resolve, reject) {
             try {
@@ -247,6 +299,18 @@ let router = {
             })
         };
         service.update(req.user, req.params.userId, req.body).then(successCB, next);
+    },
+    followTopic: (req, res, next) => {
+        let successCB = (data) => {
+            res.json({
+                result: "success",
+                response: [{
+                    message: "User Updated Successfully",
+                    code: "UPDATED"
+                }]
+            })
+        };
+        service.followTopic(req.user, req.params.userId, req.body).then(successCB, next);
     },
     delete: (req, res, next) => {
         let successCB = (data) => {

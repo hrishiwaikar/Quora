@@ -74,86 +74,124 @@ module.exports = {
             }
             let startDate = null;
             console.log("CHECK > >> > ");
+
+            let sendData = (data) => {
+                res.json({
+                    result: "success",
+                    response: {
+                        message: "Data fetched Successfully",
+                        code: "DATA"
+                    },
+                    data: data
+                });
+            }
             switch (frequency) {
                 case "hour":
-                startDate = Date.now() - (60 * 60 * 1000);
-                startDate = new Date(startDate).setSeconds(0,0);
+                    startDate = Date.now() - (60 * 60 * 1000);
+                    startDate = new Date(startDate).setSeconds(0, 0);
                     timeModel.find({
-                        frequency : "min",
-                        feature : obj.type,
-                        timestamp : {$gte: new Date(startDate)}
+                        frequency: "min",
+                        feature: obj.type,
+                        timestamp: { $gte: new Date(startDate) }
                     }).sort({
                         timestamp: 1
-                    }).select({timestamp:1,count:1}).then(d=>{
+                    }).select({ timestamp: 1, count: 1 }).then(d => {
                         for (let i = 1; i <= 60; i++) {
                             let _f = 0;
-                            abc : for (let j = 0; j < d.length; j++) {
+                            abc: for (let j = 0; j < d.length; j++) {
                                 const element = d[j];
-                                if(new Date(startDate) === d.timestamp){
+                                console.log(new Date(startDate), element.timestamp)
+                                if (new Date(startDate) === element.timestamp) {
                                     obj.graphData.push({
-                                        count: d.count,
-                                        timestamp: d.timestamp
+                                        count: element.count,
+                                        timestamp: element.timestamp
                                     });
                                     _f = 1;
                                     break abc;
                                 }
                             }
-                            if(!_f){
+                            if (!_f) {
                                 obj.graphData.push({
                                     count: 0,
                                     timestamp: new Date(startDate)
                                 });
                             }
                             startDate = startDate + (1 * 60 * 1000)
-                        }    
-                        return;
-                    }).catch(e=>console.error(e));
-                    
+                        }
+                        sendData(obj);
+                    }).catch(e => console.error(e));
+
                     break;
                 case "day":
-                    startDate = Date.now() - (24 * 60 * 60 * 1000);
+                startDate = Date.now() - (24 * 60 * 60 * 1000);
+                startDate = new Date(startDate).setMinutes(0,0, 0);
+                timeModel.find({
+                    frequency: "hour",
+                    feature: obj.type,
+                    timestamp: { $gte: new Date(startDate) }
+                }).sort({
+                    timestamp: 1
+                }).select({ timestamp: 1, count: 1 }).then(d => {
                     for (let i = 1; i <= 24; i++) {
-                        let hours = new Date(startDate).getHours();
-                        let ampm = (hours >= 12) ? "pm" : "am"
-                        obj.graphData.push({
-                            value: parseInt(Math.random() * 120),
-                            timestamp: (!!(hours % 12) ? (hours % 12) : 12) + " " + ampm
-                        });
+                        let _f = 0;
+                        abc: for (let j = 0; j < d.length; j++) {
+                            const element = d[j];
+                            console.log(new Date(startDate), element.timestamp)
+                            if (new Date(startDate) === element.timestamp) {
+                                obj.graphData.push({
+                                    count: element.count,
+                                    timestamp: element.timestamp
+                                });
+                                _f = 1;
+                                break abc;
+                            }
+                        }
+                        if (!_f) {
+                            obj.graphData.push({
+                                count: 0,
+                                timestamp: new Date(startDate)
+                            });
+                        }
                         startDate = startDate + (60 * 60 * 1000)
                     }
+                    sendData(obj);
+                }).catch(e => console.error(e));
+                    // startDate = Date.now() - (24 * 60 * 60 * 1000);
+                    // for (let i = 1; i <= 24; i++) {
+                    //     let hours = new Date(startDate).getHours();
+                    //     let ampm = (hours >= 12) ? "pm" : "am"
+                    //     obj.graphData.push({
+                    //         value: parseInt(Math.random() * 120),
+                    //         timestamp: (!!(hours % 12) ? (hours % 12) : 12) + " " + ampm
+                    //     });
+                    //     startDate = startDate + (60 * 60 * 1000)
+                    // }
                     break;
                 case "week":
-                    startDate = Date.now() - (7 * 24 * 60 * 60 * 1000) - 1;
-                    for (let i = 1; i <= 7; i++) {
-                        obj.graphData.push({
-                            value: parseInt(Math.random() * 150),
-                            timestamp: (new Date(startDate).getMonth() + 1) + "/" + new Date(startDate).getDate()
-                        });
-                        startDate = startDate + (24 * 60 * 60 * 1000)
-                    }
+                    // startDate = Date.now() - (7 * 24 * 60 * 60 * 1000) - 1;
+                    // for (let i = 1; i <= 7; i++) {
+                    //     obj.graphData.push({
+                    //         value: parseInt(Math.random() * 150),
+                    //         timestamp: (new Date(startDate).getMonth() + 1) + "/" + new Date(startDate).getDate()
+                    //     });
+                    //     startDate = startDate + (24 * 60 * 60 * 1000)
+                    // }
                     break;
                 case "month":
-                    startDate = Date.now() - (30 * 24 * 60 * 60 * 1000) - 2;
-                    for (let i = 1; i <= 31; i++) {
-                        obj.graphData.push({
-                            value: parseInt(Math.random() * 150),
-                            timestamp: (new Date(startDate).getMonth() + 1) + "/" + new Date(startDate).getDate()
-                        });
-                        startDate = startDate + (24 * 60 * 60 * 1000)
-                    }
+                    // startDate = Date.now() - (30 * 24 * 60 * 60 * 1000) - 2;
+                    // for (let i = 1; i <= 31; i++) {
+                    //     obj.graphData.push({
+                    //         value: parseInt(Math.random() * 150),
+                    //         timestamp: (new Date(startDate).getMonth() + 1) + "/" + new Date(startDate).getDate()
+                    //     });
+                    //     startDate = startDate + (24 * 60 * 60 * 1000)
+                    // }
                     break;
                 default:
                     break;
             }
             console.log("CHECK  < < < < < > >> > ");
-            res.json({
-                result: "success",
-                response: {
-                    message: "Data fetched Successfully",
-                    code: "DATA"
-                },
-                data: obj
-            });
+
         } catch (error) {
             console.log(error)
         }

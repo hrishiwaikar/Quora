@@ -49,6 +49,7 @@ module.exports = (express) => {
         versionRouter.get("/users/:userId/image", uploadService('profileRead'));
         versionRouter.put('/users/:userId', jwt.verifyRequest, userservice.update);
         versionRouter.delete('/users/:userId', jwt.verifyRequest, userservice.delete);
+        versionRouter.post('/users/:userId/topic', jwt.verifyRequest, userservice.followTopic);
         versionRouter.get('/users/:userId/notifications', jwt.verifyRequest, notificationservice.readMany);
         /* User Routes */
 
@@ -104,6 +105,7 @@ module.exports = (express) => {
 
         /* Topic Routes */
         versionRouter.post('/topics', jwt.verifyRequest, topicservice.create);
+        versionRouter.get('/topics/:topicId', jwt.verifyRequest, topicservice.read);
         versionRouter.get('/topics', jwt.verifyRequest, topicservice.readMany);
         versionRouter.put('/topics/:questionId', jwt.verifyRequest, topicservice.update);
         versionRouter.delete('/topics/:questionId', jwt.verifyRequest, topicservice.delete);
