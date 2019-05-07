@@ -24,9 +24,9 @@ let service = {
             try {
                 let _session = args[0] || {};
                 let topicId = args[1].topicId || {};
-                let userid = _session.userId || {};
+                let userId = _session.userId || {};
                 let topicsObj = null
-                topicModel.find({
+                topicModel.findOne({
                     topicId : topicId
                 }).select({
                     topicId: 1,
@@ -34,8 +34,8 @@ let service = {
                     _id: 0
                 }).then((dbObj) => {
                     if(!!dbObj){
-                        topicsObj = dbObj;
-                        return userModel.find({
+                        topicsObj = JSON.parse(JSON.stringify(dbObj));
+                        return userModel.findOne({
                             userId : userId
                         })
                     }else{
@@ -52,6 +52,7 @@ let service = {
                                 topicsObj.following = true;
                             }
                         }
+                        console.log(topicsObj)
                         return Promise.resolve(topicsObj)
                     }else{
                         return Promise.reject(rs.notfound)
