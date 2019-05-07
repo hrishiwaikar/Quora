@@ -105,7 +105,7 @@ class LocationCredential extends Component {
 
                             <Row gutter={8}>
                                 <Col span={6}><Text>location</Text></Col>
-                                <Col span={18}><Input placeholder="Carpenter" onChange={this.handleChange} name="location" value={editLocation.location} /></Col>
+                                <Col span={18}><Input placeholder="San Jose" onChange={this.handleChange} name="location" value={editLocation.location} /></Col>
                             </Row>
                         </Form.Item>
                         <Form.Item>

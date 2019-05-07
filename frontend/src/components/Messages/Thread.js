@@ -104,7 +104,10 @@ class Thread extends Component {
     conversation.messageList.push(newMessage)
     this.setState({
       conversation
+    }, () => {
+      this.scrollToBottom();
     })
+    
     call({
       method: 'post',
       url: "/conversations/message",
@@ -112,7 +115,7 @@ class Thread extends Component {
     })
       .then(data => {
         console.log(data)
-        this.scrollToBottom();
+      
       })
       .catch(err => {
         console.log(err)

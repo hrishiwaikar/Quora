@@ -55,7 +55,7 @@ class EmploymentCredential extends Component {
             if (e.target.value !== undefined) {
                 value = e.target.value
             } else if (e.target.checked !== undefined) {
-                value = e.target.value
+                value = e.target.checked
             }
         }
          else {
@@ -113,7 +113,7 @@ class EmploymentCredential extends Component {
                         </Form.Item>
                         <Form.Item>
                             <Row gutter={8}>
-                                <Col span={6}><Text>Graduation Year</Text></Col>
+                                <Col span={6}><Text>Start Year</Text></Col>
                                 <Col span={18}>
                                     <Select defaultValue="lucy" style={{ width: 120 }} name="startYear" value={editEmployment.startYear} onChange={(e) => this.handleChange(e, "startYear")}>
                                         {
@@ -125,7 +125,7 @@ class EmploymentCredential extends Component {
                         </Form.Item>
                         <Form.Item>
                             <Row gutter={8}>
-                                <Col span={6}><Text>Graduation Year</Text></Col>
+                                <Col span={6}><Text>End Year</Text></Col>
                                 <Col span={18}>
                                     <Select defaultValue="lucy" style={{ width: 120 }} name="endYear" value={editEmployment.endYear} onChange={(e) => this.handleChange(e, "endYear")}>
                                         {

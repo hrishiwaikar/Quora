@@ -77,7 +77,7 @@ class EducationCredential extends Component {
         const { visible, education, editEducation, button, hideText } = this.state;
         const { school, concentration, secondaryConcentration, degreeType, graduationYear } = education;
         var options = [];
-        for (var i = 2019; i > 1900; i--) {
+        for (var i = 2025; i > 1900; i--) {
             options.push(<Option value={i} key={i}>{i}</Option>)
         }
         return (

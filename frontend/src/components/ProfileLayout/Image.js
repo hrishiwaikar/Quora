@@ -31,9 +31,7 @@ class Image extends Component {
         call({
             method: 'put',
             url: `/users/${userId}/image`,
-            data: {
-                profileImage:  fileList[0]
-            }
+            data: formData
         })
             .then(response => {
                 console.log(response)

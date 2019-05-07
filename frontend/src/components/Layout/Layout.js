@@ -12,7 +12,6 @@ import Messages from '../Messages/Messages';
 import NewMessage from '../Messages/NewMessage';
 import Thread from '../Messages/Thread';
 import YourContentLayout from '../YourContentLayout/YourContentLayout';
-import TopicLayout from '../TopicLayout/TopicLayout';
 
 import Stats from "../Stats/Stats";
 import Dashboard from "../Dashboard/Dashboard";
@@ -46,15 +45,14 @@ class Layout extends Component {
                 <LastLocationProvider>
                     <Navbar />
                     <div className="content">
-                        <Switch location={isModal ? this.previousLocation : location}>
-                            <Route path="/topic/:id" component={TopicLayout} />
+                        <Switch location={isModal ? this.previousLocation : location}>x
                             <Route path="/profile/:id" component={ProfileLayout} />
                             <Route path="/answer" component={AnswerLayout} />
                             <Route path="/question/:id" component={QuestionPage} />
                             <Route path="/displayQuestion" component={TestDisplayQuestion} />
                             <Route path="/content" component={YourContentLayout} />
                             <Route path="/stats" component={Stats} />
-                            <Route path="/" exact component={HomeLayout} />
+                            <Route path="/" component={HomeLayout} />
                         </Switch>
                         {isModal ?
                             <>

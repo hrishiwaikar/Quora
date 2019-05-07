@@ -359,11 +359,11 @@ class CredentialAndHighlights extends Component {
                     {
                         dataSource.map((data, i) => (
                             data.type === "education" ?
-                                <EducationCredential education={data} userId={userId} visible={editEducationModal} key={i} /> :
+                                <EducationCredential education={data} userId={userId} handleAdd={this.handleEditEducation} visible={editEducationModal} key={i} /> :
                                 data.type === "employment" ?
-                                    <EmploymentCredential employment={data} userId={userId} visible={addEmploymentModal} key={i} /> :
+                                    <EmploymentCredential employment={data} userId={userId} handleAdd={this.handleEditEmployment} visible={addEmploymentModal} key={i} /> :
                                     data.type === "location" ?
-                                        <LocationCredential location={data} userId={userId} visible={addLocationModal} key={i} /> : null
+                                        <LocationCredential location={data} userId={userId} handleAdd={this.handleEditLocation} visible={addLocationModal} key={i} /> : null
                         ))
                     }
 
