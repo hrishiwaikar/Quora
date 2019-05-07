@@ -51,67 +51,67 @@ let service = {
             try {
                 let _session = args[0] || {};
                 let body = args[1] || {};
-                console.log("body",body)
-                let isUpvote = body.isUpvote || null
-                let isDownvote = body.isDownvote || null
                 let answerId = body.answerId
-
-                // answerModel.findOne({answerId:answerId}).then((answerObj) => {
-                //     if (isUpvote !== null){
-                //         if(isUpvote) {
-                //         }
-                //         else{
-    
-                //         }
-                //     }
-                //     else{
-                //         if()
-                //     }
-                // }).catch(reject);
-
-               
-                if(isUpvote) {
-                    answerModel.findOne({answerId:answerId}).then((answerObj) => {
-                        downvoteModel.findOne({userId:_session.userId,answerId:answerId}).then(async (downvoteObj) => {
-                            if (downvoteObj !== null){
-                                await downvoteModel.remove({userId:_session.userId,answerId:answerId}).then(async (response) => {
-                                    if(answerObj.downvotes > 0){
-                                        answerObj.downvotes -= 1
-                                    }
-                                    await answerObj.save()
-                                })
-                            }
+                
+                answerModel.findOne({answerId:answerId}).then(async (answerObj) => {
+                    if ("isUpvote" in body){
+                        let isUpvote = body.isUpvote
+                        console.log("Upvote k if me")
+                        if(isUpvote) {
                             let upvoteObj = new upvoteModel({userId:_session.userId,answerId:answerId})
-                            await upvoteObj.save().then(async (response) => {
+                            upvoteObj.save().then(async (response) => {
                                 answerObj.upvotes += 1
-                                await answerObj.save().then((response) =>{
+                                console.log("upated the upvote",answerObj.upvotes)
+                                answerObj.save().then((response) =>{
+                                    console.log("returning")
                                     return resolve(response);
-                                })
+                                }).catch(reject);
                             }).catch(reject);
-                        })
-                    })
-                }
-                else{
-                    answerModel.findOne({answerId:answerId}).then((answerObj) => {
-                        upvoteModel.findOne({userId:_session.userId,answerId:answerId}).then(async (upvoteObj) => {
-                            if (upvoteObj !== null){
-                                await upvoteModel.remove({userId:_session.userId,answerId:answerId}).then(async (response) => {
-                                    if(answerObj.upvotes > 0){
-                                        answerObj.upvotes -= 1
-                                    }
-                                    await answerObj.save()
-                                })
-                            }
-                            let downvoteObj = new upvoteModel({userId:_session.userId,answerId:answerId})
-                            await downvoteObj.save().then(async (response) => {
+                        }
+                        else{
+                            console.log("Upvote k else me")
+                            upvoteModel.remove({userId:_session.userId,answerId:answerId}).then(async (response) => {
+                                if(answerObj.upvotes > 0){
+                                    console.log("reducing upvotes",answerObj.upvotes)
+                                    answerObj.upvotes -= 1
+                                    console.log("upated the upvote",answerObj.upvotes)
+                                }
+                                answerObj.save().then((response) =>{
+                                    console.log("returning")
+                                    return resolve(response);
+                                }).catch(reject);
+                            }).catch(reject);
+                        }
+                    }
+                    else{
+                        let isDownvote = body.isDownvote
+                        if(isDownvote){
+                            console.log("downvote k if me")
+                            let downvoteObj = new downvoteModel({userId:_session.userId,answerId:answerId})
+                            downvoteObj.save().then(async (response) => {
                                 answerObj.downvotes += 1
-                                await answerObj.save().then((response) =>{
+                                console.log("upated the downvote",answerObj.downvotes)
+                                answerObj.save().then((response) =>{
+                                    console.log("returning")
                                     return resolve(response);
-                                })
+                                }).catch(reject);
                             }).catch(reject);
-                        })
-                    })
-                }
+                        }
+                        else{
+                            console.log("downvote k else me")
+                            downvoteModel.remove({userId:_session.userId,answerId:answerId}).then(async (response) => {
+                                if(answerObj.downvotes > 0){
+                                    answerObj.downvotes -= 1
+                                    console.log("upated the downvote",answerObj.downvotes)
+                                }
+                                answerObj.save().then((response) =>{
+                                    console.log("returning")
+                                    return resolve(response);
+                                }).catch(reject);
+                            }).catch(reject);
+                        }
+                    }
+                }).catch(reject);
             } catch (e) {
                 console.error(e)
                 reject(e);
