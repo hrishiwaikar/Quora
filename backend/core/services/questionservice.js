@@ -455,7 +455,7 @@ let service = {
                 let params = args[1] || 1;
                 let page_number = params['page']
                 let topic = params['topic']
-                let page_limit = 20
+                let page_limit = 10
                 let pagination_end_index = page_number * page_limit
                 let pagination_start_index = pagination_end_index - page_limit
 
@@ -513,6 +513,37 @@ let service = {
                         output.push(temp)
                     }
                     return resolve(output)
+                }).catch(reject);
+            }
+            catch (e) {
+                console.error(e)
+                return reject(e);
+            }
+        });
+    },
+    userBookmarkedAnswers : (...args) => {
+        return new Promise(function (resolve, reject) {
+            try {
+                let output = []
+                let _session = args[0] || {};
+                answerBookmarkModel.find({userId:_session.userId})
+                .then(async (answerBookmarkObjs) => {
+                    console.log("----answerBookmarkObjs----\n",answerBookmarkObjs)
+                    for(let index=0;index<answerBookmarkObjs.length;index++){
+                        let temp = {}
+                        await answerModel.findOne({answerId:answerBookmarkObjs[index].answerId})
+                        .then(async (answerObj) => {
+                            temp = await answerCommonAttributes(_session,answerObj)
+                            await questionModel.findOne({questionId:answerObj.questionId})
+                            .then((questionObj) => {
+                                temp["questionId"] = questionObj.questionId
+                                temp["questionText"] = questionObj.questionText
+                            }).catch(reject);
+                        }).catch(reject);
+                        console.log(temp);
+                        output.push(temp)
+                    }
+                    return resolve(output);
                 }).catch(reject);
             }
             catch (e) {
@@ -678,6 +709,19 @@ let router = {
         params['page'] = req.param('page') || 1;
         params['topic'] = req.param('topic') || null
         service.questionsRelatedToTopic(req.user,params).then(successCB, next);
+    },
+    userBookmarkedAnswers :(req, res, next) => {
+        let successCB = (data) => {
+            res.json({
+                result: "success",
+                response: [{
+                    message: "User bookmarked questions",
+                    code: "READ"
+                }],
+                data: data
+            })
+        };
+        service.userBookmarkedAnswers(req.user,req.body).then(successCB, next);
     },
 };
 module.exports.service = service;
