@@ -4,8 +4,8 @@ import jwtDecode from 'jwt-decode'
 import './Feed.css';
 import { call } from '../../api';
 import BottomScrollListener from 'react-bottom-scroll-listener';
-import { TestDisplayQuestion } from '../DisplayQuestion/DisplayQuestion';
-
+import { DisplayQuestion } from '../DisplayQuestion/DisplayQuestion';
+import { AskQuestion } from './../AskQuestion/AskQuestion.js'
 const { Title, Text } = Typography;
 
 
@@ -15,12 +15,18 @@ class Feed extends Component {
     state = {
         data: [],
         pageNumber: 1,
-        allDataFetched: false
+        allDataFetched: false,
+        addQuestion: false
     };
+
+    handleRedirection = (questionId) => {
+        // this.props.history.push('/question/' + questionId);
+        window.open('/question/' + questionId);
+    }
 
     setData = () => {
         let { data, allDataFetched, pageNumber } = this.state;
-  
+
         call({
             method: 'get',
             url: `/userfeeds?page=${pageNumber}`
@@ -67,28 +73,57 @@ class Feed extends Component {
             this.setData()
         console.log("botton")
     }
+
+    handleShowAddQuestion = (newQuestionId = null) => {
+        console.log('IN SHOW ADD QUESTION');
+        this.setState({
+            addQuestion: !this.state.addQuestion
+        })
+        // console.log('New question ', newQuestionId);
+        if (newQuestionId !== undefined && newQuestionId !== null) {
+
+            console.log('in ifff ', newQuestionId);
+
+            this.props.history.push('/question/' + newQuestionId);
+            window.location.reload();
+        }
+    }
+
     render = () => {
         const { data, topics } = this.state;
         console.log(data)
         let userId = localStorage.getItem("userId");
+        let userName = localStorage.getItem("userName");
+        let profileCredential = localStorage.getItem("profileCredential");
+        let profileImage = '/users/' + userId + '/image/';
         let user = localStorage.getItem("user")
         console.log(user)
 
-        const cardContent = <div>
-            <Avatar src={userId} />
+        const cardContent = <div className="pointer" onClick={() => { this.handleShowAddQuestion() }}>
+            <Avatar src={profileImage} />
             {/* < Text >{`${user.firstName} ${user.lastName}`}</Text> */}
-            <Text style={{marginLeft: "10px"}}>User Name</Text>
-            <Title level={3}>What is your question?</Title>
+            <Text style={{ marginLeft: "10px" }}>{userName}</Text>
+            <Title level={4} className="text_color_black" style={{ marginTop: 0, opacity: 0.5 }}>What is your question?</Title>
+            <AskQuestion handleShowAddQuestion={this.handleShowAddQuestion} visible={this.state.addQuestion} userId={userId} userName={userName} profileCredential={profileCredential} />
         </div>
 
 
         return (
             <div className="home">
-                <Card className="card">
+                <Card bodyStyle={{ padding: 7, paddingLeft: 20 }} className="card" >
                     {cardContent}
-                    <TestDisplayQuestion data={data} />
-                    <BottomScrollListener onBottom={this.handleScrollToBottom} />
                 </Card>
+                {/* <TestDisplayQuestion data={data} /> */}
+                {data.map((question) => {
+                    return (
+                        <Card className="card marginTop-m" bodyStyle={{ paddingTop: 10, paddingBottom: 5 }}>
+                            <Col span={24} >
+                                <DisplayQuestion data={question} handleRedirection={this.handleRedirection} />
+                            </Col>
+                        </Card>
+                    )
+                })}
+                <BottomScrollListener onBottom={this.handleScrollToBottom} />
             </div>
         );
     };

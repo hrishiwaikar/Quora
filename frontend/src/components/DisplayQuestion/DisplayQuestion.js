@@ -82,7 +82,7 @@ export class TestDisplayQuestion extends Component {
     }
 }
 
-class DisplayQuestion extends Component {
+export class DisplayQuestion extends Component {
 
 
 
@@ -93,7 +93,7 @@ class DisplayQuestion extends Component {
             <Row className="pointer" onClick={() => { this.props.handleRedirection(data.questionId) }}>
 
                 <Row>
-                    <Title level={3} className="quora_question_text">{data.questionText}</Title>
+                    <Title level={4} className="quora_question_text font_size_s text_color_black" >{data.questionText}</Title>
                 </Row>
                 {/* {data.hasAnswer === true ? */}
                 <Row>
