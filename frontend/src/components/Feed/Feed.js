@@ -20,7 +20,7 @@ class Feed extends Component {
 
     setData = () => {
         let { data, allDataFetched, pageNumber } = this.state;
-  
+
         call({
             method: 'get',
             url: `/userfeeds?page=${pageNumber}`
@@ -40,6 +40,7 @@ class Feed extends Component {
                     pageNumber += 1;
                     Array.prototype.push.apply(data, response);
                     console.log(data)
+                    
                     this.setState({
                         data,
                         pageNumber,
@@ -77,7 +78,7 @@ class Feed extends Component {
         const cardContent = <div>
             <Avatar src={userId} />
             {/* < Text >{`${user.firstName} ${user.lastName}`}</Text> */}
-            <Text style={{marginLeft: "10px"}}>User Name</Text>
+            <Text style={{ marginLeft: "10px" }}>User Name</Text>
             <Title level={3}>What is your question?</Title>
         </div>
 

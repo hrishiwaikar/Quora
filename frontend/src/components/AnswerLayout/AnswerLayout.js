@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Row, Col, Card, Typography, Avatar, Menu, Icon } from 'antd';
+import { Row, Col, Card, Typography, Avatar, Menu, Icon, Empty } from 'antd';
 import './AnswerLayout.css';
 import { call } from '../../api';
 import { TestDisplayQuestion } from '../DisplayQuestion/DisplayQuestion';
@@ -31,15 +31,18 @@ class AnswerLayout extends Component {
     }
     setData = () => {
         let { data, allDataFetched, pageNumber } = this.state;
-        const userId = localStorage.getItem("userId")
+        console.log(data)
         if (!allDataFetched) {
             call({
                 method: 'get',
-                url: `/userfeeds/${pageNumber}`
+                url: `/topicQuestions?page=${pageNumber}`
             })
                 .then(response => {
                     console.log(response)
-                    response = response.data
+                    response = response.data.map(d => ({
+                        hasAnswer: false,
+                        ...d
+                    }))
                     if (response.length === 0) {
                         allDataFetched = true
                         this.setState({
@@ -84,12 +87,16 @@ class AnswerLayout extends Component {
                         </Menu>
                     </Col>
                     <Col span={14}>
-                        <Card className="card"
-                            title="Questions"
-                        >
-                            <TestDisplayQuestion data={data} />
-                            <BottomScrollListener onBottom={this.handleScrollToBottom} />
-                        </Card>
+                        {
+                            data.length > 0 ?
+                                <Card className="card"
+                                    title="Questions"
+                                >
+                                    <TestDisplayQuestion data={data} />
+                                    <BottomScrollListener onBottom={this.handleScrollToBottom} />
+                                </Card> :
+                                <Empty />
+                        }
                     </Col>
                 </Row>
             </div>

@@ -20,6 +20,7 @@ class EmploymentCredential extends Component {
         this.state = {
             visible: props.visible,
             hideText: props.hideText,
+            userId: props.userId,
             employment: props.employment || {},
             editEmployment
         }
@@ -72,7 +73,7 @@ class EmploymentCredential extends Component {
         })
     }
     render() {
-        const { visible, employment, editEmployment, hideText } = this.state;
+        const { visible, employment, editEmployment, hideText, userId } = this.state;
         const { position, company, startYear, endYear, current } = employment;
         var options = [];
         for (var i = 2019; i > 1900; i--) {
@@ -85,7 +86,10 @@ class EmploymentCredential extends Component {
                         <div>
                             <Icon type="mail" />
                             <Title level={4}>{position + " at " + company}</Title>
-                            <Text type="secondary" onClick={this.toggleModal} className="edit">Edit</Text>
+                            {
+                                    userId === localStorage.getItem("userId") ?
+                                    <Text type="secondary" onClick={this.toggleModal} className="edit">Edit</Text> : null
+                                }
                         </div>
                         :
                         <div className="title">

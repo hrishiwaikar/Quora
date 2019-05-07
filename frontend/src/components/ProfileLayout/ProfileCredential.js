@@ -13,7 +13,8 @@ class ProfileCredential extends Component {
         visible: false,
         credential: this.props.profileCredential,
         editCredential: this.props.profileCredential,
-        loading: false
+        loading: false,
+        userId: this.props.userId
     }
 
     toggleModal = () => {
@@ -56,13 +57,13 @@ class ProfileCredential extends Component {
                 message.error(err.message)
                 this.setState((state, props) => ({
                     loading: false,
-                    
+
                 }))
             })
 
     }
     render() {
-        const { credential, visible, editCredential } = this.state;
+        const { credential, visible, editCredential, userId } = this.state;
         const modalContent =
             <>
                 <span><Icon type="user" /> Add profile credential</span>
@@ -72,14 +73,22 @@ class ProfileCredential extends Component {
 
         return (
             <>
+
                 <div className="credential">
                     {credential ?
                         <div>
                             <Title level={4}>{credential}</Title>
-                            <Text type="secondary" onClick={this.toggleModal} className="edit">Edit</Text>
+                            {
+                                userId === localStorage.getItem("userId") ?
+
+                                    <Text type="secondary" onClick={this.toggleModal} className="edit">Edit</Text>
+                                    : null
+                            }
                         </div>
                         :
-                        <Text type="secondary" onClick={this.toggleModal}>Add Profile Credential</Text>
+                        userId === localStorage.getItem("userId") ?
+                            <Text type="secondary" onClick={this.toggleModal}>Add Profile Credential</Text>
+                            : null
                     }
 
                 </div>

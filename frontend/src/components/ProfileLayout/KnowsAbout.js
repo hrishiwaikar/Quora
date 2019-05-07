@@ -1,5 +1,6 @@
 import React, { Component } from 'react'
 import { Typography, Icon, Divider, Modal, Input, Tag, List, Button } from 'antd';
+import { withRouter } from 'react-router-dom';
 import './KnowsAbout.css';
 import { debounce } from '../../utils';
 import { call } from '../../api';
@@ -14,7 +15,8 @@ class KnowsAbout extends Component {
             visible: false,
             loading: false,
             data: [],
-            value: ""
+            value: "",
+            userId: props.userId
         }
     }
 
@@ -104,32 +106,43 @@ class KnowsAbout extends Component {
         console.log(userId)
 
         let { topic } = this.state
-        topic.push(item)
-        call({
-            method: 'put',
-            url: `/users/${userId}`,
-            data: {
-                topic
-            }
-        })
-            .then(data => {
-                console.log(data)
-                this.setState({
-                    topic,
-                    data: [],
-                    value: ""
+        let alreadyExists = topic.filter(t => t.topicId === item.topicId).length > 0
+        console.log(alreadyExists)
+        if (!alreadyExists) {
+            topic.push(item)
+            call({
+                method: 'put',
+                url: `/users/${userId}`,
+                data: {
+                    topic
+                }
+            })
+                .then(data => {
+                    console.log(data)
+                    this.setState({
+                        topic,
+                        data: [],
+                        value: ""
+                    })
                 })
+                .catch(err => {
+                    console.log(err)
+                })
+        } else {
+            this.setState({
+                data: [],
+                value: ""
             })
-            .catch(err => {
-                console.log(err)
-            })
+        }
+
     }
     render() {
-        const { topic, loading, data, visible, value } = this.state;
+        const { topic, loading, data, visible, value, userId } = this.state;
         return (
             <div className="knows-about">
                 <Title level={4}>Knows About</Title>
-                <Icon type="edit" onClick={this.toggleModal} />
+                {userId === localStorage.getItem("userId") ?
+                    <Icon type="edit" onClick={this.toggleModal} /> : null}
                 <Divider />
                 {
                     topic.map(t => (
@@ -149,6 +162,7 @@ class KnowsAbout extends Component {
                         <Button type="primary" onClick={this.toggleModal}>Done</Button>
                     ]}
                     onCancel={this.toggleModal}
+                    className="knows-about-modal"
                 >
 
                     <Input onChange={(e) => {
@@ -195,4 +209,4 @@ class KnowsAbout extends Component {
     }
 }
 
-export default KnowsAbout;
+export default KnowsAbout

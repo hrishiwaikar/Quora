@@ -6,8 +6,8 @@ const { Meta } = Card;
 
 class FollowCard extends Component {
     handleClick = () => {
-        const { _id, history } = this.props;
-        history.push(`/profile/${_id}`);
+        const { userId, history } = this.props;
+        history.push(`/profile/${userId}`);
     }
     render() {
         const { noOfFollowers, profileImage, name, profileCredential, followText, handleFollowClick, _id, userId } = this.props;

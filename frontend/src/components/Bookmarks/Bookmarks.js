@@ -21,15 +21,10 @@ class Bookmarks extends Component {
 
     setData = () => {
         let { data, allDataFetched, pageNumber, selected } = this.state;
-        let query = `?page=${pageNumber}`;
-        if (selected === "bookmarks") {
-            return this.props.history.push('/bookmarks')
-        } else if (selected !== "feed") {
-            query += `&topic=${selected}`
-        }
+        let userId = localStorage.getItem("userId")
         call({
             method: 'get',
-            url: `/userfeeds?page=${pageNumber}`
+            url: `/users/${userId}/bookmarkedAnswers?page=${pageNumber}`
         })
             .then(response => {
                 console.log(response)

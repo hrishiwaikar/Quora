@@ -22,6 +22,7 @@ class EducationCredential extends Component {
             ...props.education
         }
         this.state = {
+            userId: props.userId,
             visible: props.visible,
             hideText: props.hideText,
             education: props.education || {},
@@ -74,7 +75,7 @@ class EducationCredential extends Component {
         })
     }
     render() {
-        const { visible, education, editEducation, button, hideText } = this.state;
+        const { visible, education, editEducation, button, hideText, userId } = this.state;
         const { school, concentration, secondaryConcentration, degreeType, graduationYear } = education;
         var options = [];
         for (var i = 2025; i > 1900; i--) {
@@ -88,7 +89,10 @@ class EducationCredential extends Component {
                             <div>
                                 <Icon type="idcard" />
                                 <Title level={4}>{degreeType + " " + concentration + " " + school}</Title>
-                                <Text type="secondary" onClick={this.toggleModal} className="edit">Edit</Text>
+                                {
+                                    userId === localStorage.getItem("userId") ?
+                                    <Text type="secondary" onClick={this.toggleModal} className="edit">Edit</Text> : null
+                                }
                             </div>
                             :
                             <div className="title">

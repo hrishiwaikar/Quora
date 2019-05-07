@@ -91,7 +91,6 @@ class Navbar extends Component {
                         <Icon type="team" />Spaces
                         </Menu.Item> */}
                     <Menu.Item key="notification">
-
                         <Popover
                             visible={this.state.visible}
                             onVisibleChange={this.handleVisibleChange}
@@ -99,11 +98,14 @@ class Navbar extends Component {
                             title="Notifications"
                             content={<Notification handleItemClick={this.handleVisibleChange} />}
                             trigger="click">
+                            {/* <Menu.Item key="notification"> */}
+                                <Icon type="bell" />Notification
+                            {/* </Menu.Item> */}
+                        </Popover>
 
-                            <Icon type="bell" />Notification
-
-                    </Popover>
                     </Menu.Item>
+
+
 
                     <Menu.Item className="navbar-search" disabled>
                         <Input
@@ -128,7 +130,7 @@ class Navbar extends Component {
 
 
                 </Menu>
-            </div>
+            </div >
 
         );
     }

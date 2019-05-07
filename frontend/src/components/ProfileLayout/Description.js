@@ -12,7 +12,8 @@ class Description extends Component {
     state = {
         editing: false,
         description: this.props.description,
-        editDescription: this.props.description
+        editDescription: this.props.description,
+        userId: this.props.userId
     }
 
     toggleEditing = () => {
@@ -62,7 +63,7 @@ class Description extends Component {
     }
 
     render() {
-        const { editing, description, editDescription } = this.state;
+        const { editing, description, editDescription, userId } = this.state;
         return (
             <div className="description">
 
@@ -76,16 +77,24 @@ class Description extends Component {
                             </div>
                         </>
                         :
+
                         <div className="edit-description">
                             {
                                 description ?
                                     <div>
                                         <Title level={4}>{description}</Title>
-                                        <Text underline type="secondary" onClick={this.toggleEditing} className="edit">Edit</Text>
+                                        {
+                                            userId === localStorage.getItem("userId") ?
+
+                                                <Text underline type="secondary" onClick={this.toggleEditing} className="edit">Edit</Text>
+                                                : null
+                                        }
                                     </div>
 
                                     :
-                                    <Text type="secondary" onClick={this.toggleEditing} >Write a description about yourself</Text>
+                                    userId === localStorage.getItem("userId") ?
+                                        <Text type="secondary" onClick={this.toggleEditing} >Write a description about yourself</Text>
+                                        : null
                             }
                         </div>
                 }

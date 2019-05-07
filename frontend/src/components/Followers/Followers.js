@@ -12,7 +12,7 @@ class Followers extends Component {
   }
 
   componentDidMount() {
-    const userId = localStorage.getItem("userId");
+    const userId = this.props.match.params.id;
     call({
       method: "get",
       url: `/users/${userId}/followers`
@@ -49,14 +49,14 @@ class Followers extends Component {
     })
   }
   handleFollowClick = (userId) => {
-    console.log(userId)
+    let loggedInUserId = localStorage.getItem("userId");
     let { followers } = this.state;
     let follower = followers.filter(follower => follower.userId === userId)[0]
     console.log("Follower", follower, follower.followingBack)
     if (!follower.followingBack) {
       call({
         method: 'post',
-        url: `/follow/${userId}`
+        url: `/follow/${loggedInUserId}`
       })
         .then(data => {
           console.log(data)
@@ -69,7 +69,7 @@ class Followers extends Component {
     } else {
       call({
         method: 'post',
-        url: `/unfollow/${userId}`
+        url: `/unfollow/${loggedInUserId}`
       })
         .then(data => {
           console.log(data)
@@ -103,7 +103,7 @@ class Followers extends Component {
     })
     return (
       <div>
-        <Row gutter={8}>
+        <Row gutter={24}>
           {
             loading ?
               <Skeleton active /> :

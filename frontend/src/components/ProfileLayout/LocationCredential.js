@@ -20,7 +20,8 @@ class LocationCredential extends Component {
             visible: props.visible,
             hideText: props.hideText,
             location: props.location || {},
-            editLocation
+            editLocation,
+            userId: props.userId
         }
     }
 
@@ -72,7 +73,7 @@ class LocationCredential extends Component {
         })
     }
     render() {
-        const { visible, location, editLocation, hideText } = this.state;
+        const { visible, location, editLocation, hideText, userId } = this.state;
         const { startYear, endYear, current } = location;
         let currentLocation = location.location;
         var options = [];
@@ -88,7 +89,10 @@ class LocationCredential extends Component {
                                 <div>
                                     <Icon type="pushpin" />
                                     <Title level={4}>{currentLocation}</Title>
-                                    <Text type="secondary" onClick={this.toggleModal} className="edit">Edit</Text>
+                                    {
+                                        userId === localStorage.getItem("userId") ?
+                                            <Text type="secondary" onClick={this.toggleModal} className="edit">Edit</Text> : null
+                                    }
                                 </div>
                                 :
                                 <div className="title">

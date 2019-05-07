@@ -22,8 +22,8 @@ class Sidebar extends Component {
     }
     handleClick = ({ key }) => {
         console.log(key)
-        const userId = localStorage.getItem("userId")
         const { match, history } = this.props;
+        const userId =match.params.id
         this.setState({
             selected: key
         });

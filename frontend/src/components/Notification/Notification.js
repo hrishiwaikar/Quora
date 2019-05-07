@@ -41,53 +41,35 @@ class Notification extends Component {
         })
             .then(data => {
                 console.log(data)
+                this.setState({
+                    notifications: data.notifications
+                })
             })
             .catch(err => {
                 console.log(err)
             })
-        setInterval(() => {
-            call({
-                method: 'get',
-                url: `/users/${userId}/notifications`
-            })
-                .then(data => {
-                    console.log(data)
-                })
-                .catch(err => {
-                    console.log(err)
-                })
-        }, 10000)
-        const notifications = [{
-            notificationId: "sdjbkcjnsd",
-            notification: "<NAME> answered a Question",
-            question: {
-                userId: "1",
-                firstName: "Bhaskar",
-                lastName: "Gurram",
-                question: "What is your name?",
-                questionId: "234"
-            },
-            createdAt: 12345678,
-        }, {
-            notificationId: "sdjbkcjnsd",
-            notification: "<NAME> answered a Question",
-            question: {
-                userId: "1",
-                firstName: "Bhaskar",
-                lastName: "Gurram",
-                question: "What is your name?",
-                questionId: "234"
-            },
-            createdAt: 12345678,
-        }]
-        this.setState({
-            notifications
-        })
+        // setInterval(() => {
+        //     call({
+        //         method: 'get',
+        //         url: `/users/${userId}/notifications`
+        //     })
+        //         .then(data => {
+        //             console.log(data)
+        //             this.setState({
+        //                 notifications: data.notifications
+        //             })
+        //         })
+        //         .catch(err => {
+        //             console.log(err)
+        //         })
+        // }, 10000)
+
+
     }
 
     handleQuestionClick = (id) => {
         const { history, handleItemClick } = this.props;
-        history.push(`/profile/${id}`)
+        history.push(`/question/${id}`)
         handleItemClick(false);
     }
 
