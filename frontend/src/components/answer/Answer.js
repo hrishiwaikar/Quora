@@ -59,7 +59,7 @@ export class Answer extends Component {
             userName = data.answererName;
         }
 
-        console.log('Render has got the answ ', this.state.answerText);
+        // console.log('Render has got the answ ', this.state.answerText);
 
         return (
             <div className="AnswerBase">
@@ -165,28 +165,44 @@ export class AnswererInfo extends Component {
 
     handleOnFollowClick = () => {
         let component = this;
-
+        console.log('ON FOLLOW CLICK ')
         let updatedUserIsFollowingAnswerer = !this.state.userIsFollowingAnswerer;
 
         // make api call
+        post('/follow/' + this.props.answererId, {}, (response) => {
+            // in success
+            message.success('You are following ' + this.props.userName);
+            component.setState({
+                userIsFollowingAnswerer: updatedUserIsFollowingAnswerer
+            });
+        }, () => { message.error('Error following') })
 
-        // in success
-        component.setState({
-            userIsFollowingAnswerer: updatedUserIsFollowingAnswerer
-        });
+    }
+
+    handleUnfollowClick = () => {
+        let component = this;
+        console.log('ON unFOLLOW CLICK ')
+        let updatedUserIsFollowingAnswerer = !this.state.userIsFollowingAnswerer;
+
+        // make api call
+        post('/unfollow/' + this.props.answererId, {}, (response) => {
+            // in success
+            message.success('You have unfollowed ' + this.props.userName);
+            component.setState({
+                userIsFollowingAnswerer: updatedUserIsFollowingAnswerer
+            });
+        }, () => { message.error('Error following') })
+
     }
     render = () => {
         // let data = this.props.data;
         let answererId = this.props.answererId;
         let profileCredential = this.props.profileCredential;
-        console.log('prof ', profileCredential);
         if (profileCredential === null || profileCredential === undefined || profileCredential === "" || profileCredential === "null") {
             profileCredential = "";
         } else {
             profileCredential = ", " + profileCredential;
         }
-
-        console.log('prof cred ', profileCredential);
 
         let userName = this.props.userName;
         let answerDate = this.props.answerDate;
@@ -243,11 +259,11 @@ export class AnswererInfo extends Component {
                             {userIsFollowingAnswerer === true
                                 ?
                                 <Col span={2}>
-                                    <Avatar size="medium" icon="user-add" className="text_color_blue" style={{ backgroundColor: "#eaf4ff" }} />
+                                    <Avatar size="medium" icon="user-add" className="text_color_white bg_color_quora_blue pointer" style={{ backgroundColor: "#eaf4ff" }} onClick={this.handleUnfollowClick} />
                                 </Col>
                                 :
                                 <Col span={2}>
-                                    <Avatar size="medium" icon="user-add" className="text_color_blue" style={{ backgroundColor: "#eaf4ff" }} />
+                                    <Avatar size="medium" icon="user-add" className="text_color_blue pointer" style={{ backgroundColor: "#eaf4ff" }} onClick={this.handleOnFollowClick} />
                                 </Col>
 
                             }
