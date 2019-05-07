@@ -6,7 +6,8 @@ let questionFollowSchema = new mongoose.Schema({
         type: String,
         required: true,
         trim :true,
-        default : utils.getUniqueId()
+        default : utils.getUniqueId(),
+        unique: true,
     },
     userId : {
         type: String,

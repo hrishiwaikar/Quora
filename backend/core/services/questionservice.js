@@ -90,7 +90,7 @@ let service = {
                 let body = args[1] || {};
                 let question_body = {}
                 let questionText = body.questionText || "";
-                let topics = body.topanswerBookmarkModelics || [];
+                let topics = body.topics || [];
                 let questionObj = new questionModel({userId:_session.userId,questionText:questionText,topicsId:topics});
                 questionObj.save().then(response => {
                     // console.log(response.questionId)
@@ -138,7 +138,7 @@ let service = {
                         if (questionObj.topicsId.length > 0){
                             for (let topicIndex=0;topicIndex<questionObj.topicsId.length;topicIndex++){
                                 await topicModel.findOne({topicId:questionObj.topicsId[topicIndex]}).then((topicObj) =>{
-                                    output['topics'].push(topicObj.topicText)
+                                    output['topics'].push({"topicId":topicObj.topicId,"topicText":topicObj.topicText})
                                 })
                             }
                         }
@@ -212,24 +212,44 @@ let service = {
         });
     },
     userFeedList : (...args) => {
-        return new Promise(function (resolve, reject) {
+        return new Promise(async function (resolve, reject) {
             try {
                 let output = []
                 let _session = args[0] || {};
-                console.log(_session.userId)
-                let page_number = args[1] || 1;
-                /* pagination logic */
-                // let page_number = param('page')
-                // if(page_number === undefined){
-                //     page_number = 1
-                // }
+                let params = args[1] || 1;
+                let page_number = params['page']
+                let topic = params['topic']
                 let page_limit = 20
                 let pagination_end_index = page_number * page_limit
                 let pagination_start_index = pagination_end_index - page_limit
                 /* pagination logic */
+                
+                console.log("topic--\n",topic)
+                let topicIdList = []
+                if(topic === null){
+                    await userModel.findOne({userId:_session.userId})
+                    .then((userObj) => {
+                        console.log("---user topics---\n",userObj)
+                        for(let index=0;index<userObj.topic.length;index++){
+                            console.log(userObj.topic[index])
+                            topicIdList.push(userObj.topic[index].topicId)
+                        }
+                    }).catch(reject);
+                }
+                else{
+                    topicIdList.push(topic)
+                }
 
-                questionModel.find({}).sort('-createdAt').skip(pagination_start_index).limit(page_limit)
+                console.log("List of topic ids---\n",topicIdList)
+
+                let dbQuery = {}
+                if(topicIdList.length > 0 ){
+                    dbQuery['topicsId'] = {"$in":topicIdList}
+                }   
+
+                questionModel.find(dbQuery).sort('-createdAt').skip(pagination_start_index).limit(page_limit)
                 .then(async (questionObjs) => {
+                    console.log("Lit of questionObjs-------\n",questionObjs)
                     for(let index=0;index<questionObjs.length;index++){
                         let answerObj = await answersPerQuestion(_session,questionObjs[index].questionId,true)
                         if(answerObj.length > 0){
@@ -499,7 +519,10 @@ let router = {
                 data: data
             })
         };
-        service.userFeedList(req.user,req.param('page')).then(successCB, next);
+        let params = {}
+        params['page'] = req.param('page') || 1;
+        params['topic'] = req.param('topic') || null
+        service.userFeedList(req.user,params).then(successCB, next);
     },
     userQuestionList : (req, res, next) => {
         let successCB = (data) => {

@@ -9,6 +9,7 @@ let topicservice = require('../services/topicservice').router;
 let analyticService = require('../services/analyticservice');
 let uploadService = require('../services/uploadService');
 let notificationservice = require('../services/notificationservice').router;
+let searchservice = require("../services/searchservice").router;
 
 // const upload = require('../services/imageservice');
 
@@ -38,7 +39,8 @@ module.exports = (express) => {
         versionRouter.post('/signup', authservice.signup);
         /* Auth Routes */
 
-        //versionRouter.get('/search', jwt.verifyRequest, searchservice.search);
+        versionRouter.post('/search', jwt.verifyRequest, searchservice.search);
+
         /* User Routes */
         //versionRouter.post('/users', userservice.create);
         versionRouter.get('/users/:userId', jwt.verifyRequest, userservice.read);
@@ -60,7 +62,7 @@ module.exports = (express) => {
         /* Question Routes */
 
         /* UserFeed */
-     versionRouter.get('/userfeeds/:page',jwt.verifyRequest, questionservice.userFeedList);
+     versionRouter.get('/userfeeds',jwt.verifyRequest, questionservice.userFeedList);
      /* UserFeed */
      
     /* User Profile Related Question, content routes*/

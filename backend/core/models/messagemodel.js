@@ -4,6 +4,7 @@ let messageSchema = new mongoose.Schema({
         type: String,
         required: true,
         trim: true,
+        unique: true,
     },
     from: {
         type: String,
