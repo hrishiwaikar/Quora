@@ -2,6 +2,7 @@ const rs = require("../commons/responses");
 const utils = require("../commons/utils");
 const _ = require("lodash");
 let pv = require("../commons/passwordVerification");
+let followModel = require('../models/followmodel');
 let service = {
     markFollow: (...args) => {
         return new Promise(function (resolve, reject) {
@@ -15,7 +16,7 @@ let service = {
                     return;
                 }
                 let userservice = require('./userservice').service;
-                let followModel = require('../models/followmodel');
+
                 userservice.read(_session, userId)
                     .then((dbObj) => {
                         return userservice.read(_session, toFollow)
@@ -94,17 +95,21 @@ let service = {
                 let _session = args[0] || {};
                 let userId = args[1] || null;
                 let userservice = require('./userservice').service;
+                let myFollowers = {};
                 userservice.read(_session, userId)
                     .then((userObj) => {
-                        let followModel = require('../models/followmodel');
                         return followModel.find({
                             following: userId
+                        }).select({
+                            userId: 1,
+                            followingBack: 1
                         })
                     })
                     .then((followers) => {
                         if (!!followers || !!followers.length) {
                             let f = [];
                             for (let i = 0; i < followers.length; i++) {
+                                myFollowers[followers[i].userId] = followers[i].followingBack || false;
                                 f.push(followers[i].userId);
                             }
                             let userModel = require('../models/usermodel');
@@ -123,6 +128,12 @@ let service = {
                         } else {
                             return resolve([])
                         }
+                    }).then((result) => {
+                        result = JSON.parse(JSON.stringify(result));
+                        for (let i = 0; i < result.length; i++) {
+                            result[i].followingBack = myFollowers[result[i].userId];
+                        }
+                        resolve(result);
                     })
                     .then(resolve, reject)
                     .catch(reject)
@@ -138,11 +149,15 @@ let service = {
                 let _session = args[0] || {};
                 let userId = args[1] || null;
                 let userservice = require('./userservice').service;
+                let myFollowing = {};
                 userservice.read(_session, userId)
                     .then((userObj) => {
-                        let followModel = require('../models/followmodel');
+
                         return followModel.find({
                             userId: userId
+                        }).select({
+                            following: 1,
+                            followingBack: 1
                         })
                     })
                     .then((followings) => {
@@ -150,6 +165,7 @@ let service = {
                             let f = [];
                             for (let i = 0; i < followings.length; i++) {
                                 f.push(followings[i].following);
+                                myFollowing[followings[i].following] = followings[i].followingBack;
                             }
                             let userModel = require('../models/usermodel');
                             return userModel.find({
@@ -167,6 +183,12 @@ let service = {
                         } else {
                             return resolve([])
                         }
+                    }).then((result) => {
+                        result = JSON.parse(JSON.stringify(result));
+                        for (let i = 0; i < result.length; i++) {
+                            result[i].followingBack = myFollowing[result[i].userId];
+                        }
+                        resolve(result);
                     })
                     .then(resolve, reject)
                     .catch(reject)
@@ -187,7 +209,7 @@ let service = {
                     return;
                 }
                 let userservice = require('./userservice').service;
-                let followModel = require('../models/followmodel');
+
                 userservice.read(_session, userId)
                     .then((dbObj) => {
                         return userservice.read(_session, toUnFollow)

@@ -1,4 +1,4 @@
 **/configs/config.js
 node_modules/*
 logs/*.log
-uploads/profiles/*
+uploads/profiles/File_*

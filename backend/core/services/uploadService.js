@@ -13,7 +13,7 @@ service.profileUpload = multer({
             callback(null, dir);
         },
         filename: function (req, file, callback) {
-            let filename = "File_" + req.params.userId;
+            let filename = "File_" + req.params.userId+".png";
             callback(null, filename);
         },
         onError: function (err, callback) {
@@ -27,7 +27,9 @@ service.profileUpload = multer({
 }).single('profileImage');
 service.profileRead = (req, res, next) => {
     let userId = req.params.userId || null;
-    res.sendFile(path.resolve("uploads/profiles/File_" + userId));
+    res.header("Content-Type" , 'application/png')
+    // res.sendFile(path.resolve("uploads/profiles/File_" + userId+".png"));
+    res.sendFile(path.resolve("uploads/profiles/mydefaultimage.png"));
 };
 module.exports = (type) => {
     return service[type];

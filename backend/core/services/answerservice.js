@@ -127,6 +127,27 @@ let service = {
             }
         });
     },
+    answerComments : (...args) => {
+        return new Promise(function (resolve, reject) {
+            try {
+                let _session = args[0] || {};
+                let body = args[1] || {};
+                let answerId = body.answerId
+                let comments = body.comments
+                answerModel.findOne({answerId:answerId}).then((answerObj) => {
+                    answerObj.comments = comments
+                    answerObj.save().then((response) => {
+                        console.log(response);
+                        return resolve(response);
+                    }).catch(reject);
+                }).catch(reject);
+            }
+            catch (e) {
+                console.error(e)
+                reject(e);
+            }
+        });
+    },
     read: (...args) => {
         return new Promise(function (resolve, reject) {
         
@@ -179,6 +200,18 @@ let router = {
             })
         };
         service.answerBookmark(req.user, req.body).then(successCB, next);
+    },
+    answerComments : (req, res, next) => {
+        let successCB = (data) => {
+            res.json({
+                result: "success",
+                response: [{
+                    message: "Commented in Answer",
+                    code: "UPDATED"
+                }]
+            })
+        };
+        service.answerComments(req.user, req.body).then(successCB, next);
     },
     read: (req, res, next) => {
         let successCB = (data) => {

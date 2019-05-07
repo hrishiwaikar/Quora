@@ -14,6 +14,7 @@ let followSchema = new mongoose.Schema({
         type: Boolean,
         required: true,
         trim: true,
+        default : false
     },
     createdAt: {
         type: Date,

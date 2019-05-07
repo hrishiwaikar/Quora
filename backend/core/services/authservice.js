@@ -3,6 +3,8 @@ const utils = require("./../commons/utils");
 const _ = require("lodash");
 let pv = require("./../commons/passwordVerification");
 let jwt = require("./../commons/jwt");
+// let producer = require('./../commons/kafkarpc');
+// producer = producer.getInstance();
 let service = {
     signup: (...args) => {
         return new Promise(function (resolve, reject) {
@@ -31,7 +33,7 @@ let service = {
                     password: 1,
                     userId: 1
                 }).then((dbObj) => {
-                    console.log("dchdfgi",dbObj);
+                    console.log("dchdfgi", dbObj);
                     if (!!dbObj) {
                         userId = dbObj.userId;
                         return pv.verify(body.password, dbObj.password);
@@ -39,14 +41,14 @@ let service = {
                         throw rs.signin;
                     }
                 }).then((result) => {
-                    console.log("dchdfgi",result);
+                    console.log("dchdfgi", result);
                     if (!!result) {
                         let userservice = require('./userservice').service;
                         return userservice.read(_session, userId);
                     } else {
                         throw rs.signin;
                     }
-                }).then(resolve,reject).catch(e => reject(e));
+                }).then(resolve, reject).catch(e => reject(e));
             } catch (e) {
                 console.error(e)
                 reject(e);
@@ -58,6 +60,14 @@ let service = {
 let router = {
     signup: (req, res, next) => {
         let successCB = (data) => {
+            // producer.fire({
+            //     topic: 'counts',
+            //     type: 'signup',
+            //     payload: {
+            //         createdAt: Date.now()
+            //     },
+            //     partition: 0
+            // })
             res.json({
                 result: "success",
                 response: [{
@@ -70,6 +80,14 @@ let router = {
     },
     signin: (req, res, next) => {
         let successCB = (data) => {
+            // producer.fire({
+            //     topic: 'counts',
+            //     type: 'signin',
+            //     payload: {
+            //         createdAt: Date.now()
+            //     },
+            //     partition: 0
+            // })
             res.json({
                 result: "success",
                 response: [{
