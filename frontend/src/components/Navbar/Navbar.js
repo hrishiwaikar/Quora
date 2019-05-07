@@ -1,5 +1,5 @@
 import React, { Component } from 'react';
-import { Menu, Icon, Input, Button, List, Popover } from 'antd';
+import { Menu, Icon, Input, Button, List, Popover, Avatar } from 'antd';
 import { withRouter } from 'react-router-dom';
 import logo from '../../assets/quora-logo.png';
 import './Navbar.css';
@@ -86,7 +86,7 @@ class Navbar extends Component {
         let userName = localStorage.getItem("userName");
         let profileCredential = localStorage.getItem("profileCredential");
         console.log('in Navbar render ', userId);
-        let profileImage = '/users/' + userId + '/image/';
+        let profileImage = `https://s3.ap-south-1.amazonaws.com/checkapp-dev/profiles/${userId}`
         return (
             <div className="navbar">
 
@@ -127,8 +127,7 @@ class Navbar extends Component {
                     <Menu.Item className="navbar-search" disabled>
                         <Search handleRedirection={this.handleRedirection} />
                     </Menu.Item>
-                    <SubMenu title={<span className="submenu-title-wrapper">
-                        <img src={profileImage} className="navbar-profile" alt="profile" /></span>}>
+                    <SubMenu title={<Avatar src={profileImage} />}>
                         <MenuItemGroup >
                             <Menu.Item key="profile">Profile</Menu.Item>
                             <Menu.Item key="messages">Messages</Menu.Item>

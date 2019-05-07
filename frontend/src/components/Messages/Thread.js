@@ -74,6 +74,7 @@ class Thread extends Component {
     })
       .then(data => {
         const conversation = data.conversation;
+        console.log(conversation)
         this.setState({
           conversation,
           loading: false
@@ -159,6 +160,7 @@ class Thread extends Component {
       const { firstName, lastName } = conversationWith;
       conversationWithName = firstName + " " + lastName;
     }
+    console.log(messageList)
 
     return (
       <div>
@@ -190,7 +192,7 @@ class Thread extends Component {
                       <Chat
                         _id={message._id}
                         justifyContent={message.justifyContent}
-                        userId={message.profileImage}
+                        userId={message.userId}
                         message={message.message}
                         date={message.date}
                       />
