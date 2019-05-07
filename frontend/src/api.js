@@ -27,6 +27,27 @@ export const post = (url, data, onSuccess, onFailure) => {
 
 }
 
+export const put = (url, data, onSuccess, onFailure) => {
+    const token = getToken();
+    axios({
+        method: 'put', //you can set what request you want to be
+        url: url,
+        data: data,
+        headers: {
+            'authorization': token
+        }
+    })
+        .then(response => {
+            onSuccess(response);
+        })
+        .catch((error) => {
+            console.log('Got error')
+            // console.log('Error msg ', error.response.data);
+            onFailure(error);
+        });
+
+}
+
 
 export const get = (url, id, onSuccess, onFailure) => {
     const token = getToken();

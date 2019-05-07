@@ -110,13 +110,13 @@ class Feed extends Component {
 
         return (
             <div className="home">
-                <Card bodyStyle={{ padding: 7, paddingLeft: 20 }} className="card" >
+                <Card bodyStyle={{ padding: 7, paddingLeft: 10 }} className="card" >
                     {cardContent}
                 </Card>
                 {/* <TestDisplayQuestion data={data} /> */}
                 {data.map((question) => {
                     return (
-                        <Card className="card marginTop-m" bodyStyle={{ paddingTop: 10, paddingBottom: 5 }}>
+                        <Card className="card marginTop-l" bodyStyle={{ paddingTop: 10, paddingBottom: 0, paddingLeft: 4, paddingRight: 4 }}>
                             <Col span={24} >
                                 <DisplayQuestion data={question} handleRedirection={this.handleRedirection} />
                             </Col>

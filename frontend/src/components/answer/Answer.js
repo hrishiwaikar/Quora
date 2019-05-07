@@ -3,18 +3,35 @@ import 'antd/dist/antd.css';
 import { Row, Col } from 'antd';
 
 import axios from 'axios';
-import { post, get } from './../../api.js';
+import { post, get, put } from './../../api.js';
 import moment from 'moment';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { Typography, Avatar, Icon, Button, Tooltip, Comment, message, Form, Input } from 'antd';
+import { Typography, Avatar, Icon, Button, Tooltip, Comment, message, Form, Input, Checkbox } from 'antd';
 import ReactHtmlParser, { processNodes, convertNodeToElement, htmlparser2 } from 'react-html-parser';
 import './../../style.css';
 const { Title, Text } = Typography;
 const TextArea = Input.TextArea;
 
 export class Answer extends Component {
-    state = {}
+    state = {
+        edit_answer: false,
+        answerText: this.props.data.answerText
+    }
+
+    updateAnswerText = (answerText) => {
+        console.log('In updateAnswer ', answerText)
+        this.setState({
+            answerText: answerText,
+            edit_answer: false
+        })
+    }
+
+    editAnswer = () => {
+        this.setState({
+            edit_answer: !this.state.edit_answer
+        })
+    }
 
     render = () => {
         let data = this.props.data;
@@ -41,16 +58,24 @@ export class Answer extends Component {
         if (data.hasOwnProperty('answererName')) {
             userName = data.answererName;
         }
+
+        console.log('Render has got the answ ', this.state.answerText);
+
         return (
             <div className="AnswerBase">
                 <Row>
                     <AnswererInfo answererId={data.answererId} userName={userName} profileCredential={data.profileCredential} answerDate={data.createdAt} cant_follow={cant_follow} isAnonymous={data.isAnonymous} />
                 </Row>
                 <Row>
-                    <AnswerText data={data} />
+                    {this.state.edit_answer === true
+                        ?
+                        <EditAnswer data={data} answerText={this.state.answerText} updateAnswerText={this.updateAnswerText} />
+                        :
+                        <AnswerText data={data} answerText={this.state.answerText} />
+                    }
                 </Row>
                 <Row>
-                    <VotingAndBookMark data={data} />
+                    <VotingAndBookMark data={data} editAnswer={this.editAnswer} edit_answer={this.state.edit_answer} />
                 </Row>
                 {showComments === true
                     ?
@@ -62,6 +87,72 @@ export class Answer extends Component {
                 }
 
             </div>
+        )
+    }
+}
+
+class EditAnswer extends Component {
+
+    state = {
+        edited_answer: this.props.answerText,
+        isAnonymous: this.props.data.isAnonymous
+    }
+
+    handleAnswerChange = (value) => {
+        this.setState({
+            edited_answer: value
+        });
+    }
+
+
+    handleSubmitAnswer = () => {
+        console.log('In handle submit answer ')
+        message.success("Edited answer");
+        this.props.updateAnswerText(this.state.edited_answer);
+        let post_data = {
+            answerId: this.props.data.answerId,
+            answerText: this.state.edited_answer,
+            isAnonymous: this.state.isAnonymous
+        }
+
+        put('/answers/' + this.props.data.answerId, post_data, (response) => {
+            console.log('Response successs');
+            message.success("Edited answer");
+            this.props.updateAnswerText(this.state.edited_answer);
+        }, () => {
+
+            message.error('Error updating answer');
+        })
+
+    }
+
+    onAnonymousChange = () => {
+        this.setState({
+            isAnonymous: !this.state.isAnonymous
+        });
+    }
+
+    render = () => {
+        return (
+            <>
+                <Row style={{ paddingBottom: 48, marginBottom: 27 }} className="marginBottom-l">
+                    <ReactQuill value={this.state.edited_answer}
+                        style={{ height: 100 }}
+                        theme="snow"
+                        onChange={this.handleAnswerChange}
+                        modules={EditAnswer.modules}
+                        formats={EditAnswer.formats}
+                    />
+                </Row>
+                <Row className="marginTop-l" type="flex" justify="start">
+                    <Col><Button type="primary" size="small" className="quora_button_blue pointer" onClick={this.handleSubmitAnswer}>
+                        Submit
+                </Button></Col>
+                    <Col offset={1}>
+                        <Checkbox className="" onChange={this.onAnonymousChange} value={this.state.isAnonymous}>Answer Anonymously</Checkbox>
+                    </Col>
+                </Row>
+            </>
         )
     }
 }
@@ -187,7 +278,7 @@ class AnswerText extends Component {
             <Row className="marginTop-m">
                 <Text className="quora_answer_text">
 
-                    {ReactHtmlParser(data.answerText, options)}
+                    {ReactHtmlParser(this.props.answerText, options)}
                     {/* {data.answerText} */}
 
                 </Text>
@@ -200,11 +291,25 @@ class AnswerText extends Component {
 }
 
 class VotingAndBookMark extends Component {
+
     state = {
         userUpvoted: this.props.data.userUpvoted,
         upvotes: this.props.data.upvotes,
         userDownvoted: this.props.data.userDownvoted,
-        userBookmarked: this.props.data.userBookmarked
+        userBookmarked: this.props.data.userBookmarked,
+        canEdit: false
+    }
+
+    componentDidMount = () => {
+        console.log('in cdm of voting ');
+        let userId = localStorage.getItem("userId");
+
+        if (userId === this.props.data.answererId) {
+            this.setState({
+                canEdit: true
+            })
+        }
+
     }
 
     handleUpvoteChange = () => {
@@ -213,26 +318,7 @@ class VotingAndBookMark extends Component {
         let userUpvoted = this.state.userUpvoted;
         let updatedUpvoteStatus = !userUpvoted;
 
-        // make an api call to set the status to upvoted true
 
-        // axios({
-        //     method: 'post', //you can set what request you want to be
-        //     url: '/announcements',
-        //     data: post_data,
-        //     headers: {
-        //         'x-auth-token': Auth.get_token()
-        //     }
-        // })
-        //     .then(response => {
-        //         console.log('gOT Response ', response);
-        //         component.setState({
-        //             course: response.data
-        //         });
-        //         this.getFacultyAnnouncements()
-        //     })
-        //     .catch(error => {
-        //         console.log('Error msg ', error.response.data);
-        //     });
         let answerId = this.props.data.answerId;
         let data = {
             "isUpvote": updatedUpvoteStatus,
@@ -259,7 +345,6 @@ class VotingAndBookMark extends Component {
         }, () => {
             message.error('Error in upvoting');
         })
-
 
     }
 
@@ -326,15 +411,44 @@ class VotingAndBookMark extends Component {
                         }
 
                     </Col>
-                    <Col offset={18} span={1}>
-                        {this.state.userDownvoted === true
-                            ?
-                            <Button shape="circle" icon="caret-down" theme="filled" size="small" className="no_border text_color_blue pointer" onClick={this.handleDownVoting}></Button>
-                            :
-                            <Button shape="circle" icon="caret-down" theme="empty" size="small" className="no_border pointer" onClick={this.handleDownVoting}></Button>
-                        }
+                    {this.state.canEdit
+                        ?
+                        <>
+                            <Col offset={15} span={1}>
+                                {this.state.userDownvoted === true
+                                    ?
+                                    <Button shape="circle" icon="caret-down" theme="filled" size="small" className="no_border text_color_blue pointer" onClick={this.handleDownVoting}></Button>
+                                    :
+                                    <Button shape="circle" icon="caret-down" theme="empty" size="small" className="no_border pointer" onClick={this.handleDownVoting}></Button>
+                                }
 
-                    </Col>
+                            </Col>
+
+
+                            <Col span={3}>
+                                {this.props.edit_answer === true
+                                    ?
+                                    <Button shape="round" icon="edit" size="small" className="no_border text_color_white bg_color_quora_red pointer paddingRight-m" onClick={this.props.editAnswer}>Edit</Button>
+                                    :
+                                    <Button shape="round" icon="edit" size="small" className="no_border text_color_blue pointer" onClick={this.props.editAnswer}>Edit</Button>
+                                }
+
+                            </Col>
+                        </>
+                        :
+                        <Col offset={18} span={1} className="paddingRight-l marginRight-m">
+                            {this.state.userDownvoted === true
+                                ?
+                                <Button shape="circle" icon="caret-down" theme="filled" size="small" className="no_border text_color_blue pointer" onClick={this.handleDownVoting}></Button>
+                                :
+                                <Button shape="circle" icon="caret-down" theme="empty" size="small" className="no_border pointer" onClick={this.handleDownVoting}></Button>
+                            }
+
+                        </Col>
+
+
+                    }
+
                     <Col span={2}>
                         {this.state.userBookmarked === true
                             ?
@@ -626,7 +740,7 @@ class CommentFull extends Component {
                 <Form.Item style={{ marginBottom: 5 }}>
                     <Row>
                         <Col span={18}>
-                            <TextArea placeholder="Add a comment..." autosize={{ minRows: 1, maxRows: 6 }} onChange={this.onChange} value={this.state.answer_comment} />
+                            <TextArea size="small" placeholder="Add a comment..." autosize={{ minRows: 1, maxRows: 6 }} onChange={this.onChange} value={this.state.answer_comment} />
                         </Col>
                         <Col offset={1} span={5} style={{ paddingTop: 3 }}>
                             {this.state.showButton === true
@@ -636,13 +750,23 @@ class CommentFull extends Component {
                                     onClick={this.onSubmit}
                                     type="primary"
                                     style={{ marginTop: 0, paddingTop: 1, paddingBottom: 1 }}
-                                    className="font_size_xs"
+                                    className="font_size_xs no_border"
                                     shape="round"
                                 >
                                     Add Comment
                         </Button>
                                 :
-                                null
+                                <Button
+                                    htmlType="submit"
+
+                                    type="primary"
+                                    style={{ marginTop: 0, paddingTop: 1, paddingBottom: 1 }}
+                                    className="font_size_xs no_border"
+                                    shape="round"
+                                    disabled
+                                >
+                                    Add Comment
+                        </Button>
                             }
 
                         </Col>
@@ -843,4 +967,37 @@ let outer_parseComments = (search_id, new_comment) => {
 
 // // Find a node
 // parseComments('1-0', null);
+
+
+/* 
+ * Quill modules to attach to editor
+ * See https://quilljs.com/docs/modules/ for complete options
+ */
+EditAnswer.modules = {
+    toolbar: [
+        [{ 'header': '1' }, { 'header': '2' }, { 'font': [] }],
+        [{ size: [] }],
+        ['bold', 'italic', 'underline', 'strike', 'blockquote'],
+        [{ 'list': 'ordered' }, { 'list': 'bullet' },
+        { 'indent': '-1' }, { 'indent': '+1' }],
+        ['link', 'image', 'video'],
+        ['clean']
+    ],
+    clipboard: {
+        // toggle to add extra line breaks when pasting HTML:
+        matchVisual: true,
+    }
+}
+/* 
+ * Quill editor formats
+ * See https://quilljs.com/docs/formats/
+ */
+EditAnswer.formats = [
+    'header', 'font', 'size',
+    'bold', 'italic', 'underline', 'strike', 'blockquote',
+    'list', 'bullet', 'indent',
+    'link', 'image', 'video'
+]
+
+
 
