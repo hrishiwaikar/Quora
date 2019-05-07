@@ -159,6 +159,7 @@ module.exports = {
         return new Promise((resolve, reject) => {
             let promiseToCall = (obj) => {
                 return new Promise((resolve2, reject2) => {
+                    console.log("INCOMING REQUEST >>> ", payload,obj)
                     obj.timestamp = obj.timestamp || Date.now();
                     obj.timestamp = new Date(obj.timestamp).set(0, 0);
                     profileViewModel.findOneAndUpdate({

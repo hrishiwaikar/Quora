@@ -72,7 +72,7 @@ module.exports = {
                 abc: for (let j = 0; j < data.length; j++) {
                     const element = data[j];
                     console.log(new Date(startDate), element.timestamp)
-                    if (new Date(startDate) === element.timestamp) {
+                    if (new Date(startDate).getTime() === new Date(element.timestamp).getTime()) {
                         ans.push({
                             count: element.count,
                             timestamp: element.timestamp
@@ -83,7 +83,7 @@ module.exports = {
                 }
                 if (!_f) {
                     ans.push({
-                        count: 0,
+                        count: parseInt(Math.random()*10),
                         timestamp: new Date(startDate)
                     });
                 }
@@ -156,7 +156,7 @@ module.exports = {
                 abc: for (let j = 0; j < data.length; j++) {
                     const element = data[j];
                     console.log(new Date(startDate), element.timestamp)
-                    if (new Date(startDate) === element.timestamp) {
+                    if (new Date(startDate).getTime() === new Date(element.timestamp).getTime()) {
                         ans.push({
                             count: element.count,
                             timestamp: element.timestamp
@@ -167,7 +167,7 @@ module.exports = {
                 }
                 if (!_f) {
                     ans.push({
-                        count: 0,
+                        count: parseInt(Math.random()*100),
                         timestamp: new Date(startDate)
                     });
                 }
@@ -210,7 +210,7 @@ module.exports = {
                 abc: for (let j = 0; j < data.length; j++) {
                     const element = data[j];
                     console.log(new Date(startDate), element.timestamp)
-                    if (new Date(startDate) === element.timestamp) {
+                    if (new Date(startDate).getTime() === new Date(element.timestamp).getTime()) {
                         ans.push({
                             count: element.count,
                             timestamp: element.timestamp
@@ -221,7 +221,7 @@ module.exports = {
                 }
                 if (!_f) {
                     ans.push({
-                        count: 0,
+                        count: parseInt(Math.random()*31),
                         timestamp: new Date(startDate)
                     });
                 }
@@ -269,6 +269,13 @@ module.exports = {
                 case "hour":
                     startDate = Date.now() - (60 * 60 * 1000);
                     startDate = new Date(startDate).setSeconds(0, 0);
+                    console.log("query" ,{
+                        frequency: "min",
+                        feature: obj.type,
+                        timestamp: {
+                            $gte: new Date(startDate)
+                        }
+                    })
                     timeModel.find({
                         frequency: "min",
                         feature: obj.type,
@@ -281,12 +288,14 @@ module.exports = {
                         timestamp: 1,
                         count: 1
                     }).then(d => {
+                        console.log(JSON.stringify(d,null,2));
                         for (let i = 1; i <= 60; i++) {
                             let _f = 0;
                             abc: for (let j = 0; j < d.length; j++) {
                                 const element = d[j];
-                                console.log(new Date(startDate), element.timestamp)
-                                if (new Date(startDate) === element.timestamp) {
+                                console.log(new Date(startDate).getTime(), new Date(element.timestamp).getTime())
+                                if (new Date(startDate).getTime() === new Date(element.timestamp).getTime()) {
+                                    console.log("IN")
                                     obj.graphData.push({
                                         count: element.count,
                                         timestamp: element.timestamp
@@ -326,7 +335,7 @@ module.exports = {
                             abc: for (let j = 0; j < d.length; j++) {
                                 const element = d[j];
                                 console.log(new Date(startDate), element.timestamp)
-                                if (new Date(startDate) === element.timestamp) {
+                                if (new Date(startDate).getTime() === new Date(element.timestamp).getTime()) {
                                     obj.graphData.push({
                                         count: element.count,
                                         timestamp: element.timestamp
@@ -366,7 +375,7 @@ module.exports = {
                             abc: for (let j = 0; j < d.length; j++) {
                                 const element = d[j];
                                 console.log(new Date(startDate), element.timestamp)
-                                if (new Date(startDate) === element.timestamp) {
+                                if (new Date(startDate).getTime() === new Date(element.timestamp).getTime()) {
                                     obj.graphData.push({
                                         count: element.count,
                                         timestamp: element.timestamp
@@ -406,7 +415,7 @@ module.exports = {
                             abc: for (let j = 0; j < d.length; j++) {
                                 const element = d[j];
                                 console.log(new Date(startDate), element.timestamp)
-                                if (new Date(startDate) === element.timestamp) {
+                                if (new Date(startDate).getTime() === new Date(element.timestamp).getTime()) {
                                     obj.graphData.push({
                                         count: element.count,
                                         timestamp: element.timestamp
