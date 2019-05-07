@@ -1,0 +1,8 @@
+.thread .ant-modal-body {
+    padding: 15px;
+}
+
+.thread-title {
+    display: flex;
+    align-items: baseline;
+}

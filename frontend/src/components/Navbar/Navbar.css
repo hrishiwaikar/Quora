@@ -7,9 +7,14 @@
 
   .navbar { 
     background: #fff;
-    padding: 0px 100px;
+    padding: 0px 200px;
     border: 0;
     border-bottom: 1px solid #e8e8e8;
+    position: fixed;
+    top:0;
+    z-index: 100;
+    width: 100%;
+    /* margin-bottom: 50px; */
   }
 
   .navbar-search:hover {
@@ -19,7 +24,6 @@
     height: 30px;
     width: 30px;
     border-radius: 50%;
-    border: 1px solid black;
     object-fit: contain;
   }
 
