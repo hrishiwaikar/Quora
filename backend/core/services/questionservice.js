@@ -121,7 +121,7 @@ let service = {
                     questionFollowObj.save().then(response => {
                         questionObj.followers += 1
                         questionObj.save().then(response => {
-                            return resolve(response);
+                            return resolve(response.questionId);
                         }).catch(reject);
                     }).catch(reject);
                 }).catch(reject);
