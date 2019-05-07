@@ -1,5 +1,7 @@
 var Redis = require('ioredis');
-let redis = new Redis();
+let redis = new Redis({
+    host: '18.188.215.21'
+});
 module.exports = {
     hset: (hash, key, value) => {
         return new Promise((resolve, reject) => {
@@ -23,9 +25,8 @@ module.exports = {
             if (!hash || !key) {
                 return Promise.resolve({});
             }
-            console.log("fetching from redis");
             redis.hget(hash, key).then((value) => {
-                console.log("fetching from redis ",value);
+                console.log("fetched from redis");
                 if (!!value) {
                     resolve(JSON.parse(value))
                 } else {

@@ -11,8 +11,8 @@ let service = {
                 let _session = args[0] || {};
                 let body = args[1] || {};
                 let userModel = require('./../models/usermodel');
-                body.firstName = (body.firstName || "").toLowerCase();
-                body.lastName = (body.lastName || "").toLowerCase();
+                body.firstName = utils.titleCase(body.firstName || "");
+                body.lastName = utils.titleCase(body.lastName || "");
                 body.userId = body.userId || utils.getUniqueId();
                 if (!body.password) {
                     throw rs.invalidrequest;
@@ -159,17 +159,17 @@ let service = {
                 let _session = args[0] || {};
                 let userId = args[1] || null;
                 let file = args[2] || {};
-                // let userModel = require('./../models/usermodel');
-                // let body = {};
-                // body.userId = userId || null;
-                // s3.up(process.cwd() + `/uploads/profiles/File_${userId}`, `profiles/${userId}`, {
-                //     "ACL": "public-read"
-                // }).then((d) => {
-                //     console.log(d)
-                // }, (e) => {
-                //     console.log("err", e)
-                // });
-                resolve({})
+                let userModel = require('./../models/usermodel');
+                let body = {};
+                body.userId = userId || null;
+                resolve({});
+                s3.up(process.cwd() + `/uploads/profiles/File_${userId}`, `profiles/${userId}`, {
+                    "ACL": "public-read"
+                }).then((d) => {
+                    console.log(d)
+                }, (e) => {
+                    console.log("err", e)
+                });
             } catch (e) {
                 console.error(e)
                 reject(e);
