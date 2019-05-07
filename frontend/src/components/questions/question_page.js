@@ -34,7 +34,7 @@ class QuestionPage extends Component {
     componentDidMount = () => {
         console.log('IN CDM ', this.props.match.params.id);
         this.getQuestionAndAnswers();
-        this.getRelatedQuestions();
+
     }
 
     getQuestionAndAnswers = () => {
@@ -52,6 +52,8 @@ class QuestionPage extends Component {
                 profileCredential: result.profileCredential,
                 userId: result.userId
             }
+
+            this.getRelatedQuestions(result);
 
             component.setState({
                 result: result,
@@ -127,45 +129,58 @@ class QuestionPage extends Component {
     }
 
 
-    getRelatedQuestions = () => {
-        let related_questions = [
-            {
-                'id': 2,
-                'questionText': 'What is the programming language of your choice?'
-            },
-            {
-                'id': 3,
-                'questionText': 'Why does everybody love coding in python?'
-            },
-            {
-                'id': 3,
-                'questionText': 'What makes one a good programmer - skills or logic?'
-            },
-            {
-                'id': 4,
-                'questionText': 'Which one is better for building secured applications, Python or java?'
-            },
-            {
-                'id': 5,
-                'questionText': 'How does a python program convert into machine level set of instructions??'
-            },
-            {
-                'id': 6,
-                'questionText': 'What is the difference between compiled and interpreted langauge? Which one is better for critical systems?'
-            },
-            {
-                'id': 7,
-                'questionText': 'Why is there a language named after a mathematician Ada Lovelace?'
-            },
-            {
-                'id': 8,
-                'questionText': 'Is C really better than python for competitive programming?'
-            },
-        ]
+    getRelatedQuestions = (result) => {
 
-        this.setState({
-            related_questions
-        })
+        get('/topicQuestions?page=1&topic=', result.topics[0].topicId,
+            (response) => {
+                console.log('Got questions related to topic ', response.data.data);
+
+                this.setState({
+                    related_questions: response.data.data
+                })
+
+            }, () => { })
+
+
+
+        // let related_questions = [
+        //     {
+        //         'id': 2,
+        //         'questionText': 'What is the programming language of your choice?'
+        //     },
+        //     {
+        //         'id': 3,
+        //         'questionText': 'Why does everybody love coding in python?'
+        //     },
+        //     {
+        //         'id': 3,
+        //         'questionText': 'What makes one a good programmer - skills or logic?'
+        //     },
+        //     {
+        //         'id': 4,
+        //         'questionText': 'Which one is better for building secured applications, Python or java?'
+        //     },
+        //     {
+        //         'id': 5,
+        //         'questionText': 'How does a python program convert into machine level set of instructions??'
+        //     },
+        //     {
+        //         'id': 6,
+        //         'questionText': 'What is the difference between compiled and interpreted langauge? Which one is better for critical systems?'
+        //     },
+        //     {
+        //         'id': 7,
+        //         'questionText': 'Why is there a language named after a mathematician Ada Lovelace?'
+        //     },
+        //     {
+        //         'id': 8,
+        //         'questionText': 'Is C really better than python for competitive programming?'
+        //     },
+        // ]
+
+        // this.setState({
+        //     related_questions
+        // })
     }
 
     handleShowAddQuestion = (newQuestionId = null) => {
@@ -260,6 +275,7 @@ class QuestionPage extends Component {
     }
 
     handleOnRelatedQuestionClick = (questionId) => {
+        console.log('IN handle relatedd qu click');
         this.props.history.push('/question/' + questionId);
     }
 
@@ -370,11 +386,16 @@ class QuestionPage extends Component {
                         {this.state.related_questions !== null
                             ?
                             this.state.related_questions.map((related_question) => {
-                                return (
-                                    <Row className="marginTop-m paddingTop-s text_color_quora_blue font_size_xs pointer" onClick={() => { this.handleOnRelatedQuestionClick(related_question.id) }}>
-                                        {related_question.questionText}
-                                    </Row>
-                                )
+                                if (related_question.questionId === this.state.result.questionId) {
+                                    return null
+                                } else {
+                                    return (
+                                        <Row className="marginTop-m paddingTop-s text_color_quora_blue font_size_xs pointer" onClick={() => { this.handleOnRelatedQuestionClick(related_question.questionId) }}>
+                                            {related_question.questionText}
+                                        </Row>
+                                    )
+                                }
+
                             })
 
                             :
