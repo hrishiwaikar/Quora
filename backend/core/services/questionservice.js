@@ -114,10 +114,15 @@ let service = {
                 let question_body = {}
                 let questionText = body.questionText || "";
                 let topics = body.topics || [];
-                let questionObj = new questionModel({userId:_session.userId,questionText:questionText,topicsId:topics});
-                questionObj.save().then(response => {
-                    // console.log(response.questionId)
-                    return resolve(response.questionId);
+                let questionObjQuery = new questionModel({userId:_session.userId,questionText:questionText,topicsId:topics});
+                questionObjQuery.save().then(questionObj => {
+                    let questionFollowObj = new questionFollowModel({userId:_session.userId,questionId:questionObj.questionId})
+                    questionFollowObj.save().then(response => {
+                        questionObj.followers += 1
+                        questionObj.save().then(response => {
+                            return resolve(response);
+                        }).catch(reject);
+                    }).catch(reject);
                 }).catch(reject);
                 
             } catch (e) {
