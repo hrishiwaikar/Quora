@@ -12,6 +12,7 @@ let answerUpvotesModel = require("../models/answerupvotesmodel")
 let answerDownvotesModel = require("../models/answerdownvotesmodel")
 let answerBookmarkModel = require("../models/answerbookmarkmodel")
 let questionFollowModel = require("../models/questionfollowmodel")
+let userFollowModel = require("../models/followmodel")
 
 
 let questionCommonAttributes = (_session,questionObj) => {
@@ -53,7 +54,13 @@ let answerCommonAttributes = (_session,answerObj) => {
         temp_answer['userDownvoted'] = false
         temp_answer['userBookmarked'] = false
         temp_answer['comments'] = answerObj.comments
-        temp_answer['userisfollowinganswerer'] = false //vinit dependency
+        temp_answer['userIsFollowingAnswerer'] = false
+
+        await userFollowModel.findOne({userId:_session.userId,following:answerObj.userId}).then((userFollowObj)=>{
+            if(userFollowObj !== null){
+                temp_answer['userIsFollowingAnswerer'] = true
+            }
+        });
         await answerUpvotesModel.findOne({userId:_session.userId,answerId:answerObj.answerId}).then((answerUpvoteObj)=>{
             if(answerUpvoteObj !== null){
                 temp_answer['userUpvoted'] = true
@@ -142,7 +149,7 @@ let service = {
                 let body = {};
                 // body.questionId = mongoose.Types.ObjectId(questionId);
                 body.questionId = questionId;
-                // console.log("----body----",body);
+                // console.log("----body----",_session);
 
                 questionModel.findOne(body).then(async (questionObj) => {
                     if (!!questionObj){
@@ -245,6 +252,7 @@ let service = {
             try {
                 let output = []
                 let _session = args[0] || {};
+                console.log("User id\n",_session.userId)
                 let params = args[1] || 1;
                 let page_number = params['page']
                 let topic = params['topic']
