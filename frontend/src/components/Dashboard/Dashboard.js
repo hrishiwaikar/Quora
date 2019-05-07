@@ -38,9 +38,9 @@ class Dashboard extends Component {
     //     }
     //   })
     call({
-        method: "get",
-        url: "/views?frequency=" + graphRange + "&type=" + graphType
-      })
+      method: "get",
+      url: "/views?frequency=" + graphRange + "&type=" + graphType
+    })
       .then(res => {
         // console.log("view response data", res.data.data.graphData);
 
@@ -57,7 +57,7 @@ class Dashboard extends Component {
             return ((new Date(date["timestamp"]).getMonth() + 1) + "/" + new Date(date["timestamp"]).getDate())
           } else if (graphRange === "month") {
             return ((new Date(date["timestamp"]).getMonth() + 1) + "/" + new Date(date["timestamp"]).getDate())
-          }else{
+          } else {
             return new Date(date["timestamp"]).toDateString();
           }
         });
@@ -81,25 +81,25 @@ class Dashboard extends Component {
   makeAllGraph = value => {
     let graphRange = value;
     let graphAttr = [{
-        graphRange: graphRange,
-        graphType: "signin"
-      },
-      {
-        graphRange: graphRange,
-        graphType: "signup"
-      },
-      {
-        graphRange: graphRange,
-        graphType: "questions"
-      },
-      {
-        graphRange: graphRange,
-        graphType: "answers"
-      },
-      {
-        graphRange: graphRange,
-        graphType: "comments"
-      }
+      graphRange: graphRange,
+      graphType: "signin"
+    },
+    {
+      graphRange: graphRange,
+      graphType: "signup"
+    },
+    {
+      graphRange: graphRange,
+      graphType: "questions"
+    },
+    {
+      graphRange: graphRange,
+      graphType: "answers"
+    },
+    {
+      graphRange: graphRange,
+      graphType: "comments"
+    }
     ];
 
     graphAttr.map((d, i) => {
@@ -112,35 +112,35 @@ class Dashboard extends Component {
 
   render() {
     let chartData = [{
-        name: "SignIn",
-        color: "#ff6361",
-        graphData: this.state.graphData["signin"],
-        xAxis: this.state.xAxis["signin"]
-      },
-      {
-        name: "Signup",
-        color: "#bc5090",
-        graphData: this.state.graphData["signup"],
-        xAxis: this.state.xAxis["signup"]
-      },
-      {
-        name: "Questions",
-        color: "#58508d",
-        graphData: this.state.graphData["questions"],
-        xAxis: this.state.xAxis["questions"]
-      },
-      {
-        name: "Answer",
-        color: "#003f5c",
-        graphData: this.state.graphData["answers"],
-        xAxis: this.state.xAxis["answers"]
-      },
-      {
-        name: "Comments",
-        color: "#ffa600",
-        graphData: this.state.graphData["comments"],
-        xAxis: this.state.xAxis["comments"]
-      }
+      name: "SignIn",
+      color: "#ff6361",
+      graphData: this.state.graphData["signin"],
+      xAxis: this.state.xAxis["signin"]
+    },
+    {
+      name: "Signup",
+      color: "#bc5090",
+      graphData: this.state.graphData["signup"],
+      xAxis: this.state.xAxis["signup"]
+    },
+    {
+      name: "Questions",
+      color: "#58508d",
+      graphData: this.state.graphData["questions"],
+      xAxis: this.state.xAxis["questions"]
+    },
+    {
+      name: "Answer",
+      color: "#003f5c",
+      graphData: this.state.graphData["answers"],
+      xAxis: this.state.xAxis["answers"]
+    },
+    {
+      name: "Comments",
+      color: "#ffa600",
+      graphData: this.state.graphData["comments"],
+      xAxis: this.state.xAxis["comments"]
+    }
     ];
 
     const Option = Select.Option;
@@ -151,88 +151,48 @@ class Dashboard extends Component {
 
     console.log(chartData);
 
-    return ( <
-      Row style = {
-        {
+    return (
+      <Row
+        style={{
           marginTop: "30px",
           marginLeft: "40px"
-        }
-      } >
-      <
-      Row >
-      <
-      Col span = {
-        24
-      } >
-      <
-      Col span = {
-        8
-      } >
-      <
-      h3 className = "dashboardChartTitle" > Dashboard < /h3> <
-      /Col> <
-      Col span = {
-        8
-      }
-      /> <
-      Col span = {
-        8
-      }
-      style = {
-        {
-          float: "right",
-          marginRight: "80px"
-        }
-      } >
-      <
-      Select defaultValue = "hour"
-      style = {
-        {
-          width: 120
-        }
-      }
-      onChange = {
-        this.makeAllGraph
-      }
-      style = {
-        {
-          float: "right"
-        }
-      } >
-      <
-      Option value = "hour" > Hour < /Option> <
-      Option value = "day" > Day < /Option> <
-      Option value = "week" > Week < /Option> <
-      Option value = "month" > Month < /Option> {
-        /* <Option value="year">Year</Option> */ } <
-      /Select> <
-      /Col> <
-      /Col> <
-      /Row> <
-      Row > {
-        chartData.map((value, i) => ( <
-          Col span = {
-            8
-          } >
-          <
-          DashboardCharts name = {
-            value.name
-          }
-          color = {
-            value.color
-          }
-          graphData = {
-            value.graphData
-          }
-          xAxis = {
-            value.xAxis
-          }
-          /> <
-          /Col>
-        ))
-      } <
-      /Row> <
-      /Row>
+        }}
+      >
+        <Row>
+          <Col span={24}>
+            <Col span={8}>
+              <h3 className="dashboardChartTitle">Dashboard</h3>
+            </Col>
+            <Col span={8} />
+            <Col span={8} style={{ float: "right", marginRight: "80px" }}>
+              <Select
+                defaultValue="hour"
+                style={{ width: 120 }}
+                onChange={this.makeAllGraph}
+                style={{ float: "right" }}
+              >
+                <Option value="hour">Hour</Option>
+                <Option value="day">Day</Option>
+                <Option value="week">Week</Option>
+                <Option value="month">Month</Option>
+                <Option value="year">Year</Option>
+              </Select>
+            </Col>
+          </Col>
+        </Row>
+        <Row>
+          {chartData.map((value, i) => (
+            <Col span={8}>
+              <DashboardCharts
+                name={value.name}
+                color={value.color}
+                graphData={value.graphData}
+                xAxis={value.xAxis}
+              />
+            </Col>
+          ))}
+        </Row>
+      </Row>
     );
   }
 }

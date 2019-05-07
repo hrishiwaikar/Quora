@@ -173,7 +173,7 @@ class Stats extends Component {
     //create scales!
     const xScale = d3
       .scaleBand()
-      .domain((this.state.graphData || []).map((d, i) => d.timestamp))
+      .domain((this.state.graphData || []).map((d, i) => {return ((new Date(d.timestamp).getMonth()+1)+"/"+new Date(d.timestamp).getDate())}))
       .range([0, width]);
     const yScale = d3
       .scaleLinear()
@@ -187,7 +187,7 @@ class Stats extends Component {
       .enter()
       .append("rect")
       .classed("bar", true)
-      .attr("x", d => xScale(d.timestamp))
+      .attr("x", d => xScale(((new Date(d.timestamp).getMonth()+1)+"/"+new Date(d.timestamp).getDate())))
       .attr("y", d => yScale(d.count))
       .attr("height", d => height - yScale(d.count))
       .attr("width", d => xScale.bandwidth() - 1)
@@ -358,7 +358,7 @@ class Stats extends Component {
       });
     } else if (value === "bookmark") {
       this.setState({
-        filter: "views",
+        filter: "bookmark",
         toggle: false
       });
     }

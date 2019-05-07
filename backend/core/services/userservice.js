@@ -79,7 +79,7 @@ let service = {
                 };
                 if(!!query.profile){
                     producer.fire({
-                        topic: 'views',
+                        topic: 'api',
                         type: 'profileview',
                         payload: {
                             createdAt: Date.now(),
@@ -347,7 +347,7 @@ let router = {
                 user: data
             })
         };
-        service.read(req.user, req.params.userId).then(successCB, next);
+        service.read(req.user, req.params.userId,req.query).then(successCB, next);
     },
     readProfileImage: (req, res, next) => {
         let successCB = (data) => {
