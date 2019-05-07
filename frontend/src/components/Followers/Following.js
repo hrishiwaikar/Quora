@@ -10,7 +10,7 @@ class Following extends Component {
   }
 
   componentDidMount() {
-    const userId = localStorage.getItem("userId");
+    const userId = this.props.match.params.id
     call({
       method: "get",
       url: `/users/${userId}/following`
@@ -28,10 +28,10 @@ class Following extends Component {
       })
   }
   handleFollowClick = (userId) => {
-    console.log(userId)
+    let loggedInUserId = localStorage.getItem("userId");
     call({
       method: "post",
-      url: `/unfollow/${userId}`
+      url: `/unfollow/${loggedInUserId}`
     })
       .then(data => {
         let { following } = this.state;
@@ -52,7 +52,7 @@ class Following extends Component {
     console.log(following)
     following = following.map(d => {
       const { followers, profileImage, firstName, lastName, profileCredential, followingBack, _id, userId } = d;
-      return <Col span={12} key={userId}>
+      return <Col span={12} key={_id}>
         <FollowerCard
           _id={_id}
           userId={userId}

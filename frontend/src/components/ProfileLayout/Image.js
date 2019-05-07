@@ -9,7 +9,8 @@ const Dragger = Upload.Dragger;
 class Image extends Component {
     state = {
         visible: false,
-        fileList: []
+        fileList: [],
+        userId: this.props.userId
     }
 
     toggleModal = () => {
@@ -22,7 +23,7 @@ class Image extends Component {
         console.log("hello")
         let userId = localStorage.getItem("userId");
         const formData = new FormData();
-      
+
         formData.append('profileImage', fileList[0]);
 
         this.setState({
@@ -48,8 +49,7 @@ class Image extends Component {
     }
 
     render() {
-        const { visible, fileList } = this.state
-        let userId = localStorage.getItem("userId")
+        const { visible, fileList, userId } = this.state
 
         const props = {
             onRemove: (file) => {
@@ -80,10 +80,10 @@ class Image extends Component {
                 <div className="profile-image-div">
                     <img src={`http://node-lb-1978766301.us-east-2.elb.amazonaws.com/v1/users/${userId}/image`} alt="profile" className="profile-image" />
                 </div>
-                <Tooltip title="Remove this photo" className="profile-image-remove">
+                {/* <Tooltip title="Remove this photo" className="profile-image-remove">
                     <Icon type="close" />
-                </Tooltip>
-                <div className="profile-image-edit">
+                </Tooltip> */}
+                <div className="profile-image-edit" style={userId !== localStorage.getItem("userId") ? { display: "none" } : {}}>
                     <span onClick={this.toggleModal}>Edit Photo</span>
                 </div>
                 <Modal

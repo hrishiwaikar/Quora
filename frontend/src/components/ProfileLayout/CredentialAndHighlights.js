@@ -224,7 +224,7 @@ class CredentialAndHighlights extends Component {
             if (e._id === item._id) return item
             return e
         })
-    
+
         console.log(education)
         call({
             method: "put",
@@ -236,7 +236,7 @@ class CredentialAndHighlights extends Component {
             .then(data => {
                 console.log(data)
                 message.success(data.response[0].message)
-                
+
                 this.setState({
                     education,
                     dataSource
@@ -261,7 +261,7 @@ class CredentialAndHighlights extends Component {
         let { employment, dataSource } = this.state;
         const userId = localStorage.getItem("userId")
         employment = employment.slice(0);
-        employment =employment.map(e => {
+        employment = employment.map(e => {
             console.log(e._id === item._id)
 
             if (e._id === item._id) {
@@ -269,7 +269,7 @@ class CredentialAndHighlights extends Component {
             }
             return e
         })
-      
+
         console.log(employment)
         call({
             method: "put",
@@ -281,7 +281,7 @@ class CredentialAndHighlights extends Component {
             .then(data => {
                 console.log(data)
                 message.success(data.response[0].message)
-                
+
                 this.setState({
                     employment,
                     dataSource
@@ -309,7 +309,7 @@ class CredentialAndHighlights extends Component {
             if (e._id === item._id) return item
             return e
         })
-       
+
         console.log(location)
         call({
             method: "put",
@@ -321,7 +321,7 @@ class CredentialAndHighlights extends Component {
             .then(data => {
                 console.log(data)
                 message.success(data.response[0].message)
-               
+
                 this.setState({
                     location,
                     dataSource,
@@ -354,7 +354,8 @@ class CredentialAndHighlights extends Component {
             <>
                 <div className="credential-and-highlights">
                     <Title level={4}>Credential & Highlights</Title>
-                    <Icon type="edit" onClick={this.toggleModal} />
+                    {userId === localStorage.getItem("userId") ?
+                        <Icon type="edit" onClick={this.toggleModal} /> : null}
                     <Divider />
                     {
                         dataSource.map((data, i) => (
@@ -397,11 +398,11 @@ class CredentialAndHighlights extends Component {
                                     <List.Item.Meta
                                         title={
                                             item.type === "education" ?
-                                                <EducationCredential education={item} visible={editEducationModal} handleAdd={this.handleEditEducation} key={item} /> :
+                                                <EducationCredential education={item} visible={editEducationModal} userId={userId} handleAdd={this.handleEditEducation} key={item} /> :
                                                 item.type === "employment" ?
-                                                    <EmploymentCredential employment={item} visible={addEmploymentModal} handleAdd={this.handleEditEmployment} key={item} /> :
+                                                    <EmploymentCredential employment={item} visible={addEmploymentModal} userId={userId} handleAdd={this.handleEditEmployment} key={item} /> :
                                                     item.type === "location" ?
-                                                        <LocationCredential location={item} visible={addLocationModal} handleAdd={this.handleEditLocation} key={item} /> : null
+                                                        <LocationCredential location={item} visible={addLocationModal} userId={userId} handleAdd={this.handleEditLocation} key={item} /> : null
                                         }
                                     />
                                 </List.Item>
@@ -418,6 +419,7 @@ class CredentialAndHighlights extends Component {
                     hideText={true}
                     handleAdd={this.handleAddEducation}
                     toggleModal={this.toggleAddModal}
+
                 />
                 <EmploymentCredential
                     visible={addEmploymentModal}

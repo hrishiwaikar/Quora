@@ -93,18 +93,18 @@ export class DisplayQuestion extends Component {
             <Row className="pointer" onClick={() => { this.props.handleRedirection(data.questionId) }}>
 
                 <Row>
-                    <Title level={4} className="quora_question_text font_size_s text_color_black" >{data.questionText}</Title>
+                    <Text className="font_size_m font_bold text_color_black" >{data.questionText}</Text>
                 </Row>
                 <Row>
 
                     {data.hasAnswer === false ?
                         <Row>
-                            <Col span={2}>
+                            <Col span={4}>
                                 <Button shape="round" icon="edit" size="small" className="no_border pointer" style={{ paddingLeft: 0 }}>
                                     Answer
                                 </Button>
                             </Col>
-                            <Col span={3}>
+                            <Col span={4}>
                                 <Button shape="round" icon="wifi" size="small" className="no_border pointer" style={{ paddingLeft: 0 }} onClick={this.handleFollowQuestion} >Follow</Button>
                             </Col>
 

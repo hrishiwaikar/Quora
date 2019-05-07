@@ -1,23 +1,26 @@
 import React, { Component } from 'react'
 import { call } from '../../api'
 import { TestDisplayQuestion } from '../DisplayQuestion/DisplayQuestion';
+import { Skeleton } from 'antd';
 
 
 class UserAnswers extends Component {
     state = {
-        data: []
+        data: [],
+        loading: true
     }
     componentDidMount() {
         const userId = localStorage.getItem("userId")
         call({
             method: 'get',
-            url: `/user/${userId}/answers`
+            url: `/users/${userId}/answers`
         })
             .then(response => {
 
                 console.log(response)
                 this.setState({
-                    data: response.data
+                    data: response.data,
+                    loading: false
                 })
             })
             .catch(err => {
@@ -25,11 +28,16 @@ class UserAnswers extends Component {
             })
     }
     render() {
-        const { data } = this.state;
+        const { data, loading } = this.state;
         return (
             <div>
-                <TestDisplayQuestion data={data}/>
-      </div>
+                {
+                    loading ?
+                        <Skeleton active /> :
+
+                        <TestDisplayQuestion data={data} />
+                }
+            </div>
         )
     }
 }

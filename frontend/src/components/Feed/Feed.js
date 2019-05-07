@@ -46,6 +46,7 @@ class Feed extends Component {
                     pageNumber += 1;
                     Array.prototype.push.apply(data, response);
                     console.log(data)
+
                     this.setState({
                         data,
                         pageNumber,

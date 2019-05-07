@@ -10,10 +10,12 @@ class Name extends Component {
         super(props);
         const { firstName, lastName } = props;
         const name = firstName + " " + lastName;
+        console.log(name)
         this.state = {
             editing: false,
             loading: false,
-            name
+            name,
+            userId: props.userId
         }
     }
 
@@ -29,6 +31,7 @@ class Name extends Component {
     //     return null;
     // }
     // componentWillReceiveProps(nextProps) {
+    //     console.log(nextProps.firstName, this.props.firstName)
     //     if (this.props.firstName !== nextProps.firstName) {
     //         const { firstName, lastName } = nextProps;
     //         const name = firstName + " " + lastName;
@@ -91,7 +94,7 @@ class Name extends Component {
     }
 
     render() {
-        const { editing, name, loading } = this.state;
+        const { editing, name, loading, userId } = this.state;
         return (
             <div className="name">
 
@@ -111,13 +114,22 @@ class Name extends Component {
                                 name ?
                                     <div>
                                         <Title level={2}>{name}</Title>
-                                        <Text underline type="secondary" onClick={this.toggleEditing} className="edit">Edit</Text>
+                                        {
+                                            userId === localStorage.getItem("userId") ?
+
+                                                <Text underline type="secondary" onClick={this.toggleEditing} className="edit">Edit</Text>
+                                                : null
+                                        }
                                     </div>
 
                                     :
-                                    <Text type="secondary" onClick={this.toggleEditing} >Your name</Text>
+                                    userId === localStorage.getItem("userId") ?
+                                        <Text type="secondary" onClick={this.toggleEditing} >Your name</Text>
+                                        : null
                             }
                         </div>
+
+
 
                 }
 

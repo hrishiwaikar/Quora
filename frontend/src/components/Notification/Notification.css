@@ -1,5 +1,6 @@
 .notification {
     max-width: 500px;
+    min-width: 500px;
 }
 
 .notification .name {

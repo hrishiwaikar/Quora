@@ -4,8 +4,9 @@ import decode from 'jwt-decode';
 
 
 const verifyToken = () => {
-    const token = sessionStorage.getItem('token');
-    if (!token)
+    const token = localStorage.getItem('token');
+    const userId = localStorage.getItem('userId')
+    if (!token || !userId)
         return false
 
     try {

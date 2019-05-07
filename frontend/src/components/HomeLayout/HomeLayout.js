@@ -24,7 +24,6 @@ class HomeLayout extends Component {
         data: [],
         pageNumber: 1,
         allDataFetched: false,
-        topics: ["bhaskar"],
         addQuestion: false
     };
     componentDidMount() {
@@ -58,8 +57,8 @@ class HomeLayout extends Component {
     }
 
     render = () => {
-        const { data, topics } = this.state;
-        console.log(data)
+        const { data, topics, selected } = this.state;
+        console.log(topics)
         return (
             <div className="home">
                 <Row gutter={16}>
@@ -67,6 +66,7 @@ class HomeLayout extends Component {
                         <Menu
                             onClick={this.handleClick}
                             defaultSelectedKeys={["feed"]}
+                            selected={selected}
                             mode="inline"
                         >
                             <Menu.Item key="feed"><Icon type="idcard" /> Feed</Menu.Item>
@@ -81,7 +81,7 @@ class HomeLayout extends Component {
                     <Col span={14}>
                         <Switch>
                             <Route path="/bookmarks" component={Bookmarks} />
-                            <Route path="/topic/:id" component={Topic} />
+                            <Route path="/topic/:id" component={Topic} key={this.props.match.params.id}/>
                             <Route path="/" component={Feed} />
                         </Switch>
 

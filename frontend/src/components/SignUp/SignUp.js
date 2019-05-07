@@ -58,8 +58,12 @@ class SignUp extends Component {
                 console.log("login response data", res);
                 message.success(res.response[0].message);
                 window.localStorage.setItem("userId", res.user.userId);
-                localStorage.setItem("user", res.user)
+
                 window.localStorage.setItem("token", res.token);
+                window.localStorage.setItem("profileCredential", res.user.profileCredential);
+                window.localStorage.setItem("userName", res.user.firstName + ' ' + res.user.lastName)
+
+                localStorage.setItem("user", res.user)
                 this.props.history.push("/")
 
               })
@@ -68,7 +72,6 @@ class SignUp extends Component {
 
                 message.error(err.message.response.message);
               });
-            this.props.history.push("/")
 
           })
           .catch(err => {

@@ -22,8 +22,8 @@ class Sidebar extends Component {
     }
     handleClick = ({ key }) => {
         console.log(key)
-        const userId = localStorage.getItem("userId")
         const { match, history } = this.props;
+        const userId = match.params.id
         this.setState({
             selected: key
         });
@@ -37,7 +37,7 @@ class Sidebar extends Component {
         return (
             <div>
                 <Row gutter={16}>
-                    <Col span={6}>
+                    <Col span={4}>
                         <div className="profile-sidebar">
                             <Title level={4} >Feeds</Title>
                             <Divider />
@@ -54,7 +54,7 @@ class Sidebar extends Component {
                             </Menu>
                         </div>
                     </Col>
-                    <Col span={18}>
+                    <Col span={20}>
                         <div className="profile-sidebar-content">
                             <Title level={4} >{selected}</Title>
                             <Divider />

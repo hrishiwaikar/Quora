@@ -22,17 +22,20 @@ class Profile extends Component {
         user: {},
         loading: true
     }
-    componentDidMount() {
-        const { match } = this.props;
-        console.log(match.params.id)
-        // get(`/users/`, match.params.id, (data) => {
-        //     console.log(data)
-        // }, (err) => {
-        //     console.log(err)
-        // })
+    componentWillReceiveProps(nextProps) {
+        if (nextProps.match.params.id !== this.props.match.params.id) {
+            // const id = nextProps.match.params.id
+            this.call(nextProps.match.params.id);
+        }
+    }
+
+    call = (id) => {
+        this.setState({
+            loading: true
+        })
         call({
             method: 'get',
-            url: `/users/${match.params.id}`
+            url: `/users/${id}?profile=true`
         })
             .then(data => {
                 console.log(data.user)
@@ -44,6 +47,16 @@ class Profile extends Component {
             .catch(err => {
                 console.log(err)
             })
+    }
+    componentDidMount() {
+        const id = this.props.match.params.id;
+        this.call(id);
+        // get(`/users/`, match.params.id, (data) => {
+        //     console.log(data)
+        // }, (err) => {
+        //     console.log(err)
+        // })
+
     }
 
 
@@ -71,13 +84,13 @@ class Profile extends Component {
                                 !loading ?
                                     <>
                                         <Col span={5}>
-                                            <Image />
+                                            <Image userId={userId} />
                                         </Col>
                                         <Col span={19}>
                                             <Name firstName={firstName} lastName={lastName} key={firstName} userId={userId} />
-                                            <ProfileCredential profileCredential={profileCredential} key={profileCredential} userId={userId}  />
+                                            <ProfileCredential profileCredential={profileCredential} key={profileCredential} userId={userId} />
                                             <Description description={description} key={description} userId={userId} />
-                                            <FollowerCount followers={followers} key={followers}/>
+                                            <FollowerCount followers={followers} key={followers} />
 
                                         </Col>
                                     </>
@@ -96,7 +109,7 @@ class Profile extends Component {
                                 !loading ?
                                     <>
                                         <CredentialAndHighlights
-                                        userId={userId}
+                                            userId={userId}
                                             education={education}
                                             employment={employment}
                                             location={location}
@@ -117,6 +130,7 @@ class Profile extends Component {
                                         <KnowsAbout
                                             topic={topic}
                                             key={topic}
+                                            userId={userId}
                                         />
                                     </>
                                     :
