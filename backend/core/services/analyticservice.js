@@ -3,11 +3,15 @@ var questions = ["Why is Wednesday spelled Wednesday", "Can you ever really be f
 var timeModel = require('./../models/timemodel');
 let answerModel = require("../models/answermodel")
 let questionModel = require("../models/questionmodel")
+let profileViewModel = require("../models/profileviewmodel")
 module.exports = {
     getAnswers: (req, res, next) => {
+        console.log(req.user,"stats")
         let limit = parseInt(req.query.top || 10);
         let sort = req.query.sort || "noOfTimesviewed";
-        answerModel.find({}).select({
+        answerModel.find({
+            userId : (req.user||{}).userId
+        }).select({
             answerId: 1,
             questionId: 1,
             answer: 1,
@@ -47,14 +51,17 @@ module.exports = {
         let days = parseInt(req.query.days || 30);
         startDate = Date.now() - ((days * 24) * 60 * 60 * 1000);
         startDate = new Date(startDate).setHours(0, 0, 0, 0);
-        profileViewModel.find({
+        let search = {};
+        search = {
             userId: (req.params || {}).answerId || null,
             frequency: "day",
             feature: "answerview",
             timestamp: {
                 $gte: new Date(startDate)
             }
-        }).sort({
+        };
+        console.log("SEARCHING FOR",search)
+        profileViewModel.find(search).sort({
             timestamp: 1
         }).select({
             timestamp: 1,
