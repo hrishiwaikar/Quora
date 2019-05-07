@@ -14,19 +14,24 @@ const { Title, Text } = Typography;
 
 export class TestDisplayQuestion extends Component {
 
+    handleRedirection = (questionId) => {
+        // this.props.history.push('/question/' + questionId);
+        window.open('/question/' + questionId);
+    }
+
     render = () => {
         let { data } = this.props;
         console.log('Render of test');
-        let questions = [
+        data = [
             {
-                questionId: '1031390ABC',
+                questionId: 'ba20d1d0-706d-11e9-aa18-2d2b40f23af0',
                 questionText: 'What is the first thing a child learns as it comes out of the womb?',
                 hasAnswer: true,
                 noOfAnswers: 10,
                 answerId: 1,
-                answererProfileImage: "https://qph.fs.quoracdn.net/main-thumb-16193221-200-EO9EO7XcPOETr1ZfTiWvDKKVxqAzgtzG.jpeg",
+                answererName: 'Roger Scott',
                 isAnonymous: false, // is the answerer anonymous
-                profileCredential: "Roger Scott, Product Architect at GammaTech, Inc. (2015-present)", // profile credential of answerer
+                profileCredential: "Product Architect at GammaTech, Inc. (2015-present)", // profile credential of answerer
                 createdAt: '2018-04-10T10:20:30Z', // answer created date time 
                 answererId: 21, // answerer user id
                 answerText: "As an engineer, I like to build things. I’m also not very patient. Programming is then a good occupation because I can build interesting things that work much more quickly (and cheaply, at least in terms of materials) than I would be able to do in pretty much any other engineering discipline. I also like to help other people (you know, the whole messiah complex thing ;->), so seeing my work used by others is gratifying.",
@@ -45,9 +50,9 @@ export class TestDisplayQuestion extends Component {
                 hasAnswer: false,
                 noOfAnswers: 150,
                 answerId: 1,
-                answererProfileImage: "https://qph.fs.quoracdn.net/main-thumb-19904714-200-uwrpnqdikmuzquejfxjkxurnvwytrqhs.jpeg",
+                answererName: 'Roger Scott',
                 isAnonymous: false, // is the answerer anonymous
-                profileCredential: "Roger Scott, Product Architect at GammaTech, Inc. (2015-present)", // profile credential of answerer
+                profileCredential: "Product Architect at GammaTech, Inc. (2015-present)", // profile credential of answerer
                 createdAt: '2018-04-10T10:20:30Z', // answer created date time 
                 answererId: 21, // answerer user id
                 answerText: "As an engineer, I like to build things. I’m also not very patient. Programming is then a good occupation because I can build interesting things that work much more quickly (and cheaply, at least in terms of materials) than I would be able to do in pretty much any other engineering discipline. I also like to help other people (you know, the whole messiah complex thing ;->), so seeing my work used by others is gratifying.",
@@ -67,7 +72,7 @@ export class TestDisplayQuestion extends Component {
                 return (
                     <Row className="paddingTop-l marginTop-l">
                         <Col span={24} >
-                            <DisplayQuestion data={question} />
+                            <DisplayQuestion data={question} handleRedirection={this.handleRedirection} />
                         </Col>
                     </Row>
                 )
@@ -79,11 +84,14 @@ export class TestDisplayQuestion extends Component {
 
 class DisplayQuestion extends Component {
 
+
+
     render = () => {
         console.log('Render of display question ');
         let data = this.props.data;
         return (
-            <>
+            <Row className="pointer" onClick={() => { this.props.handleRedirection(data.questionId) }}>
+
                 <Row>
                     <Title level={4} className="quora_question_text">{data.questionText}</Title>
                 </Row>
@@ -96,7 +104,7 @@ class DisplayQuestion extends Component {
                     null
                 } */}
 
-            </>
+            </Row>
         );
     }
 }

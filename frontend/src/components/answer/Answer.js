@@ -32,14 +32,23 @@ export class Answer extends Component {
         let answer_comments = null;
 
         if (data.comments !== null && data.comments !== undefined) {
+            console.log('Data is not null');
             answer_comments = data.comments;
         }
-        answer_comments = comments;
+        // answer_comments = comments;
         console.log('Answer comments ', answer_comments);
+
+        let userName = '';
+
+        if (this.props.thisUserData !== undefined && this.props.thisUserData !== null) {
+            userName = this.props.thisUserData.userName;
+        } else if (data.hasOwnProperty('answererName')) {
+            userName = data.answererName;
+        }
         return (
             <div className="AnswerBase">
                 <Row>
-                    <AnswererInfo answererId={data.answererId} profileCredential={data.profileCredential} answerDate={data.createdAt} cant_follow={cant_follow} />
+                    <AnswererInfo answererId={data.answererId} userName={userName} profileCredential={data.profileCredential} answerDate={data.createdAt} cant_follow={cant_follow} isAnonymous={data.isAnonymous} />
                 </Row>
                 <Row>
                     <AnswerText data={data} />
@@ -50,7 +59,7 @@ export class Answer extends Component {
                 {showComments === true
                     ?
                     <Row>
-                        <CommentFull comments={answer_comments} thisUserData={this.props.thisUserData} />
+                        <CommentFull answerId={data.answerId} comments={answer_comments} thisUserData={this.props.thisUserData} />
                     </Row>
                     :
                     null
@@ -83,6 +92,7 @@ export class AnswererInfo extends Component {
         // let data = this.props.data;
         let answererId = this.props.answererId;
         let profileCredential = this.props.profileCredential;
+        let userName = this.props.userName;
         let answerDate = this.props.answerDate;
         var date = null;
         if (answerDate !== undefined && answerDate !== null) {
@@ -91,8 +101,8 @@ export class AnswererInfo extends Component {
         }
 
         let cant_follow = this.props.cant_follow;
-        let image_src = 'http://10.0.0.86:7836/v1/users/' + answererId + '/image/';
-
+        // let image_src = 'http://10.0.0.86:7836/v1/users/' + answererId + '/image/';
+        let image_src = '/users/' + answererId + '/image/';
         // image_src = "https://qph.fs.quoracdn.net/main-thumb-16193221-200-EO9EO7XcPOETr1ZfTiWvDKKVxqAzgtzG.jpeg"
 
         let userIsFollowingAnswerer = this.state.userIsFollowingAnswerer;
@@ -101,12 +111,26 @@ export class AnswererInfo extends Component {
             <>
                 <Row className="text_color_black paddingTop-s paddingBottom-s" gutter={16} type="flex" justify="space-around" align="middle">
                     <Col span={2}>
-                        <Avatar size="large" src={image_src} />
+                        {this.props.isAnonymous === true
+                            ?
+                            <Avatar size="large" />
+                            :
+                            <Avatar size="large" src={image_src} />
+                        }
+
                     </Col>
                     <Col span={19}>
-                        <Row type="flex" justify="start" align="top">
-                            {profileCredential}
-                        </Row>
+                        {this.props.isAnonymous === true
+                            ?
+                            <Row type="flex" justify="start" align="top">
+                                Anonymous
+                            </Row>
+                            :
+                            <Row type="flex" justify="start" align="top">
+                                {userName}, {profileCredential}
+                            </Row>
+                        }
+
                         {date !== null ?
                             <Row>
                                 <Text className="font_size_xs text_color_quora_faint_text" disabled>Answered {date}</Text>
@@ -213,13 +237,13 @@ class VotingAndBookMark extends Component {
         //     .catch(error => {
         //         console.log('Error msg ', error.response.data);
         //     });
-
+        let answerId = this.props.data.answerId;
         let data = {
             "isUpvote": updatedUpvoteStatus,
-            "answerId": this.props.data.answerId
+            "answerId": answerId
         }
 
-        post('v1/answers/vote', data, (response) => {
+        post('/answers/' + answerId + '/vote', data, (response) => {
             console.log('sUCEESSFULL UPVOTE CHANGE ', response.data);
 
             // In success
@@ -250,14 +274,15 @@ class VotingAndBookMark extends Component {
         let userDownvoted = this.state.userDownvoted;
 
         let updatedDownVoteStatus = !userDownvoted;
+        let answerId = this.props.data.answerId;
 
         let data = {
             "isDownvote": updatedDownVoteStatus,
-            "answerId": this.props.data.answerId
+            "answerId": answerId
         }
 
-        post('v1/answers/vote', data, (response) => {
-            console.log('sUCEESSFULL UPVOTE CHANGE ', response.data);
+        post('/answers/' + answerId + '/vote', data, (response) => {
+            console.log('sUCEESSFULL dowbvote CHANGE ', response.data);
 
             component.setState({
                 userDownvoted: updatedDownVoteStatus
@@ -274,14 +299,14 @@ class VotingAndBookMark extends Component {
     handleBookMarking = () => {
         let component = this;
         let updatedBookMarkStatus = !this.state.userBookmarked;
-
+        let answerId = this.props.data.answerId;
         // Make an api call
         let data = {
             "isBookmark": updatedBookMarkStatus,
-            "answerId": this.props.data.answerId
+            "answerId": answerId
         };
 
-        post('v1/answers/bookmark', data, () => {
+        post('/answers/' + answerId + '/bookmark', data, () => {
             component.setState({
                 userBookmarked: updatedBookMarkStatus
             })
@@ -292,7 +317,7 @@ class VotingAndBookMark extends Component {
 
     render = () => {
 
-
+        console.log('User has downvoted ', this.props.data.userDownvoted);
         return (
             <>
                 <Row className="marginTop-m" gutter={16}>
@@ -332,87 +357,6 @@ class VotingAndBookMark extends Component {
 
 
 
-
-class CommentComponentClass extends React.Component {
-    state = {
-        comment_upvotes: 0,
-        comment_downvotes: 0,
-        action: null,
-    }
-
-    like = () => {
-        this.setState({
-            comment_upvotes: 1,
-            comment_downvotes: 0,
-            action: 'comment_upvoted',
-        });
-    }
-
-    dislike = () => {
-        this.setState({
-            comment_upvotes: 0,
-            comment_downvotes: 1,
-            action: 'comment_downvoted',
-        });
-    }
-
-    render() {
-        const { comment_upvotes, comment_downvotes, action } = this.state;
-
-        const actions = [
-            <span>
-                <Tooltip title="Upvote">
-                    <Icon
-                        type="like"
-                        theme={action === 'comment_upvoted' ? 'filled' : 'outlined'}
-                        onClick={this.like}
-                    />
-                </Tooltip>
-                <span style={{ paddingLeft: 8, cursor: 'auto' }}>
-                    {comment_upvotes}
-                </span>
-            </span>,
-            <span>
-                <Tooltip title="Downvote">
-                    <Icon
-                        type="dislike"
-                        theme={action === 'comment_downvoted' ? 'filled' : 'outlined'}
-                        onClick={this.dislike}
-                    />
-                </Tooltip>
-                <span style={{ paddingLeft: 8, cursor: 'auto' }}>
-                    {comment_downvotes}
-                </span>
-            </span>,
-            <span style={{ marginTop: 0, marginBottom: 0 }}>Reply to</span>,
-        ];
-
-        return (
-            <Comment
-                actions={actions}
-                author={<a>Han Solo</a>}
-                avatar={(
-                    <Avatar
-                        src="https://zos.alipayobjects.com/rmsportal/ODTLcjxAfvqbxHnVXCYX.png"
-                        alt="Han Solo"
-                    />
-                )}
-                content={(
-                    <p>We supply a series of design principles, practical patterns and high quality design resources (Sketch and Axure), to help people create their product prototypes beautifully and efficiently.</p>
-                )}
-                datetime={(
-                    <Tooltip title={moment().format('YYYY-MM-DD HH:mm:ss')}>
-                        <span>{moment().fromNow()}</span>
-                    </Tooltip>
-                )}
-            >
-            </Comment>
-        );
-    }
-}
-
-
-
 class TextEditor extends Component {
 
     state = {
@@ -428,9 +372,7 @@ class TextEditor extends Component {
     onSubmit = () => {
         console.log('IN ON SUBMIT ');
         let thisUserData = this.props.thisUserData;
-        //updateComments =  (new_comment_text, userId, profileCredential, profileImage, parentCommentId) => {
-        console.log('COmment id ', this.props.commentId);
-        this.props.updateComments(this.state.value, thisUserData.userId, thisUserData.profileCredential, thisUserData.profileImage, this.props.commentId);
+        this.props.updateComments(this.state.value, thisUserData.userId, thisUserData.profileCredential, thisUserData.userName, this.props.commentId);
         this.props.handleCommentReply();
     }
     render = () => {
@@ -439,7 +381,7 @@ class TextEditor extends Component {
         let thisUserData = this.props.thisUserData;
         return (<>
             <div>
-                <AnswererInfo answererId={thisUserData.userId} profileCredential={thisUserData.profileCredential} cant_follow={false} />
+                <AnswererInfo answererId={thisUserData.userId} userName={thisUserData.userName} profileCredential={thisUserData.profileCredential} cant_follow={false} />
                 <Form.Item style={{ marginBottom: 5 }}>
                     <TextArea placeholder="Add a comment..." autosize={{ minRows: 1, maxRows: 6 }} onChange={this.onChange} value={this.state.value} />
                 </Form.Item>
@@ -473,14 +415,15 @@ class CommentComponent extends Component {
 
     render = () => {
         let props = this.props;
+        let image_src = '/users/' + props.comment.userId + '/image/';
         return (<Comment
             actions={[<span onClick={() => { this.handleCommentReply(props.comment) }} style={{ marginBottom: 0 }}>Reply to</span>]}
-            author={<a>{props.comment.profileCredential}</a>}
+            author={<a>{props.comment.userName}</a>}
             style={{ marginTop: '10px', marginBottom: 0, paddingTop: '0px', paddingBottom: '0px' }}
             avatar={(
                 <Avatar
-                    src={props.comment.profileImage}
-                    alt={props.comment.profileCredential}
+                    src={image_src}
+                    alt={props.comment.userName}
                 />
             )}
             content={<>{props.comment.commentText}
@@ -548,13 +491,6 @@ class CommentFull extends Component {
         }
 
         console.log('Found comment: ', found_child.commentText)
-        // let new_comment = {
-        //     commentText: new_comment_text,
-        //     profileCredential: profileCredential,
-        //     profileImage: profileImage,
-        //     comments: {}
-        // }
-
         if (new_comment !== null) {
             var new_id_index = Object.keys(found_child.comments).length;
 
@@ -567,23 +503,49 @@ class CommentFull extends Component {
         }
 
         console.log('Search object finally ', original_comments);
-        this.setState({
-            comments: original_comments
-        })
+        // this.setState({
+        //     comments: original_comments
+        // })
+
+        return original_comments
     }
 
 
-    updateComments = (new_comment_text, userId, profileCredential, profileImage, parentCommentId) => {
+    updateComments = (new_comment_text, userId, profileCredential, userName, parentCommentId) => {
         console.log('In update comments');
-
+        let component = this;
         let new_comment = {
             commentText: new_comment_text,
+            userName: userName,
             profileCredential: profileCredential,
-            profileImage: profileImage,
+            userId: userId,
             comments: {}
         }
         // console.log('nEW COMMENT ', new_comment, ' ', typeof parentCommentId, ' ', parentCommentId)
-        this.parseComments(parentCommentId, new_comment)
+        let updated_comments = this.parseComments(parentCommentId, new_comment)
+        console.log('Posting updated  comments ', updated_comments);
+
+        // api call answer id,
+        let post_data = {
+            'comments': updated_comments,
+            'answerId': this.props.answerId
+        }
+
+        console.log('Post data for comments ', post_data);
+        post('/answers/' + this.props.answerId + '/comments', post_data, (response) => {
+
+            // do in success
+            component.setState({
+                comments: updated_comments,
+                showButton: false,
+                answer_comment: null,
+                view_comments: true
+            });
+
+        }, () => { console.log('Error postging comment '); })
+        // updated comment
+
+        // make api call here
     }
 
     commentGenerator = (simple_comment_id, comment, thisUserData, updateComments) => {
@@ -622,20 +584,37 @@ class CommentFull extends Component {
 
         let new_comment = {
             commentText: new_answer_comment,
+            userName: thisUserData.userName,
             profileCredential: thisUserData.profileCredential,
-            profileImage: thisUserData.profileImage,
+            userId: thisUserData.userId,
             comments: {}
         }
         let update = {};
-        update[comments.length] = new_comment
+        update[Object.keys(comments).length] = new_comment
         let updated_comments = Object.assign({}, comments, update);
-        // do in success
-        this.setState({
-            comments: updated_comments,
-            showButton: false,
-            answer_comment: null,
-            view_comments: true
-        });
+
+
+        // api call answer id,
+        let post_data = {
+            'comments': updated_comments,
+            'answerId': this.props.answerId
+        }
+
+        console.log('Post data for comments ', post_data);
+        post('/answers/' + this.props.answerId + '/comments', post_data, (response) => {
+
+            // do in success
+            this.setState({
+                comments: updated_comments,
+                showButton: false,
+                answer_comment: null,
+                view_comments: true
+            });
+
+        }, () => { console.log('Error postging comment '); })
+        // updated comment
+
+
     }
 
     handleShowComments = () => {
@@ -846,12 +825,6 @@ let outer_parseComments = (search_id, new_comment) => {
     }
 
     console.log('Found comment: ', found_child.commentText)
-    // let new_comment = {
-    //     commentText: new_comment_text,
-    //     profileCredential: profileCredential,
-    //     profileImage: profileImage,
-    //     comments: {}
-    // }
 
     if (new_comment !== null) {
         var new_id_index = Object.keys(found_child.comments).length;

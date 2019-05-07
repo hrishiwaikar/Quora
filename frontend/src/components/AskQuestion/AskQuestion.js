@@ -77,21 +77,21 @@ export class AskQuestion extends React.Component {
         // get a list of topics
         let topics_data = []
         console.log('Getting topics');
-        get('/v1/topics', '', (response) => {
-            console.log('Res ', response);
-            console.log('res data ', response.data);
-            console.log('res data ', response.data.data);
+        get('/topics', '', (response) => {
+            // console.log('Res ', response);
+            // console.log('res data ', response.data);
+            // console.log('res data ', response.data.data);
             topics_data = response.data.data;
 
 
             let topics = [];
-            console.log('Topucs  data', topics_data);
+            // console.log('Topucs  data', topics_data);
             for (let i = 0; i < topics_data.length; i++) {
-                console.log(topics_data[i]);
-                topics.push(<Option key={topics_data[i].id}>{topics_data[i].topicText}</Option>);
+                // console.log(topics_data[i]);
+                topics.push(<Option key={topics_data[i].topicId}>{topics_data[i].topicText}</Option>);
             }
 
-            console.log('Topics ', topics);
+            // console.log('Topics ', topics);
 
 
             this.setState({
@@ -146,7 +146,7 @@ export class AskQuestion extends React.Component {
         }
 
 
-        post('/v1/questions', data, (response) => {
+        post('/questions', data, (response) => {
             console.log('Got succcesss response on posting question ', response);
             message.success('Posted question successfully');
             let questionId = response.data.data;
@@ -164,6 +164,7 @@ export class AskQuestion extends React.Component {
         let visible = this.props.visible;
         let userId = this.props.userId;
         let profileCredential = this.props.profileCredential;
+        let userName = this.props.userName;
 
         return (
             <div>
@@ -180,7 +181,7 @@ export class AskQuestion extends React.Component {
                         </Button>,
                     ]}
                 >
-                    <AnswererInfo profileImage={userId} profileCredential={profileCredential} cant_follow={true} />
+                    <AnswererInfo profileImage={userId} userName={userName} profileCredential={profileCredential} cant_follow={true} />
 
                     <TextArea size="large" onChange={(e) => { this.handleQuestionTextChange(e) }} placeholder='Start your question with "What","How","Why",etc.' className="quora_new_question_text marginTop-m no_border" value={this.state.questionText} />
 

@@ -7,7 +7,7 @@ import { post, get } from './../../api.js';
 import moment from 'moment';
 import ReactQuill from 'react-quill';
 import 'react-quill/dist/quill.snow.css';
-import { Typography, Avatar, Icon, Modal, Button, Skeleton, Spin, message } from 'antd';
+import { Typography, Avatar, Icon, Modal, Button, Skeleton, Spin, message, Checkbox } from 'antd';
 import { AskQuestion } from './../AskQuestion/AskQuestion.js';
 import './../../style.css';
 import { Answer, AnswererInfo } from './../answer/Answer.js';
@@ -39,144 +39,94 @@ class QuestionPage extends Component {
 
     getQuestionAndAnswers = () => {
         let component = this;
-        console.log('in get quesiton and answ ');
-        // let url = '/v1/questions/'
-        // // let question_id = '  977716b0-695d-11e9-99d1-6fafc8c77cbc';
-        // let question_id = this.props.match.params.id;
-        // console.log('question ID for get ', question_id);
-        // let onSuccess = (response) => {
-        //     console.log('gOT Response ', response);
-        //     console.log('Result : ', response.data.data);
-        //     component.setState({
-        //         result: response.data.data,
-        //         userHasAnswered: response.data.data.userHasAnswered,
-        //         userIsFollowingTheQuestion: response.data.data.userIsFollowingTheQuestion
-        //     });
+        let url = '/questions/'
+        // let question_id = '  977716b0-695d-11e9-99d1-6fafc8c77cbc';
+        let question_id = this.props.match.params.id;
+        console.log('question ID for get ', question_id);
+        let onSuccess = (response) => {
+            // console.log('gOT Response ', response);
+            console.log('Result : ', response.data.data);
+            let result = response.data.data;
+            let thisUserData = {
+                userName: result.userName,
+                profileCredential: result.profileCredential,
+                userId: result.userId
+            }
 
-        // }
+            component.setState({
+                result: result,
+                userHasAnswered: response.data.data.userHasAnswered,
+                userIsFollowingTheQuestion: response.data.data.userIsFollowingTheQuestion,
+                thisUserData: thisUserData
+            });
 
-        // let onFailure = (error) => {
-        //     console.log('Error msg ', error.response.data);
-        // }
-
-        // get(url, question_id, onSuccess, onFailure);
-
-        let result = {
-            questionId: 2,
-            questionText: "What's the most satisfying thing about working as a computer programmer?",
-            userIsFollowingTheQuestion: false,
-            profileImage: "https://qph.fs.quoracdn.net/main-thumb-19904714-200-uwrpnqdikmuzquejfxjkxurnvwytrqhs.jpeg",
-            profileCredential: "Hrishikesh Waikar, Love building systems that transform my surroundings.",
-            userId: '12345',
-            userHasAnswered: false,
-            followersCount: 10,
-            topics: ['Computer Science', 'Programming', 'Sc'],
-            answers: [
-                {
-                    answerId: 1,
-                    answererProfileImage: "https://qph.fs.quoracdn.net/main-thumb-16193221-200-EO9EO7XcPOETr1ZfTiWvDKKVxqAzgtzG.jpeg",
-                    isAnonymous: false,
-                    profileCredential: "Roger Scott, Product Architect at GammaTech, Inc. (2015-present)",
-                    createdAt: '2018-04-10T10:20:30Z',
-                    answererId: 21,
-                    answerText: "As an engineer, I like to build things. I’m also not very patient. Programming is then a good occupation because I can build interesting things that work much more quickly (and cheaply, at least in terms of materials) than I would be able to do in pretty much any other engineering discipline. I also like to help other people (you know, the whole messiah complex thing ;->), so seeing my work used by others is gratifying.",
-                    upvotes: 252,
-                    downvotes: 50,
-                    userUpvoted: false,
-                    userDownvoted: false,
-                    comments: [],
-                    userBookmarked: false,
-                    userIsFollowingAnswerer: false
-                },
-                {
-                    answerId: 2,
-                    answererProfileImage: "https://qph.fs.quoracdn.net/main-thumb-10469463-200-yI3VrWqmn4osoGyNMsImyZYll3lGGbNC.jpeg",
-                    isAnonymous: false,
-                    profileCredential: "Mason Porter, Professor, Department of Mathematics, UCLA",
-                    createdAt: '2017-02-17T10:20:30Z',
-                    answererId: 45,
-                    answerText: "Knowledge is not a scalar quantity, so I can’t answer this question in precisely the way that it was asked. (It is not well-defined in such broad, all-encompassing terms.) Obviously, for every student with whom I have ever interacted, there will exist a topic — presumably a large number of topics — about which they know more than me. Whether this topic has anything to do with, for example, a course that I am teaching is another story entirely. I have certainly had students who know more than me about specific topics, especially when I teach advanced courses (e.g., with Ph.D. students taking it). For example, I teach a graduate-level networks courses, and I expect the statistics Ph.D. students in it to know more about statistical methods than I do, as the focus of their studies is different from my main expertise. And when it comes to research advisees, I not only have had students who know more than me about many topics, I expect all such students — and I do mean literally all of them — to ultimately know their specific topics (e.g., of their dissertation or of the papers on which they are first author) better than I do. They are the ones leading the project, whereas I am the mentor. So, yes, in the senses that I indicated above, I have had numerous students who “know more” than I do.  Thanks for the A2A.",
-                    upvotes: 100,
-                    downvotes: 0,
-                    userUpvoted: true,
-                    userDownvoted: false,
-                    comments: [],
-                    userBookmarked: true,
-                    userIsFollowingAnswerer: true
-
-                }
-            ]
-        }
-        var delayInMilliseconds = 2000; //1 second
-
-        let thisUserData = {
-            profileName: 'Hrishikesh',
-            profileCredential: result.profileCredential,
-            userId: result.userId,
-            profileImage: result.profileImage
         }
 
-        setTimeout(function () {
-            //your code to be executed after 1 second
-            component.setState({ result: result, userHasAnswered: result.userHasAnswered, thisUserData: thisUserData });
-        }, delayInMilliseconds);
+        let onFailure = (error) => {
+            console.log('Error msg ', error.response.data);
+        }
+
+        get(url, question_id, onSuccess, onFailure);
+
+        // let result = {
+        //     questionId: 2,
+        //     questionText: "What's the most satisfying thing about working as a computer programmer?",
+        //     userIsFollowingTheQuestion: false,
+        //     profileCredential: "Hrishikesh Waikar, Love building systems that transform my surroundings.",
+        //     userId: '12345',
+        //     userHasAnswered: false,
+        //     followersCount: 10,
+        //     topics: ['Computer Science', 'Programming', 'Sc'],
+        //     answers: [
+        //         {
+        //             answerId: 1,
+        //             isAnonymous: false,
+        //             profileCredential: "Roger Scott, Product Architect at GammaTech, Inc. (2015-present)",
+        //             createdAt: '2018-04-10T10:20:30Z',
+        //             answererId: 21,
+        //             answerText: "As an engineer, I like to build things. I’m also not very patient. Programming is then a good occupation because I can build interesting things that work much more quickly (and cheaply, at least in terms of materials) than I would be able to do in pretty much any other engineering discipline. I also like to help other people (you know, the whole messiah complex thing ;->), so seeing my work used by others is gratifying.",
+        //             upvotes: 252,
+        //             downvotes: 50,
+        //             userUpvoted: false,
+        //             userDownvoted: false,
+        //             comments: [],
+        //             userBookmarked: false,
+        //             userIsFollowingAnswerer: false
+        //         },
+        //         {
+        //             answerId: 2,
+        //             isAnonymous: false,
+        //             profileCredential: "Mason Porter, Professor, Department of Mathematics, UCLA",
+        //             createdAt: '2017-02-17T10:20:30Z',
+        //             answererId: 45,
+        //             answerText: "Knowledge is not a scalar quantity, so I can’t answer this question in precisely the way that it was asked. (It is not well-defined in such broad, all-encompassing terms.) Obviously, for every student with whom I have ever interacted, there will exist a topic — presumably a large number of topics — about which they know more than me. Whether this topic has anything to do with, for example, a course that I am teaching is another story entirely. I have certainly had students who know more than me about specific topics, especially when I teach advanced courses (e.g., with Ph.D. students taking it). For example, I teach a graduate-level networks courses, and I expect the statistics Ph.D. students in it to know more about statistical methods than I do, as the focus of their studies is different from my main expertise. And when it comes to research advisees, I not only have had students who know more than me about many topics, I expect all such students — and I do mean literally all of them — to ultimately know their specific topics (e.g., of their dissertation or of the papers on which they are first author) better than I do. They are the ones leading the project, whereas I am the mentor. So, yes, in the senses that I indicated above, I have had numerous students who “know more” than I do.  Thanks for the A2A.",
+        //             upvotes: 100,
+        //             downvotes: 0,
+        //             userUpvoted: true,
+        //             userDownvoted: false,
+        //             comments: [],
+        //             userBookmarked: true,
+        //             userIsFollowingAnswerer: true
+
+        //         }
+        //     ]
+        // }
+        // var delayInMilliseconds = 2000; //1 second
+
+        // let thisUserData = {
+        //     profileName: 'Hrishikesh',
+        //     profileCredential: result.profileCredential,
+        //     userId: result.userId,
+        // }
+
+        // setTimeout(function () {
+        //     //your code to be executed after 1 second
+        //     component.setState({ result: result, userHasAnswered: result.userHasAnswered, thisUserData: thisUserData });
+        // }, delayInMilliseconds);
 
 
     }
 
-    getAnotherResult = () => {
-        let component = this;
-        let result = {
-            id: 2,
-            questionText: "What's the most satisfying thing about working as a computer programmer?",
-            userIsFollowingTheQuestion: false,
-            profileImage: "https://qph.fs.quoracdn.net/main-thumb-19904714-200-uwrpnqdikmuzquejfxjkxurnvwytrqhs.jpeg",
-            profileCredential: "Hrishikesh Waikar, Love building systems that transform my surroundings.",
-            userHasAnswered: false,
-            followersCount: 10,
-            answers: [
-                {
-                    id: 2,
-                    answererProfileImage: "https://qph.fs.quoracdn.net/main-thumb-10469463-200-yI3VrWqmn4osoGyNMsImyZYll3lGGbNC.jpeg",
-                    isAnonymous: false,
-                    profileCredential: "Daniel Dsouza, Professor, Department of Physics, UCSD",
-                    createdAt: '2017-02-17T10:20:30Z',
-                    answererId: 45,
-                    answerText: "Knowledge is not a scalar quantity, so I can’t answer this question in precisely the way that it was asked. (It is not well-defined in such broad, all-encompassing terms.) Obviously, for every student with whom I have ever interacted, there will exist a topic — presumably a large number of topics — about which they know more than me. Whether this topic has anything to do with, for example, a course that I am teaching is another story entirely. I have certainly had students who know more than me about specific topics, especially when I teach advanced courses (e.g., with Ph.D. students taking it). For example, I teach a graduate-level networks courses, and I expect the statistics Ph.D. students in it to know more about statistical methods than I do, as the focus of their studies is different from my main expertise. And when it comes to research advisees, I not only have had students who know more than me about many topics, I expect all such students — and I do mean literally all of them — to ultimately know their specific topics (e.g., of their dissertation or of the papers on which they are first author) better than I do. They are the ones leading the project, whereas I am the mentor. So, yes, in the senses that I indicated above, I have had numerous students who “know more” than I do.  Thanks for the A2A.",
-                    upvotes: 100,
-                    downvotes: 0,
-                    userUpvoted: true,
-                    userDownvoted: false,
-                    comments: null,
-                    userBookmarked: true
-
-                },
-                {
-                    id: 1,
-                    answererProfileImage: "https://qph.fs.quoracdn.net/main-thumb-16193221-200-EO9EO7XcPOETr1ZfTiWvDKKVxqAzgtzG.jpeg",
-                    isAnonymous: false,
-                    profileCredential: "Amadeus Mozart, Musician by choice",
-                    createdAt: '2018-04-10T10:20:30Z',
-                    answererId: 21,
-                    answerText: "As an engineer, I like to build things. I’m also not very patient. Programming is then a good occupation because I can build interesting things that work much more quickly (and cheaply, at least in terms of materials) than I would be able to do in pretty much any other engineering discipline. I also like to help other people (you know, the whole messiah complex thing ;->), so seeing my work used by others is gratifying.",
-                    upvotes: 252,
-                    downvotes: 50,
-                    userUpvoted: false,
-                    userDownvoted: false,
-                    comments: null,
-                    userBookmarked: false
-                },
-
-            ]
-        }
-        var delayInMilliseconds = 2000; //1 second
-
-        setTimeout(function () {
-            //your code to be executed after 1 second
-            component.setState({ result: result, userHasAnswered: result.userHasAnswered });
-        }, delayInMilliseconds);
-
-    }
 
     getRelatedQuestions = () => {
         let related_questions = [
@@ -220,10 +170,11 @@ class QuestionPage extends Component {
     }
 
     handleShowAddQuestion = (newQuestionId = null) => {
+        // console.log('IN SHOW ADD QUESTION');
         this.setState({
             addQuestion: !this.state.addQuestion
         })
-        console.log('New question ', newQuestionId);
+        // console.log('New question ', newQuestionId);
         if (newQuestionId !== undefined && newQuestionId !== null) {
             this.props.history.push('/question/' + newQuestionId);
             window.location.reload();
@@ -252,7 +203,7 @@ class QuestionPage extends Component {
 
         console.log('DataBoyyy  ', data);
 
-        post('/v1/answers', data, (response) => {
+        post('/answers', data, (response) => {
             console.log('pOSTED SUCCESSFULLY ')
             console.log('gOT Response ', response);
             console.log('Result : ', response.data.data);
@@ -292,12 +243,13 @@ class QuestionPage extends Component {
         let component = this;
         let userIsFollowingTheQuestion = this.state.userIsFollowingTheQuestion;
         let update = !userIsFollowingTheQuestion;
+        let questionId = this.state.result.questionId;
         let data = {
             "isFollow": update,
-            "questionId": this.state.result.questionId
+            "questionId": questionId
         }
 
-        post('/v1/questions/follow', data, (response) => {
+        post('/questions/' + questionId + '/follow/', data, (response) => {
             console.log('got success in fpollow ');
             component.setState({
                 userIsFollowingTheQuestion: update
@@ -312,11 +264,17 @@ class QuestionPage extends Component {
         this.props.history.push('/question/' + questionId);
     }
 
+    onAnonymousChange = () => {
+        console.log('In onchange anonymou');
+        this.setState({
+            isAnonymous: !this.state.isAnonymous
+        })
+    }
 
     render = () => {
         let result = this.state.result;
-        console.log('Result in render ', result);
-        // console.log('Answer ', this.state.new_answer);
+        // console.log('Result in render ', result);
+        console.log('Is anonymous ', this.state.isAnonymous);
         return (
             <div>
                 <Row className="marginTop-l text_color_black">
@@ -351,7 +309,7 @@ class QuestionPage extends Component {
 
                             <>
                                 <Row className="bg_color_light_gray paddingLeft-s marginTop-m">
-                                    <AnswererInfo profileImage={result.userId} profileCredential={result.profileCredential} cant_follow={true} />
+                                    <AnswererInfo answererId={result.userId} userName={this.state.thisUserData.userName} profileCredential={result.profileCredential} cant_follow={true} />
                                 </Row>
                                 <Row style={{ paddingBottom: 48, marginBottom: 27 }} className="marginBottom-l">
 
@@ -367,6 +325,9 @@ class QuestionPage extends Component {
                                     <Col><Button type="primary" size="small" className="quora_button_blue pointer" onClick={this.handleSubmitAnswer}>
                                         Submit
                                     </Button></Col>
+                                    <Col offset={1}>
+                                        <Checkbox className="" onChange={this.onAnonymousChange} value={this.state.isAnonymous}>Answer Anonymously</Checkbox>
+                                    </Col>
                                 </Row>
                             </>
                             :
@@ -393,7 +354,7 @@ class QuestionPage extends Component {
                                 ?
                                 result.answers.map((answer) => {
                                     return (
-                                        <Answer data={answer} new_answer={this.state.new_answer} thisUserData={this.state.thisUserData} />
+                                        <Answer data={answer} thisUserData={this.state.thisUserData} />
                                     )
                                 })
                                 :
@@ -424,7 +385,7 @@ class QuestionPage extends Component {
                             <Button shape="round" icon="plus" size="small" className="no_border text_color_quora_blue font_bold pointer" style={{ paddingLeft: 0, fontSize: 13 }} onClick={() => { this.handleShowAddQuestion() }}>Ask New Question</Button>
                             {result !== null
                                 ?
-                                <AskQuestion handleShowAddQuestion={this.handleShowAddQuestion} visible={this.state.addQuestion} userId={result.userId} profileCredential={result.profileCredential} />
+                                <AskQuestion handleShowAddQuestion={this.handleShowAddQuestion} visible={this.state.addQuestion} userId={result.userId} userName={this.state.thisUserData.userName} profileCredential={result.profileCredential} />
                                 :
                                 null
                             }
