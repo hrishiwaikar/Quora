@@ -188,6 +188,7 @@ let service = {
                         if (push) {
                             _topics.push(dbObj)
                         }
+                        redis.hdel("USERS", userId).then(() => {}).catch(() => {})
                         return userModel.findOneAndUpdate({
                             userId: userId
                         }, {
@@ -239,6 +240,7 @@ let service = {
                         if (_f >= 0) {
                             _topics.splice(_f,1)
                         }
+                        redis.hdel("USERS", userId).then(() => {}).catch(() => {})
                         return userModel.findOneAndUpdate({
                             userId: userId
                         }, {
