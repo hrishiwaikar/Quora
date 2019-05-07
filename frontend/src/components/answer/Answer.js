@@ -179,6 +179,15 @@ export class AnswererInfo extends Component {
         // let data = this.props.data;
         let answererId = this.props.answererId;
         let profileCredential = this.props.profileCredential;
+        console.log('prof ', profileCredential);
+        if (profileCredential === null || profileCredential === undefined || profileCredential === "" || profileCredential === "null") {
+            profileCredential = "";
+        } else {
+            profileCredential = ", " + profileCredential;
+        }
+
+        console.log('prof cred ', profileCredential);
+
         let userName = this.props.userName;
         let answerDate = this.props.answerDate;
         var date = null;
@@ -214,7 +223,7 @@ export class AnswererInfo extends Component {
                             </Row>
                             :
                             <Row type="flex" justify="start" align="top">
-                                {userName}, {profileCredential}
+                                {userName} {profileCredential}
                             </Row>
                         }
 

@@ -4,9 +4,10 @@ import { withRouter } from 'react-router-dom';
 import logo from '../../assets/quora-logo.png';
 import './Navbar.css';
 import URL from '../../constants';
-
+import Search from './../Search/Search.js';
 import Notification from '../Notification/Notification';
-import { AskQuestion } from './../AskQuestion/AskQuestion.js'
+import { AskQuestion } from './../AskQuestion/AskQuestion.js';
+
 
 const SubMenu = Menu.SubMenu;
 const MenuItemGroup = Menu.ItemGroup;
@@ -99,7 +100,7 @@ class Navbar extends Component {
                             content={<Notification handleItemClick={this.handleVisibleChange} />}
                             trigger="click">
                             {/* <Menu.Item key="notification"> */}
-                                <Icon type="bell" />Notification
+                            <Icon type="bell" />Notification
                             {/* </Menu.Item> */}
                         </Popover>
 
@@ -108,10 +109,7 @@ class Navbar extends Component {
 
 
                     <Menu.Item className="navbar-search" disabled>
-                        <Input
-                            placeholder="Search Quora"
-                            prefix={<Icon type="search" style={{ color: 'rgba(0,0,0,.25)' }} />}
-                        />
+                        <Search />
                     </Menu.Item>
                     <SubMenu title={<span className="submenu-title-wrapper">
                         <img src={profileImage} className="navbar-profile" alt="profile" /></span>}>
