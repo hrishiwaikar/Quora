@@ -159,15 +159,17 @@ module.exports = {
         return new Promise((resolve, reject) => {
             let promiseToCall = (obj) => {
                 return new Promise((resolve2, reject2) => {
+                    obj.timestamp = obj.timestamp || Date.now();
+                    obj.timestamp = new Date(obj.timestamp).setSeconds(0, 0);
                     profileViewModel.findOneAndUpdate({
                         feature: "profileview",
                         timestamp: obj.timestamp,
-                        frequency: obj.frequency,
+                        frequency: "day",
                         userId: obj.userId,
                     }, {
                         feature: "profileview",
                         timestamp: obj.timestamp,
-                        frequency: obj.frequency,
+                        frequency: "day",
                         userId: obj.userId,
                         $inc: {
                             count: 1

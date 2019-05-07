@@ -5,7 +5,7 @@ let answerModel = require("../models/answermodel")
 module.exports = {
     getAnswers: (req, res, next) => {
         let limit = parseInt(req.query.top || 10);
-        let sort = req.query.sort || "views";
+        let sort = req.query.sort || "noOfTimesviewed";
         answerModel.findMany({}).select({
             answerId: 1,
             questionId: 1,
@@ -57,6 +57,35 @@ module.exports = {
             },
             data: obj
         });
+    },
+    getProfileViews: (req, res, next) => {
+        let days = parseInt(req.query.days || 30);
+        startDate = Date.now() - ((days * 24) * 60 * 60 * 1000);
+        startDate = new Date(startDate).setHours(0, 0, 0, 0);
+        profileViewModel.find({
+            userId: (req.user || {}).userId || null,
+            frequency: "day",
+            feature: "profileview",
+            timestamp: {
+                $gte: new Date(startDate)
+            }
+        }).sort({
+            timestamp: 1
+        }).select({
+            timestamp: 1,
+            count: 1
+        }).then((data) => {
+            res.json({
+                result: "success",
+                response: {
+                    message: "Data fetched Successfully",
+                    code: "DATA"
+                },
+                data: data
+            });
+        }).catch((err) => {
+            next(err)
+        })        
     },
     getViews: (req, res, next) => {
         try {
