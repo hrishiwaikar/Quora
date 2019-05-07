@@ -109,6 +109,11 @@ module.exports = (express) => {
         versionRouter.delete('/topics/:questionId', jwt.verifyRequest, topicservice.delete);
         /* Topic Routes */
 
+        /* question related to topic*/
+        versionRouter.get('/topicQuestions', jwt.verifyRequest, questionservice.questionsRelatedToTopic); //user related topic questions as well as any topic question
+        /* question related to topic*/
+        
+
         return versionRouter;
     } catch (error) {
         console.error(error)

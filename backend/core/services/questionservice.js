@@ -12,6 +12,29 @@ let answerDownvotesModel = require("../models/answerdownvotesmodel")
 let answerBookmarkModel = require("../models/answerbookmarkmodel")
 let questionFollowModel = require("../models/questionfollowmodel")
 
+
+let questionCommonAttributes = (_session,questionObj) => {
+    return new Promise(async function (resolve, reject) {
+        let temp = {}
+        temp["questionId"] = questionObj.questionId
+        temp["questionText"] = questionObj.questionText
+        temp['userIsFollowingTheQuestion'] = false
+        temp["createdAt"] = questionObj.createdAt
+        temp["updatedAt"] = questionObj.updatedAt
+        temp["followers"] = questionObj.followers
+        await questionFollowModel.findOne({userId:_session.userId,questionId:questionObj.questionId}).then((questionFollowObj) => {
+            if(questionFollowObj !== null){
+                temp['userIsFollowingTheQuestion'] = true
+            }
+        })
+        temp["noOfAnswers"] = 0
+        await answerModel.find({questionId:questionObj.questionId}).then((response) => {
+            temp["noOfAnswers"] = response.length
+        })
+        return resolve(temp)
+    });
+}
+
 let answerCommonAttributes = (_session,answerObj) => {
     return new Promise(async function (resolve, reject) {
         let temp_answer = {}
@@ -48,7 +71,7 @@ let answerCommonAttributes = (_session,answerObj) => {
         await userModel.findOne({userId:answerObj.userId}).then((answererObj)=>{
             // console.log("answerObj\n",answererObj)
             if (answererObj !== null){
-                temp_answer['name'] = answerObj.firstName + " "+answerObj.lastName
+                temp_answer['answererName'] = answerObj.firstName + " "+answerObj.lastName
                 temp_answer['profileCredential'] = answererObj.profileCredential
             }
         })
@@ -224,12 +247,11 @@ let service = {
                 let pagination_start_index = pagination_end_index - page_limit
                 /* pagination logic */
                 
-                console.log("topic--\n",topic)
                 let topicIdList = []
                 if(topic === null){
                     await userModel.findOne({userId:_session.userId})
                     .then((userObj) => {
-                        console.log("---user topics---\n",userObj)
+                        console.log("---user topics---\n",userObj) //vinit fix
                         for(let index=0;index<userObj.topic.length;index++){
                             console.log(userObj.topic[index])
                             topicIdList.push(userObj.topic[index].topicId)
@@ -289,22 +311,7 @@ let service = {
                     output["noOfQuestions"] = questionObjs.length;
                     for(let index=0;index<questionObjs.length;index++){
                         let questionObj = questionObjs[index]
-                        console.log(questionObj)
-                        let temp = {}
-                        temp["questionText"] = questionObj.questionText
-                        temp['userIsFollowingTheQuestion'] = false
-                        temp["createdAt"] = questionObj.createdAt
-                        temp["updatedAt"] = questionObj.updatedAt
-                        temp["followers"] = questionObj.followers
-                        await questionFollowModel.findOne({userId:_session.userId,questionId:questionObj.questionId}).then((questionFollowObj) => {
-                            if(questionFollowObj !== null){
-                                temp['userIsFollowingTheQuestion'] = true
-                            }
-                        })
-                        temp["noOfAnswers"] = 0
-                        await answerModel.find({questionId:questionObj.questionId}).then((response) => {
-                            temp["noOfAnswers"] = response.length
-                        })
+                        let temp = questionCommonAttributes(_session,questionObj)
                         output.push(temp)
                     }
                     return resolve(output)
@@ -424,6 +431,80 @@ let service = {
                             let temp = Object.assign({answered:false},questionObjs[index]._doc)
                             output.push(temp)
                         }
+                    }
+                    return resolve(output)
+                }).catch(reject);
+            }
+            catch (e) {
+                console.error(e)
+                return reject(e);
+            }
+        });
+    },
+    questionsRelatedToTopic : (...args) => {
+        return new Promise(async function (resolve, reject) {
+            try {
+                let output = []
+                let _session = args[0] || {};
+                let params = args[1] || 1;
+                let page_number = params['page']
+                let topic = params['topic']
+                let page_limit = 20
+                let pagination_end_index = page_number * page_limit
+                let pagination_start_index = pagination_end_index - page_limit
+
+                let topicIdList = []
+                if(topic === null){
+                    await userModel.findOne({userId:_session.userId})
+                    .then((userObj) => {
+                        console.log("---user topics---\n",userObj) //vinit fix
+                        for(let index=0;index<userObj.topic.length;index++){
+                            console.log(userObj.topic[index])
+                            topicIdList.push(userObj.topic[index].topicId)
+                        }
+                    }).catch(reject);
+                }
+                else{
+                    topicIdList.push(topic)
+                }
+                
+                console.log("List of topics---\n",topicIdList)
+
+                let dbQuery = {}
+                if(topicIdList.length > 0 ){
+                    dbQuery['topicsId'] = {"$in":topicIdList}
+                }   
+
+                //get list of questions answered by user
+                let userAnsweredQuestionList = []
+                await answerModel.find({userId:_session.userId}).distinct('questionId')
+                .then((questionIds) => {
+                    userAnsweredQuestionList = questionIds
+                }).catch(reject);
+
+                console.log("Lits of questions----\n",userAnsweredQuestionList)
+
+                if(userAnsweredQuestionList.length > 0){
+                    dbQuery['questionId'] = {"$nin":userAnsweredQuestionList}
+                }
+
+                console.log("-----dbQuery---",dbQuery)
+
+                await questionModel.find(dbQuery).sort('-createdAt').skip(pagination_start_index).limit(page_limit)
+                .then(async (questionObjs) => {
+                    for(let index=0;index<questionObjs.length;index++){
+                        let questionObj = questionObjs[index]
+                        let temp = await questionCommonAttributes(_session,questionObj)
+                        console.log(temp)
+                        temp['topics'] = []
+                        if (questionObj.topicsId.length > 0){
+                            for (let topicIndex=0;topicIndex<questionObj.topicsId.length;topicIndex++){
+                                await topicModel.findOne({topicId:questionObj.topicsId[topicIndex]}).then((topicObj) =>{
+                                    temp['topics'].push({"topicId":topicObj.topicId,"topicText":topicObj.topicText})
+                                })
+                            }
+                        }
+                        output.push(temp)
                     }
                     return resolve(output)
                 }).catch(reject);
@@ -567,6 +648,22 @@ let router = {
         filters["order_direction"] = req.param('order_direction') ||  "newest_first";
         console.log(filters)
         service.userContentGet(req.user,filters).then(successCB, next);
+    },
+    questionsRelatedToTopic : (req, res, next) => {
+        let successCB = (data) => {
+            res.json({
+                result: "success",
+                response: [{
+                    message: "Questions related to topic",
+                    code: "READ"
+                }],
+                data: data
+            })
+        };
+        let params = {}
+        params['page'] = req.param('page') || 1;
+        params['topic'] = req.param('topic') || null
+        service.questionsRelatedToTopic(req.user,params).then(successCB, next);
     },
 };
 module.exports.service = service;
