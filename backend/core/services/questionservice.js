@@ -311,8 +311,13 @@ let service = {
             try {
                 let output = []
                 let _session = args[0] || {};
-                let page_number = args[1] || 1;
-                questionModel.find({userId:_session.userId}).sort('-createdAt').select({_id:0,"__v":0,topicsId:0})
+                let params = args[1] || {};
+                let page_number = params['page']
+                let page_limit = 20
+                let pagination_end_index = page_number * page_limit
+                let pagination_start_index = pagination_end_index - page_limit
+
+                questionModel.find({userId:_session.userId}).sort('-createdAt').select({_id:0,"__v":0,topicsId:0}).skip(pagination_start_index).limit(page_limit)
                 .then(async (questionObjs) => {
                     console.log(questionObjs)
                     // output["noOfQuestions"] = questionObjs.length;
@@ -335,8 +340,13 @@ let service = {
             try {
                 let output = []
                 let _session = args[0] || {};
-                let page_number = args[1] || 1;
-                answerModel.find({userId:_session.userId}).sort('-createdAt')
+                let params = args[1] || {};
+                let page_number = params['page']
+                let page_limit = 20
+                let pagination_end_index = page_number * page_limit
+                let pagination_start_index = pagination_end_index - page_limit
+
+                answerModel.find({userId:_session.userId}).sort('-createdAt').skip(pagination_start_index).limit(page_limit)
                 .then(async (answerObjs) => {
                     for(let index=0;index<answerObjs.length;index++){
                         let temp = await answerCommonAttributes(_session,answerObjs[index])
@@ -527,7 +537,13 @@ let service = {
             try {
                 let output = []
                 let _session = args[0] || {};
-                answerBookmarkModel.find({userId:_session.userId})
+                let params = args[1] || {};
+                let page_number = params['page']
+                let page_limit = 20
+                let pagination_end_index = page_number * page_limit
+                let pagination_start_index = pagination_end_index - page_limit
+
+                answerBookmarkModel.find({userId:_session.userId}).skip(pagination_start_index).limit(page_limit)
                 .then(async (answerBookmarkObjs) => {
                     console.log("----answerBookmarkObjs----\n",answerBookmarkObjs)
                     for(let index=0;index<answerBookmarkObjs.length;index++){
@@ -662,7 +678,9 @@ let router = {
                 data: data
             })
         };
-        service.userQuestionList(req.user,req.body).then(successCB, next);
+        let params = {}
+        params['page'] = req.param('page') || 1;
+        service.userQuestionList(req.user, params, req.body).then(successCB, next);
     },
     userAnswerList : (req, res, next) => {
         let successCB = (data) => {
@@ -675,7 +693,9 @@ let router = {
                 data: data
             })
         };
-        service.userAnswerList(req.user,req.body).then(successCB, next);
+        let params = {}
+        params['page'] = req.param('page') || 1;
+        service.userAnswerList(req.user,params,req.body).then(successCB, next);
     },
     userContentGet : (req, res, next) => {
         let successCB = (data) => {
@@ -722,7 +742,9 @@ let router = {
                 data: data
             })
         };
-        service.userBookmarkedAnswers(req.user,req.body).then(successCB, next);
+        let params = {}
+        params['page'] = req.param('page') || 1;
+        service.userBookmarkedAnswers(req.user,params,req.body).then(successCB, next);
     },
 };
 module.exports.service = service;

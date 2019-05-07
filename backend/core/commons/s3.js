@@ -9,8 +9,8 @@ let service = {};
 service.upCustom = (s3Params, s3Config) => {
     return new Promise(function (resolve, reject) {
         // do not require endpoints
-        delete s3Config.s3BucketEndpoint;
-        delete s3Config.endpoint;
+        // delete s3Config.s3BucketEndpoint;
+        // delete s3Config.endpoint;
         console.log(s3Params,s3Config)
         let AWS = require('aws-sdk');
         AWS.config.update(s3Config);
@@ -72,7 +72,7 @@ service.up = (source, destination, options) => {
             destination = path.normalize(destination);
             const s3Config = s3Conf || {};
             const s3Params = {
-                Bucket: "quoradotcom",
+                Bucket: "checkapp-dev",
                 Key: destination,
                 Body: source
             };
