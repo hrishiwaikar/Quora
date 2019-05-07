@@ -35,7 +35,7 @@ class YourContentLayout extends Component {
     state = {
         type: "all_types",
         year: "all_time",
-        sort: "newest_first"
+        order_direction: "newest_first"
     }
 
     setData = (filter, key) => {
@@ -66,16 +66,16 @@ class YourContentLayout extends Component {
 
     handleTypeClick = ({ key }) => {
         console.log(key)
-        const {sort, year } = this.state;
-        let filter = `content_types=${key}&sort=${sort}&year=${year}`;
+        const {order_direction, year } = this.state;
+        let filter = `content_types=${key}&order_direction=${order_direction}&year=${year}`;
 
         this.setData(filter, {
             type: key
         })
     }
     hanleYearClick = ({ key }) => {
-        const { sort, type } = this.state;
-        let filter = `content_types=${type}&sort=${sort}&year=${key}`;
+        const { order_direction, type } = this.state;
+        let filter = `content_types=${type}&order_direction=${order_direction}&year=${key}`;
 
         this.setData(filter, {
             year: key
@@ -84,15 +84,15 @@ class YourContentLayout extends Component {
 
     hanldeSortClick = ({ key }) => {
         console.log(key)
-        const { type, sort, year } = this.state;
-        let filter = `content_types=${type}&sort=${key}&year=${year}`;
+        const { type, order_direction, year } = this.state;
+        let filter = `content_types=${type}&order_direction=${key}&year=${year}`;
 
         this.setData(filter, {
-            sort: key
+            order_direction: key
         })
     }
     render() {
-        const { type, sort, year, data } = this.state;
+        const { type, order_direction, year, data } = this.state;
         return (
             <div className="your-content">
                 <Row gutter={16}>
@@ -126,7 +126,7 @@ class YourContentLayout extends Component {
                         <Divider />
                         <Menu
                             onClick={this.hanldeSortClick}
-                            defaultSelectedKeys={[sort]}
+                            defaultSelectedKeys={[order_direction]}
                             mode="inline"
                         >
                             <Menu.Item key="newest_first">Newest First</Menu.Item>

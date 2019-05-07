@@ -20,7 +20,10 @@ class Navbar extends Component {
         const { history } = this.props;
         if (key === "notification") return false;
         const userId = localStorage.getItem("userId");
-
+        if(key === 'logout') {
+            localStorage.clear();
+            return history.push('/login')
+        }
         this.setState({
             current: key,
         });
@@ -92,7 +95,7 @@ class Navbar extends Component {
                             <Menu.Item key="messages">Messages</Menu.Item>
                             <Menu.Item key="content">Your Content</Menu.Item>
                             <Menu.Item key="stats">Stats</Menu.Item>
-                            <Menu.Item key="settings">Logout</Menu.Item>
+                            <Menu.Item key="logout">Logout</Menu.Item>
                         </MenuItemGroup>
                     </SubMenu>
                     <Menu.Item className="navbar-button" disabled>

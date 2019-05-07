@@ -1,5 +1,5 @@
 import React, { Component } from 'react'
-import { Modal, List, Typography, Button, Avatar, Input, Icon } from 'antd';
+import { Modal, List, Typography, Button, Avatar, Input, Icon, Skeleton } from 'antd';
 import { withLastLocation } from 'react-router-last-location';
 import Chat from './Chat';
 import { call } from '../../api';
@@ -60,13 +60,15 @@ const axios = {
 class Thread extends Component {
   state = {
     visible: true,
-    conversation: {}
+    conversation: {},
+    loading: true
   }
 
 
 
   componentDidMount() {
     console.log(this.props.match.params.id)
+
     call({
       method: "get",
       url: `/conversations/${this.props.match.params.id}`
@@ -74,8 +76,10 @@ class Thread extends Component {
       .then(data => {
         const conversation = data.conversation;
         this.setState({
-          conversation
+          conversation,
+          loading: false
         })
+        this.scrollToBottom();
       })
       .catch(err => {
         console.log(err)
@@ -102,6 +106,7 @@ class Thread extends Component {
     this.setState({
       conversation
     })
+
     call({
       method: 'post',
       url: "/conversations/message",
@@ -109,6 +114,7 @@ class Thread extends Component {
     })
       .then(data => {
         console.log(data)
+        this.scrollToBottom();
       })
       .catch(err => {
         console.log(err)
@@ -129,8 +135,11 @@ class Thread extends Component {
     else
       this.props.history.go(-2);
   }
+  scrollToBottom = () => {
+    this.messagesEnd.scrollIntoView({ behavior: "smooth" });
+  }
   render() {
-    const { visible, conversation } = this.state;
+    const { visible, conversation, loading } = this.state;
     let conversationWithName;
     let messageList = [];
 
@@ -171,20 +180,31 @@ class Thread extends Component {
 
         >
           {
-            messageList.map((message, i) => (
-              <div key={i}>
-                <Chat
-                  _id={message._id}
-                  justifyContent={message.justifyContent}
-                  userId={message.profileImage}
-                  message={message.message}
-                  date={message.date}
-                />
-              </div>
 
-            ))
+            !loading ?
+              <>
+                {
+                  messageList.map((message, i) => (
+                    <div key={i}>
+                      <Chat
+                        _id={message._id}
+                        justifyContent={message.justifyContent}
+                        userId={message.profileImage}
+                        message={message.message}
+                        date={message.date}
+                      />
+                    </div>
+
+                  ))
+                }
+                <div style={{ float: "left", clear: "both" }}
+                  ref={(el) => { this.messagesEnd = el; }}>
+                </div>
+              </> :
+              <Skeleton active paragraph={{ rows: 9 }} />
 
           }
+
         </Modal>
       </div>
     )

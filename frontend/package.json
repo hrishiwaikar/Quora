@@ -40,5 +40,5 @@
       "last 1 safari version"
     ]
   },
-  "proxy": "http://10.0.0.86:7836/v1"
+  "proxy": "http://node-lb-1978766301.us-east-2.elb.amazonaws.com/v1"
 }
