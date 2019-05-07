@@ -139,6 +139,10 @@ export class AskQuestion extends React.Component {
             return;
         }
 
+        if (this.state.selected_topics.length < 1) {
+            message.error("Please select a topic");
+            return;
+        }
 
         let data = {
             questionText: this.state.questionText,

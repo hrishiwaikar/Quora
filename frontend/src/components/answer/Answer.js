@@ -648,13 +648,16 @@ class CommentFull extends Component {
 
 
     updateComments = (new_comment_text, userId, profileCredential, userName, parentCommentId) => {
+        let thisUserId = localStorage.getItem("userId");
+        let thisUserName = localStorage.getItem("userName");
+        let thisprofileCredential = localStorage.getItem("profileCredential");
         // console.log('In update comments');
         let component = this;
         let new_comment = {
             commentText: new_comment_text,
-            userName: userName,
-            profileCredential: profileCredential,
-            userId: userId,
+            userName: thisUserName,
+            profileCredential: thisprofileCredential,
+            userId: thisUserId,
             comments: {}
         }
         // console.log('nEW COMMENT ', new_comment, ' ', typeof parentCommentId, ' ', parentCommentId)
@@ -717,12 +720,15 @@ class CommentFull extends Component {
         let new_answer_comment = this.state.answer_comment;
         let thisUserData = this.props.thisUserData;
         let comments = this.state.comments;
+        let thisUserId = localStorage.getItem("userId");
+        let thisUserName = localStorage.getItem("userName");
+        let profileCredential = localStorage.getItem("profileCredential");
 
         let new_comment = {
             commentText: new_answer_comment,
-            userName: thisUserData.userName,
-            profileCredential: thisUserData.profileCredential,
-            userId: thisUserData.userId,
+            userName: thisUserName,
+            profileCredential: profileCredential,
+            userId: thisUserId,
             comments: {}
         }
         let update = {};
