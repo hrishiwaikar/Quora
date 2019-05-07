@@ -1,13 +1,21 @@
-import React, { Component } from "react";
+import React, {
+  Component
+} from "react";
 import "antd/dist/antd.css";
 import "./DashboardCharts.css";
 import axios from "axios";
-import { call } from "../../api";
+import {
+  call
+} from "../../api";
 
 import DashboardCharts from "./DashboardCharts";
 // import { Element } from "react-faux-dom";
 // import * as d3 from "d3";
-import { Row, Col, Select } from "antd";
+import {
+  Row,
+  Col,
+  Select
+} from "antd";
 
 class Dashboard extends Component {
   constructor(props) {
@@ -30,9 +38,9 @@ class Dashboard extends Component {
     //     }
     //   })
     call({
-      method: "get",
-      url: "/views?frequency=" + graphRange + "&type=" + graphType
-    })
+        method: "get",
+        url: "/views?frequency=" + graphRange + "&type=" + graphType
+      })
       .then(res => {
         // console.log("view response data", res.data.data.graphData);
 
@@ -41,7 +49,17 @@ class Dashboard extends Component {
         });
 
         let result1 = res.data.graphData.map((date, i) => {
-          return date["timestamp"];
+          if (graphRange == "hour") {
+            return new Date(date["timestamp"]).getHours() + " " + new Date(date["timestamp"]).getMinutes()
+          } else if (graphRange === "day") {
+            return new Date(date["timestamp"]).getHours()
+          } else if (graphRange === "week") {
+            return ((new Date(date["timestamp"]).getMonth() + 1) + "/" + new Date(date["timestamp"]).getDate())
+          } else if (graphRange === "month") {
+            return ((new Date(date["timestamp"]).getMonth() + 1) + "/" + new Date(date["timestamp"]).getDate())
+          }else{
+            return new Date(date["timestamp"]).toDateString();
+          }
         });
 
         //   console.log("result", result1);
@@ -62,12 +80,26 @@ class Dashboard extends Component {
   };
   makeAllGraph = value => {
     let graphRange = value;
-    let graphAttr = [
-      { graphRange: graphRange, graphType: "signin" },
-      { graphRange: graphRange, graphType: "signup" },
-      { graphRange: graphRange, graphType: "questions" },
-      { graphRange: graphRange, graphType: "answers" },
-      { graphRange: graphRange, graphType: "comments" }
+    let graphAttr = [{
+        graphRange: graphRange,
+        graphType: "signin"
+      },
+      {
+        graphRange: graphRange,
+        graphType: "signup"
+      },
+      {
+        graphRange: graphRange,
+        graphType: "questions"
+      },
+      {
+        graphRange: graphRange,
+        graphType: "answers"
+      },
+      {
+        graphRange: graphRange,
+        graphType: "comments"
+      }
     ];
 
     graphAttr.map((d, i) => {
@@ -79,8 +111,7 @@ class Dashboard extends Component {
   }
 
   render() {
-    let chartData = [
-      {
+    let chartData = [{
         name: "SignIn",
         color: "#ff6361",
         graphData: this.state.graphData["signin"],
@@ -120,48 +151,88 @@ class Dashboard extends Component {
 
     console.log(chartData);
 
-    return (
-      <Row
-        style={{
+    return ( <
+      Row style = {
+        {
           marginTop: "30px",
           marginLeft: "40px"
-        }}
-      >
-        <Row>
-          <Col span={24}>
-            <Col span={8}>
-              <h3 className="dashboardChartTitle">Dashboard</h3>
-            </Col>
-            <Col span={8} />
-            <Col span={8} style={{ float: "right", marginRight: "80px" }}>
-              <Select
-                defaultValue="hour"
-                style={{ width: 120 }}
-                onChange={this.makeAllGraph}
-                style={{ float: "right" }}
-              >
-                <Option value="hour">Hour</Option>
-                <Option value="day">Day</Option>
-                <Option value="week">Week</Option>
-                <Option value="month">Month</Option>
-                <Option value="year">Year</Option>
-              </Select>
-            </Col>
-          </Col>
-        </Row>
-        <Row>
-          {chartData.map((value, i) => (
-            <Col span={8}>
-              <DashboardCharts
-                name={value.name}
-                color={value.color}
-                graphData={value.graphData}
-                xAxis={value.xAxis}
-              />
-            </Col>
-          ))}
-        </Row>
-      </Row>
+        }
+      } >
+      <
+      Row >
+      <
+      Col span = {
+        24
+      } >
+      <
+      Col span = {
+        8
+      } >
+      <
+      h3 className = "dashboardChartTitle" > Dashboard < /h3> <
+      /Col> <
+      Col span = {
+        8
+      }
+      /> <
+      Col span = {
+        8
+      }
+      style = {
+        {
+          float: "right",
+          marginRight: "80px"
+        }
+      } >
+      <
+      Select defaultValue = "hour"
+      style = {
+        {
+          width: 120
+        }
+      }
+      onChange = {
+        this.makeAllGraph
+      }
+      style = {
+        {
+          float: "right"
+        }
+      } >
+      <
+      Option value = "hour" > Hour < /Option> <
+      Option value = "day" > Day < /Option> <
+      Option value = "week" > Week < /Option> <
+      Option value = "month" > Month < /Option> {
+        /* <Option value="year">Year</Option> */ } <
+      /Select> <
+      /Col> <
+      /Col> <
+      /Row> <
+      Row > {
+        chartData.map((value, i) => ( <
+          Col span = {
+            8
+          } >
+          <
+          DashboardCharts name = {
+            value.name
+          }
+          color = {
+            value.color
+          }
+          graphData = {
+            value.graphData
+          }
+          xAxis = {
+            value.xAxis
+          }
+          /> <
+          /Col>
+        ))
+      } <
+      /Row> <
+      /Row>
     );
   }
 }
