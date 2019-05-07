@@ -469,7 +469,7 @@ class VotingAndBookMark extends Component {
                         <Col offset={18} span={1} className="paddingRight-l marginRight-m">
                             {this.state.userDownvoted === true
                                 ?
-                                <Button shape="circle" icon="caret-down" theme="filled" size="small" className="no_border text_color_blue pointer" onClick={this.handleDownVoting}></Button>
+                                <Button shape="circle" icon="caret-down" theme="filled" size="small" className="no_border text_color_white bg_color_blue pointer" onClick={this.handleDownVoting}></Button>
                                 :
                                 <Button shape="circle" icon="caret-down" theme="empty" size="small" className="no_border pointer" onClick={this.handleDownVoting}></Button>
                             }
@@ -482,7 +482,7 @@ class VotingAndBookMark extends Component {
                     <Col span={2}>
                         {this.state.userBookmarked === true
                             ?
-                            <Button shape="circle" icon="book" size="small" className="no_border text_color_blue pointer" onClick={this.handleBookMarking} ></Button>
+                            <Button shape="circle" icon="book" size="small" className="no_border text_color_white bg_color_blue pointer" onClick={this.handleBookMarking} ></Button>
                             :
                             <Button shape="circle" icon="book" theme="filled" size="small" className="no_border pointer" onClick={this.handleBookMarking}></Button>
                         }

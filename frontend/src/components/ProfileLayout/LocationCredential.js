@@ -281,7 +281,8 @@ class LocationCredential extends Component {
 
     handleOk = () => {
         console.log("handleok")
-        const { handleAdd, zipCodeError, stateError } = this.props;
+        const { stateError } = this.props;
+        const { handleAdd, zipCodeError } = this.state;
         if (!zipCodeError && !stateError) {
 
             if (handleAdd) {
