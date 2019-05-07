@@ -71,7 +71,7 @@ let answerCommonAttributes = (_session,answerObj) => {
         await userModel.findOne({userId:answerObj.userId}).then((answererObj)=>{
             // console.log("answerObj\n",answererObj)
             if (answererObj !== null){
-                temp_answer['answererName'] = answerObj.firstName + " "+answerObj.lastName
+                temp_answer['answererName'] = answererObj.firstName + " "+answererObj.lastName
                 temp_answer['profileCredential'] = answererObj.profileCredential
             }
         })
