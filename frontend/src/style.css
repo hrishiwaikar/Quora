@@ -245,6 +245,11 @@
 	background-color: #3e78ad;
 }
 
+.quora_button_red {
+	background-color: #b92b27;
+	border: 1px solid #b92b27;
+}
+
 .no_hover:hover {
 	/* example color */
 	color:#FFFFFF;
