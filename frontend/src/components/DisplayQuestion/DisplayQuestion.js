@@ -22,7 +22,7 @@ export class TestDisplayQuestion extends Component {
     render = () => {
         let { data } = this.props;
         console.log('Render of test');
-        let test_data = [
+        let old_data = [
             {
                 questionId: 'ba20d1d0-706d-11e9-aa18-2d2b40f23af0',
                 questionText: 'What is the first thing a child learns as it comes out of the womb?',
@@ -95,15 +95,28 @@ export class DisplayQuestion extends Component {
                 <Row>
                     <Title level={4} className="quora_question_text font_size_s text_color_black" >{data.questionText}</Title>
                 </Row>
-                {/* {data.hasAnswer === true ? */}
                 <Row>
-                    <Answer data={data} />
+
+                    {data.hasAnswer === false ?
+                        <Row>
+                            <Col span={2}>
+                                <Button shape="round" icon="edit" size="small" className="no_border pointer" style={{ paddingLeft: 0 }}>
+                                    Answer
+                                </Button>
+                            </Col>
+                            <Col span={3}>
+                                <Button shape="round" icon="wifi" size="small" className="no_border pointer" style={{ paddingLeft: 0 }} onClick={this.handleFollowQuestion} >Follow</Button>
+                            </Col>
+
+                        </Row>
+                        :
+                        <Row>
+                            <Answer data={data} />
+                        </Row>
+
+
+                    }
                 </Row>
-
-                {/* :
-                    null
-                } */}
-
             </Row>
         );
     }
