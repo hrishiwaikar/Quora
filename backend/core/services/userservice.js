@@ -205,6 +205,57 @@ let service = {
             }
         });
     },
+    unFollowTopic: (...args) => {
+        return new Promise(function (resolve, reject) {
+            try {
+                let _session = args[0] || {};
+                let userId = args[1] || null;
+                let updateObj = args[2] || {};
+                let userModel = require('./../models/usermodel');
+                let body = {};
+                body.userId = userId || null;
+                userModel.findOne({
+                    userId: userId
+                }).then((dbObj) => {
+                    if (!!dbObj) {
+                        body = dbObj || {};
+                        return topicModel.findOne({
+                            topicId: updateObj.topicId
+                        });
+                    } else {
+                        return reject(rs.notfound)
+                    }
+
+                }).then((dbObj) => {
+                    if (!!dbObj) {
+                        let _topics = body.topic || [];
+                        let _f = null;
+                        for (let i = 0; i < _topics.length; i++) {
+                            const element = _topics[i];
+                            if (element.topicId === updateObj.topicId) {
+                                _f = i;
+                            }
+                        }
+                        if (_f >= 0) {
+                            _topics.splice(_f,1)
+                        }
+                        return userModel.findOneAndUpdate({
+                            userId: userId
+                        }, {
+                            topic: _topics
+                        });
+                    } else {
+                        return reject(rs.notfound)
+                    }
+                }).then(resolve).catch((err) => {
+                    reject(err);
+                })
+            } catch (e) {
+                console.error(e)
+                reject(e);
+            }
+        });
+    },
     uploadImage: (...args) => {
         return new Promise(function (resolve, reject) {
             try {
@@ -311,6 +362,18 @@ let router = {
             })
         };
         service.followTopic(req.user, req.params.userId, req.body).then(successCB, next);
+    },
+    unFollowTopic: (req, res, next) => {
+        let successCB = (data) => {
+            res.json({
+                result: "success",
+                response: [{
+                    message: "User Updated Successfully",
+                    code: "UPDATED"
+                }]
+            })
+        };
+        service.unFollowTopic(req.user, req.params.userId, req.body).then(successCB, next);
     },
     delete: (req, res, next) => {
         let successCB = (data) => {

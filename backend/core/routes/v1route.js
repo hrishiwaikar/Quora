@@ -50,6 +50,7 @@ module.exports = (express) => {
         versionRouter.put('/users/:userId', jwt.verifyRequest, userservice.update);
         versionRouter.delete('/users/:userId', jwt.verifyRequest, userservice.delete);
         versionRouter.post('/users/:userId/topic', jwt.verifyRequest, userservice.followTopic);
+        versionRouter.delete('/users/:userId/topic', jwt.verifyRequest, userservice.unFollowTopic);
         versionRouter.get('/users/:userId/notifications', jwt.verifyRequest, notificationservice.readMany);
         /* User Routes */
 
@@ -67,8 +68,8 @@ module.exports = (express) => {
      /* UserFeed */
      
     /* User Profile Related Question, content routes*/
-    versionRouter.get('/user/:userId/questions',jwt.verifyRequest, questionservice.userQuestionList);
-    versionRouter.get('/user/:userId/answers',jwt.verifyRequest, questionservice.userAnswerList)
+    versionRouter.get('/users/:userId/questions',jwt.verifyRequest, questionservice.userQuestionList);
+    versionRouter.get('/users/:userId/answers',jwt.verifyRequest, questionservice.userAnswerList)
     /* User Profile Related Question, content routes*/
 
     /* User Content */
