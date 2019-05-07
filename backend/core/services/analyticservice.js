@@ -76,14 +76,18 @@ module.exports = {
             console.log("CHECK > >> > ");
             switch (frequency) {
                 case "hour":
+                startDate = Date.now() - (60 * 60 * 1000);
+                startDate = new Date(startDate).setSeconds(0,0);
                     timeModel.find({
-                        frequency : obj.frequency,
+                        frequency : "min",
                         feature : obj.type,
-                        timestamp : {$gte: new Date(2019,01,01)}
+                        timestamp : {$gte: new Date(startDate)}
                     }).sort({
                         timestamp: 1
-                    }).then(d=>console.log(d)).catch(e=>console.error(e));
-                    startDate = Date.now() - (60 * 60 * 1000);
+                    }).select({timestamp:1,count:1}).then(d=>{
+                        
+                        return;
+                    }).catch(e=>console.error(e));
                     for (let i = 1; i <= 60; i++) {
                         obj.graphData.push({
                             value: parseInt(Math.random() * 120),

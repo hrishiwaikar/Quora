@@ -105,6 +105,31 @@ module.exports = {
             return Promise.all([promiseToCall(timestamps[0]), promiseToCall(timestamps[1]), promiseToCall(timestamps[2]), promiseToCall(timestamps[3]), promiseToCall(timestamps[4]), promiseToCall(timestamps[5])]).then(resolve, reject);
         });
     },
+    newcomment: (payload) => {
+        return new Promise((resolve, reject) => {
+            let promiseToCall = (obj) => {
+                return new Promise((resolve2, reject2) => {
+                    timeModel.findOneAndUpdate({
+                        feature: "newcomment",
+                        timestamp: obj.timestamp,
+                        frequency: obj.frequency,
+                    }, {
+                        feature: "newcomment",
+                        timestamp: obj.timestamp,
+                        frequency: obj.frequency,
+                        $inc: {
+                            count: 1
+                        }
+                    }, {
+                        upsert: true,
+                        new: true,
+                    }).then(resolve2, reject2)
+                })
+            }
+            let timestamps = utils.getAnalyticsTimestamps(payload.createdAt || new Date());
+            return Promise.all([promiseToCall(timestamps[0]), promiseToCall(timestamps[1]), promiseToCall(timestamps[2]), promiseToCall(timestamps[3]), promiseToCall(timestamps[4]), promiseToCall(timestamps[5])]).then(resolve, reject);
+        });
+    },
     questionview: (payload) => {
         return new Promise((resolve, reject) => {
             let promiseToCall = (obj) => {
