@@ -8,6 +8,7 @@ let service = {
             try {
                 let _session = args[0] || {};
                 let body = args[1] || {};
+                body.topicId = body.topicId || utils.getUniqueId();
                 let topicObj = new topicModel(body);
                 topicObj.save().then(response => {
                     return resolve(response);

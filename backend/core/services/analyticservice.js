@@ -85,16 +85,30 @@ module.exports = {
                     }).sort({
                         timestamp: 1
                     }).select({timestamp:1,count:1}).then(d=>{
-                        
+                        for (let i = 1; i <= 60; i++) {
+                            let _f = 0;
+                            abc : for (let j = 0; j < d.length; j++) {
+                                const element = d[j];
+                                if(new Date(startDate) === d.timestamp){
+                                    obj.graphData.push({
+                                        count: d.count,
+                                        timestamp: d.timestamp
+                                    });
+                                    _f = 1;
+                                    break abc;
+                                }
+                            }
+                            if(!_f){
+                                obj.graphData.push({
+                                    count: 0,
+                                    timestamp: new Date(startDate)
+                                });
+                            }
+                            startDate = startDate + (1 * 60 * 1000)
+                        }    
                         return;
                     }).catch(e=>console.error(e));
-                    for (let i = 1; i <= 60; i++) {
-                        obj.graphData.push({
-                            value: parseInt(Math.random() * 120),
-                            timestamp: new Date(startDate).getHours() + ":" + new Date(startDate).getMinutes()
-                        });
-                        startDate = startDate + (1 * 60 * 1000)
-                    }
+                    
                     break;
                 case "day":
                     startDate = Date.now() - (24 * 60 * 60 * 1000);
