@@ -196,6 +196,8 @@ export class AnswererInfo extends Component {
 
         }
 
+        let thisUserId = localStorage.getItem("userId");
+
         let cant_follow = this.props.cant_follow;
         // let image_src = 'http://10.0.0.86:7836/v1/users/' + answererId + '/image/';
         let image_src = '/users/' + answererId + '/image/';
@@ -235,7 +237,7 @@ export class AnswererInfo extends Component {
                             <Row>{""}</Row>
                         }
                     </Col>
-                    {cant_follow !== true
+                    {answererId !== thisUserId
                         ?
                         <>
                             {userIsFollowingAnswerer === true

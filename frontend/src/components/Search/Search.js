@@ -40,19 +40,6 @@ class Search extends Component {
 
     }
 
-    handleRedirection = (selected_data) => {
-        console.log('In handle redirrection ', selected_data);
-        if (selected_data.type === 'PROFILE') {
-
-        } else if (selected_data.type === 'QUESTION') {
-
-            this.props.history.push('/question/' + selected_data.id);
-            window.location.reload();
-
-        } else if (selected_data.type === 'TOPIC') {
-
-        }
-    }
 
     handleChange = (value) => {
         console.log('In hamdle Change ', value);
@@ -60,7 +47,7 @@ class Search extends Component {
 
         for (var i = 0; i < data.length; i++) {
             if (value === data[i].value) {
-                this.handleRedirection(data[i]);
+                this.props.handleRedirection(data[i]);
             }
         }
     }

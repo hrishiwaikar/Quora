@@ -90,15 +90,15 @@ export class DisplayQuestion extends Component {
         console.log('Render of display question ');
         let data = this.props.data;
         return (
-            <Row className="pointer" onClick={() => { this.props.handleRedirection(data.questionId) }}>
+            <Row>
 
-                <Row>
+                <Row className="pointer" onClick={() => { this.props.handleRedirection(data.questionId) }}>
                     <Text className="font_size_m font_bold text_color_black" >{data.questionText}</Text>
                 </Row>
                 <Row>
 
                     {data.hasAnswer === false ?
-                        <Row>
+                        <Row className="pointer" onClick={() => { this.props.handleRedirection(data.questionId) }}>
                             <Col span={4}>
                                 <Button shape="round" icon="edit" size="small" className="no_border pointer" style={{ paddingLeft: 0 }}>
                                     Answer
